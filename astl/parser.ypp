@@ -1,0 +1,937 @@
+/*
+   Copyright (C) 2009, 2010 Andreas Franz Borchert
+   ----------------------------------------------------------------------------
+   The Astl Library is free software; you can redistribute it
+   and/or modify it under the terms of the GNU Library General Public
+   License as published by the Free Software Foundation; either version
+   2 of the License, or (at your option) any later version.
+
+   The Astl Library is distributed in the hope that it will be
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
+%{
+namespace Astl {
+   class Scanner;
+}
+
+#include <cstring>
+#include <astl/location.hpp>
+#include <astl/syntax-tree.hpp>
+#include <astl/yystype.hpp>
+#include <astl/scanner.hpp>
+#include <astl/operators.hpp>
+#include <astl/yytname.hpp>
+#include <astl/error.hpp>
+
+using namespace Astl;
+
+/* since bison 3.x it is no longer yyloc but yyla.location... */
+#define YYLLOC (yyla.location)
+
+#define NODE(op) \
+   (NodePtr(new Node(make_loc(YYLLOC), Op::op)))
+#define UNARY(unop, op1) \
+   (NodePtr(new Node(make_loc(YYLLOC), Op::unop, (op1))))
+#define BINARY(binop, op1,op2) \
+   (NodePtr(new Node(make_loc(YYLLOC), Op::binop, (op1), (op2))))
+#define TERTIARY(top, op1,op2,op3) \
+   (NodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3))))
+#define QUATERNARY(top, op1,op2,op3,op4) \
+   (SubnodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4))))
+#define QUINARY(top, op1,op2,op3,op4,op5) \
+   (SubnodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4), (op5))))
+#define SENARY(top, op1,op2,op3,op4,op5,op6) \
+   (SubnodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4), (op5), (op6))))
+
+#define LEAF(tk) \
+   (NodePtr(new Node(make_loc(YYLLOC), \
+      Token(token::tk, yytname[token::tk - 255]))))
+#define NT_LEAF(op) \
+   (NodePtr(new Node(make_loc(YYLLOC), Op::op)))
+
+NodePtr flatten(NodePtr node, NodePtr subnodes, const Operator& op);
+NodePtr fix_print_expression(NodePtr node, location& yylloc);
+
+#define FLATTEN(node, subnodes, op) \
+   (flatten(node, subnodes, Op::op))
+
+%}
+
+%skeleton "lalr1.cc"
+%define namespace "Astl"
+%defines
+%verbose
+%locations
+%token-table
+%parse-param { Scanner& scanner }
+%parse-param { Astl::NodePtr& root }
+%lex-param { Scanner& scanner }
+
+/* delimiters */
+
+%token	LPAREN RPAREN SEMICOLON DOT QMARK COLON
+
+/* operators for subtoken expressions */
+
+%left	OR
+%left	AND
+%left	MATCHES
+%left	AMPERSAND	/* string concatenation */
+%left	X		/* string repetition */
+%left	EQEQ NE LT LE GT GE	/* comparisons */
+%left	PLUS MINUS	/* additive operators */
+%left	DIV MOD STAR	/* multiplicative operators */
+%left	POWER
+%right	NOT
+
+/* delimiters */
+
+%token	ARROW /* -> */
+%token  STAR /* * */
+%token	EQ /* = */
+%token	AMP_EQ /* &= */
+%token	PLUS_EQ /* += */
+%token	MINUS_EQ /* -= */
+%token	COMMA
+%token	MATCHES /* =~ */
+%token	LBRACE RBRACE
+%token	LBRACKET RBRACKET
+%token	PLUSPLUS MINUSMINUS
+%token	DOTS
+
+/* identifiers and literals */
+
+%token	IDENT
+%token	STRING_LITERAL
+%token	TEXT_LITERAL
+%token	REGEXP_LITERAL
+%token	VARIABLE
+%token  CARDINAL_LITERAL
+
+/* keywords */
+
+%token	ABSTRACT
+%token	AND
+%token	AS
+%token	AT
+%token	ATTRIBUTION
+%token	CACHE
+%token	CREATE
+%token	CLOSE
+%token	CUT
+%token	DELETE
+%token	ELSE
+%token	ELSIF
+%token	EXISTS
+%token	FOREACH
+%token	IMPORT
+%token	IF
+%token	IN
+%token	INPLACE
+%token	LEFT
+%token	LIBRARY
+%token	MACHINE
+%token	NONASSOC
+%token	NULL_T
+%token	ON
+%token	OPERATORS
+%token	OPSET
+%token	OR
+%token	POST
+%token	PRE
+%token	PRINT
+%token	PRIVATE
+%token	RETRACT
+%token	RETURN
+%token	RIGHT
+%token	RULES
+%token	SHARED
+%token	STATE
+%token	SUB
+%token	TRANSFORMATION
+%token	VAR
+%token	WHEN
+%token	WHERE
+%token	WHILE
+
+%start	start
+
+%%
+
+start: unit
+      { root = $1; }
+   ;
+
+unit: opt_clauses opt_rules
+      { $$ = BINARY(unit, $1, $2); }
+   ;
+
+opt_clauses:
+      { $$ = NODE(clauses); }
+   | clauses
+      { $$ = FLATTEN(NODE(clauses), $1, clauses); }
+   ;
+
+clauses: clause
+   | clauses clause
+      { $$ = BINARY(clauses, $1, $2); }
+   ;
+
+clause: import_clause
+   | library_clause
+   | operator_set_clause
+   ;
+
+import_clause: IMPORT IDENT SEMICOLON
+      { $$ = UNARY(import_clause, $2); }
+   ;
+
+library_clause: LIBRARY STRING_LITERAL SEMICOLON
+      { $$ = UNARY(library_clause, $2); }
+   ;
+
+operator_set_clause: OPSET IDENT EQ operator_expression SEMICOLON
+      { $$ = BINARY(operator_set_clause, $2, $4); }
+   ;
+
+opt_rules:
+      { $$ = NODE(rules); }
+   | rules
+      { $$ = FLATTEN(NODE(rules), $1, rules); }
+   ;
+
+rules: rule
+   | rule SEMICOLON
+   | rules rule
+      { $$ = BINARY(rules, $1, $2); }
+   | rules rule SEMICOLON
+      { $$ = BINARY(rules, $1, $2); }
+   ;
+
+rule: print_rules
+   | named_print_rules
+   | operator_rules
+   | transformation_rules
+   | named_transformation_rules
+   | named_inplace_transformation_rules
+   | attribution_rules
+   | named_attribution_rules
+   | function_definition
+   | state_machine
+   | abstract_state_machine
+   ;
+
+function_definition: SUB IDENT block
+      { $$ = BINARY(function_definition, $2, $3); }
+   ;
+
+print_rules:
+   PRINT RULES LBRACE
+      sequence_of_print_rules
+   RBRACE
+      { $$ = UNARY(print_rules,
+	 FLATTEN(NODE(sequence_of_print_rules), $4, sequence_of_print_rules)); }
+   ;
+
+named_print_rules:
+   PRINT RULES IDENT LBRACE
+      sequence_of_print_rules
+   RBRACE
+      { $$ = BINARY(named_print_rules, $3,
+	    FLATTEN(NODE(sequence_of_print_rules), $5,
+	       sequence_of_print_rules)); }
+   ;
+
+sequence_of_print_rules: print_rule
+   | sequence_of_print_rules print_rule
+      { $$ = BINARY(sequence_of_print_rules, $1, $2); }
+   ;
+
+print_rule: conditional_tree_expression ARROW print_expression SEMICOLON
+      { $$ = BINARY(print_rule, $1, $3); }
+   ;
+
+named_tree_expression: tree_expression
+   | tree_expression AS IDENT
+      { $$ = BINARY(named_tree_expression, $1, $3); }
+   ;
+tree_expression: LPAREN operator_expression RPAREN
+      { $$ = UNARY(tree_expression, $2); }
+   | LPAREN operator_expression subnodes RPAREN
+      { $$ = FLATTEN(UNARY(tree_expression, $2), $3, subnodes); }
+   | variable_length_tree_expression
+   ;
+
+variable_length_tree_expression: LPAREN operator_expression STAR RPAREN
+      { $$ = UNARY(variable_length_tree_expression,
+	 UNARY(tree_expression, $2)); }
+   | LPAREN operator_expression subnodes subnode_list RPAREN
+      {
+	 $$ = BINARY(variable_length_tree_expression,
+		  FLATTEN(UNARY(tree_expression, $2), $3, subnodes), $4);
+      }
+   | LPAREN operator_expression subnodes subnode_list subnodes RPAREN
+      {
+	 $$ = TERTIARY(variable_length_tree_expression,
+		  FLATTEN(UNARY(tree_expression, $2), $3, subnodes),
+		  $4,
+		  FLATTEN(NODE(subnodes), $5, subnodes));
+      }
+   | LPAREN operator_expression subnode_list subnodes RPAREN
+      {
+	 $$ = TERTIARY(variable_length_tree_expression,
+		  UNARY(tree_expression, $2),
+		  $3,
+		  FLATTEN(NODE(subnodes), $4, subnodes));
+      }
+   | LPAREN operator_expression subnode_list RPAREN
+      {
+	 $$ = BINARY(variable_length_tree_expression,
+		  UNARY(tree_expression, $2), $3);
+      }
+   ;
+operator_expression: string_literal
+   | IDENT
+   | LBRACKET operators RBRACKET
+      { $$ = $2; }
+   ;
+
+conditional_tree_expression: contextual_tree_expression
+   | contextual_tree_expression WHERE expression
+      { $$ = BINARY(conditional_tree_expression, $1, $3); }
+   ;
+
+contextual_tree_expression: named_tree_expression
+   | named_tree_expression IN context_expression
+      { $$ = BINARY(contextual_tree_expression, $1, $3); }
+   | named_tree_expression NOT IN context_expression
+      { $$ = BINARY(contextual_tree_expression, $1, UNARY(NOT, $4)); }
+   ;
+
+context_expression: context_match
+   | context_match AND IN context_expression
+      { $$ = BINARY(context_expression, $1, $4); }
+   | context_match AND NOT IN context_expression
+      { $$ = BINARY(context_expression, $1, UNARY(NOT, $5)); }
+   ;
+
+context_match: named_tree_expression
+      { $$ = UNARY(context_match, $1); }
+   ;
+
+subnodes: subnode
+   | subnodes subnode
+      { $$ = BINARY(subnodes, $1, $2); }
+   ;
+
+subnode: named_tree_expression
+   | regular_expression
+   | string_literal
+   | IDENT
+   ;
+subnode_list: IDENT DOTS
+   ;
+regular_expression: REGEXP_LITERAL
+      { $$ = UNARY(regular_expression, $1); }
+   | REGEXP_LITERAL AS IDENT
+      { $$ = BINARY(regular_expression, $3, $1); }
+   ;
+
+assignment: conditional
+   | designator EQ assignment
+      { $$ = UNARY(assignment, BINARY(EQ, UNARY(designator, $1), $3)); }
+   | designator AMP_EQ assignment
+      { $$ = UNARY(assignment, BINARY(AMP_EQ, UNARY(designator, $1), $3)); }
+   | designator PLUS_EQ assignment
+      { $$ = UNARY(assignment, BINARY(PLUS_EQ, UNARY(designator, $1), $3)); }
+   | designator MINUS_EQ assignment
+      { $$ = UNARY(assignment, BINARY(MINUS_EQ, UNARY(designator, $1), $3)); }
+   ;
+conditional: term
+   | term QMARK term COLON term
+      { $$ = TERTIARY(conditional, $1, $3, $5); }
+   ;
+term: factor
+   /* logical operators */
+   | term OR term
+      { $$ = BINARY(OR, $1, $3); }
+   | term AND term
+      { $$ = BINARY(AND, $1, $3); }
+   /* string operators */
+   | term AMPERSAND term
+      { $$ = BINARY(AMPERSAND, $1, $3); }
+   | term MATCHES REGEXP_LITERAL
+      { $$ = BINARY(MATCHES, $1, $3); }
+   | term MATCHES term
+      { $$ = BINARY(MATCHES, $1, $3); }
+   | term X term
+      { $$ = BINARY(X, $1, $3); }
+   /* conditional operators */
+   | term EQEQ term
+      { $$ = BINARY(EQEQ, $1, $3); }
+   | term NE term
+      { $$ = BINARY(NE, $1, $3); }
+   | term LT term
+      { $$ = BINARY(LT, $1, $3); }
+   | term LE term
+      { $$ = BINARY(LE, $1, $3); }
+   | term GE term
+      { $$ = BINARY(GE, $1, $3); }
+   | term GT term
+      { $$ = BINARY(GT, $1, $3); }
+   /* arithmetic operators */
+   | term PLUS term
+      { $$ = BINARY(PLUS, $1, $3); }
+   | term MINUS term
+      { $$ = BINARY(MINUS, $1, $3); }
+   | term DIV term
+      { $$ = BINARY(DIV, $1, $3); }
+   | term MOD term
+      { $$ = BINARY(MOD, $1, $3); }
+   | term STAR term
+      { $$ = BINARY(STAR, $1, $3); }
+   | term POWER term
+      { $$ = BINARY(POWER, $1, $3); }
+   ;
+factor: primary
+      { $$ = UNARY(primary, $1); }
+   | MINUS primary
+      { $$ = UNARY(MINUS, UNARY(primary, $2)); }
+   | NOT primary
+      { $$ = UNARY(NOT, UNARY(primary, $2)); }
+   ;
+primary: designator
+      { $$ = UNARY(designator, $1); }
+   | EXISTS designator
+      { $$ = UNARY(EXISTS, $2); }
+   | EXISTS LPAREN designator RPAREN
+      { $$ = UNARY(EXISTS, $3); }
+   | prefix_increment
+   | prefix_decrement
+   | postfix_increment
+   | postfix_decrement
+   | LPAREN assignment RPAREN
+      { $$ = $2; }
+   | list_aggregate
+   | dictionary_aggregate
+   | function_call
+   | function_constructor
+   | CARDINAL_LITERAL
+      { $$ = UNARY(CARDINAL_LITERAL, $1); }
+   | STRING_LITERAL
+      { $$ = UNARY(STRING_LITERAL, $1); }
+   | NULL_T
+      { $$ = NT_LEAF(NULL_T); }
+   ;
+
+prefix_increment: PLUSPLUS designator
+      { $$ = UNARY(prefix_increment, $2); }
+   ;
+
+prefix_decrement: MINUSMINUS designator
+      { $$ = UNARY(prefix_decrement, $2); }
+   ;
+
+postfix_increment: designator PLUSPLUS
+      { $$ = UNARY(postfix_increment, $1); }
+   ;
+
+postfix_decrement: designator MINUSMINUS
+      { $$ = UNARY(postfix_decrement, $1); }
+   ;
+
+list_aggregate: LBRACKET RBRACKET
+      { $$ = NODE(list_aggregate); }
+   | LBRACKET expression_list RBRACKET
+      { $$ = FLATTEN(NODE(list_aggregate), $2, expression_list); }
+   ;
+
+dictionary_aggregate: LBRACE RBRACE
+      { $$ = NODE(dictionary_aggregate); }
+   | LBRACE key_value_pairs RBRACE
+      { $$ = FLATTEN(NODE(dictionary_aggregate), $2, key_value_pairs); }
+   | LBRACE key_value_pairs COMMA RBRACE
+      { $$ = FLATTEN(NODE(dictionary_aggregate), $2, key_value_pairs); }
+   ;
+
+key_value_pairs: key_value_pair
+   | key_value_pairs COMMA key_value_pair
+      { $$ = BINARY(key_value_pairs, $1, $3); }
+   ;
+
+key_value_pair: IDENT ARROW expression
+      { $$ = BINARY(key_value_pair, $1, $3); }
+   ;
+
+function_call: primary LPAREN RPAREN
+      { $$ = UNARY(function_call, UNARY(primary, $1)); }
+   | primary LPAREN expression_list RPAREN
+      { $$ = BINARY(function_call, UNARY(primary, $1),
+	 FLATTEN(NODE(expression_list), $3, expression_list)); }
+   ;
+
+function_constructor: SUB block
+      { $$ = UNARY(function_constructor, $2); }
+   ;
+
+expression_list: expression
+   | expression_list COMMA expression
+      { $$ = BINARY(expression_list, $1, $3); }
+   ;
+
+print_expression:
+      { $$ = NODE(print_expression); }
+   | print_expression_list
+      { $$ = fix_print_expression(
+	 FLATTEN(NODE(print_expression), $1, print_expression_list),
+	 YYLLOC); }
+   ;
+print_expression_list: print_expression_item
+   | print_expression_list print_expression_item
+      { $$ = BINARY(print_expression_list, $1, $2); }
+   ;
+print_expression_item: TEXT_LITERAL
+   | VARIABLE
+   | LBRACE expression RBRACE
+      { $$ = $2; }
+   | print_expression_listvar
+   ;
+print_expression_listvar: DOTS
+      { $$ = NODE(DOTS); }
+   ;
+
+operator_rules: OPERATORS LBRACE operator_lists RBRACE
+      { $$ = FLATTEN(NODE(operator_rules), $3, operator_lists); }
+   ;
+operator_lists: operator_list SEMICOLON
+   | operator_lists operator_list SEMICOLON
+      { $$ = BINARY(operator_lists, $1, $2); }
+   ;
+operator_list: LEFT operators
+      { $$ = FLATTEN(NODE(LEFT), $2, operators); }
+   | RIGHT operators
+      { $$ = FLATTEN(NODE(RIGHT), $2, operators); }
+   | NONASSOC operators
+      { $$ = FLATTEN(NODE(NONASSOC), $2, operators); }
+   ;
+operators: operator_term
+   | operators operator_term
+      { $$ = BINARY(operators, $1, $2); }
+   ;
+
+operator_term: string_literal
+   | IDENT
+   ;
+
+transformation_rules:
+   TRANSFORMATION RULES LBRACE
+      transformations
+   RBRACE
+      { $$ = FLATTEN(NODE(transformation_rules), $4, transformations); }
+   ;
+
+named_transformation_rules:
+   TRANSFORMATION RULES IDENT LBRACE
+      transformations
+   RBRACE
+      { $$ = BINARY(named_transformation_rules, $3,
+	       FLATTEN(NODE(transformation_rules), $5, transformations)); }
+   ;
+
+named_inplace_transformation_rules:
+   INPLACE TRANSFORMATION RULES IDENT LBRACE
+      transformations
+   RBRACE
+      { $$ = BINARY(named_inplace_transformation_rules, $4,
+	       FLATTEN(NODE(transformation_rules), $6, transformations)); }
+   ;
+
+transformations: transformation SEMICOLON
+   | transformations transformation SEMICOLON
+      { $$ = BINARY(transformations, $1, $2); }
+   ;
+
+transformation: conditional_tree_expression ARROW
+	 transformation_instructions
+      { $$ = BINARY(transformation, $1, $3); }
+   | conditional_tree_expression ARROW PRE transformation_instructions
+      { $$ = BINARY(transformation, UNARY(PRE, $1), $4); }
+   | conditional_tree_expression ARROW POST transformation_instructions
+      { $$ = BINARY(transformation, UNARY(POST, $1), $4); }
+   /* named transformation rules */
+   | IDENT COLON conditional_tree_expression ARROW
+	 transformation_instructions
+      { $$ = TERTIARY(transformation, $3, $5, $1); }
+   | IDENT COLON conditional_tree_expression ARROW
+	 PRE transformation_instructions
+      { $$ = TERTIARY(transformation, UNARY(PRE, $3), $6, $1); }
+   | IDENT COLON conditional_tree_expression ARROW
+	 POST transformation_instructions
+      { $$ = TERTIARY(transformation, UNARY(POST, $3), $6, $1); }
+   ;
+
+transformation_instructions: transformed_subnode
+   | pre_transformation_block transformed_subnode
+      { $$ = BINARY(transformation_instructions, $2, $1); }
+   | transformed_subnode post_transformation_block
+      { $$ = BINARY(transformation_instructions, $1, $2); }
+   | pre_transformation_block transformed_subnode
+	 post_transformation_block
+      { $$ = TERTIARY(transformation_instructions, $2, $1, $3); }
+   ;
+
+pre_transformation_block: block
+      { $$ = UNARY(pre_transformation_block, $1); }
+   ;
+
+post_transformation_block: block
+      { $$ = UNARY(post_transformation_block, $1); }
+   ;
+
+/* tree expression for the rhs of an extended transformation rule */
+transformed_subnode: IDENT
+   | IDENT DOTS
+      { $$ = UNARY(subnode_list, $1); }
+   | named_transformed_tree_expression
+   | named_expression
+   ;
+
+named_expression: LBRACE expression RBRACE
+      { $$ = $2; }
+   | LBRACE expression RBRACE AS IDENT
+      { $$ = BINARY(named_expression, $2, $5); }
+   ;
+
+named_transformed_tree_expression: transformed_tree_expression
+   | transformed_tree_expression AS IDENT
+      { $$ = BINARY(named_transformed_tree_expression, $1, $3); }
+   ;
+
+transformed_tree_expression: LPAREN STRING_LITERAL RPAREN
+      { $$ = UNARY(tree_expression, $2); }
+   | LPAREN STRING_LITERAL transformed_subnodes RPAREN
+      { $$ = FLATTEN(UNARY(tree_expression, $2), $3, subnodes); }
+   ;
+transformed_subnodes: transformed_subnode
+   | transformed_subnodes transformed_subnode
+      { $$ = BINARY(subnodes, $1, $2); }
+   ;
+
+attribution_rules:
+   ATTRIBUTION RULES LBRACE
+      attributions
+   RBRACE
+      { $$ = FLATTEN(NODE(attribution_rules), $4, attributions); }
+   ;
+
+named_attribution_rules:
+   ATTRIBUTION RULES IDENT LBRACE
+      attributions
+   RBRACE
+      { $$ = BINARY(named_attribution_rules, $3,
+	       FLATTEN(NODE(attribution_rules), $5, attributions)); }
+   ;
+
+attributions: attribution SEMICOLON
+   | attributions attribution SEMICOLON
+      { $$ = BINARY(attributions, $1, $2); }
+   ;
+
+attribution: conditional_tree_expression ARROW block
+      { $$ = BINARY(attribution, $1, $3); }
+   | conditional_tree_expression ARROW PRE block
+      { $$ = BINARY(attribution, UNARY(PRE, $1), $4); }
+   | conditional_tree_expression ARROW POST block
+      { $$ = BINARY(attribution, UNARY(POST, $1), $4); }
+   ;
+block: LBRACE statements RBRACE
+      { $$ = FLATTEN(NODE(block), $2, statements); }
+   | LBRACE RBRACE
+      { $$ = NODE(block); }
+   ;
+statements: statement
+   | statements statement
+      { $$ = BINARY(statements, $1, $2); }
+   ;
+statement: expression SEMICOLON
+   | delete_statement SEMICOLON
+   | if_statement
+   | while_statement
+   | foreach_statement
+   | var_statement SEMICOLON
+   | return_statement SEMICOLON
+   | statement SEMICOLON
+   ;
+
+delete_statement: DELETE designator
+      { $$ = UNARY(delete_statement,
+	 UNARY(expression, UNARY(primary, UNARY(designator, $2))));
+      }
+   ;
+
+if_statement: IF LPAREN expression RPAREN block
+      { $$ = BINARY(if_statement, $3, $5); }
+   | IF LPAREN expression RPAREN block ELSE block
+      { $$ = TERTIARY(if_statement, $3, $5, $7); }
+   | IF LPAREN expression RPAREN block elsif_chain
+      { $$ = TERTIARY(if_statement, $3, $5, UNARY(elsif_chain, $6)); }
+   | IF LPAREN expression RPAREN block elsif_chain ELSE block
+      { $$ = QUATERNARY(if_statement, $3, $5, UNARY(elsif_chain, $6), $8); }
+   ;
+
+elsif_chain: elsif_statement
+   | elsif_chain elsif_statement
+      { $$ = BINARY(elsif_chain, $1, $2); }
+   ;
+
+elsif_statement: ELSIF LPAREN expression RPAREN block
+      { $$ = BINARY(elsif_statement, $3, $5); }
+   ;
+
+while_statement: WHILE LPAREN expression RPAREN block
+      { $$ = BINARY(while_statement, $3, $5); }
+   ;
+
+foreach_statement: FOREACH IDENT IN LPAREN expression RPAREN block
+      { $$ = TERTIARY(foreach_statement, $2, $5, $7); }
+   | FOREACH LPAREN IDENT COMMA IDENT RPAREN IN LPAREN expression RPAREN block
+      { $$ = QUATERNARY(foreach_statement, $3, $5, $9, $11); }
+   ;
+
+var_statement: VAR IDENT
+      { $$ = UNARY(var_statement, $2); }
+   | VAR IDENT EQ expression
+      { $$ = BINARY(var_statement, $2, $4); }
+   ;
+
+return_statement: RETURN
+      { $$ = NT_LEAF(return_statement); }
+   | RETURN expression
+      { $$ = UNARY(return_statement, $2); }
+   ;
+
+designator: IDENT
+   | designator DOT IDENT
+      { $$ = BINARY(DOT, $1, $3); }
+   | designator LBRACE expression RBRACE
+      { $$ = BINARY(LBRACE, $1, $3); }
+   | designator LBRACKET expression RBRACKET
+      { $$ = BINARY(LBRACKET, $1, $3); }
+   ;
+expression: assignment
+      { $$ = UNARY(expression, $1); }
+   ;
+
+abstract_state_machine: ABSTRACT STATE MACHINE IDENT
+	 LBRACE sm_vars sm_functions sm_rules RBRACE
+      { $$ = QUATERNARY(abstract_state_machine, $4, $6, $7, $8); }
+   | ABSTRACT STATE MACHINE IDENT COLON IDENT
+	 LBRACE sm_vars sm_functions sm_rules RBRACE
+      { $$ = QUINARY(abstract_state_machine, $4, $6, $8, $9, $10); }
+   ;
+state_machine: STATE MACHINE IDENT
+	 LPAREN states RPAREN LBRACE sm_vars sm_functions sm_rules RBRACE
+      { $$ = QUINARY(state_machine, $3, $5, $8, $9, $10); }
+   | STATE MACHINE IDENT COLON IDENT
+	 LPAREN states RPAREN LBRACE sm_vars sm_functions sm_rules RBRACE
+      { $$ = SENARY(state_machine, $3, $5, $7, $10, $11, $12); }
+   ;
+
+states: IDENT
+   | states COMMA IDENT
+      { $$ = BINARY(states, $1, $3); }
+   ;
+
+sm_vars: sm_var_declarations
+      { $$ = UNARY(sm_vars, $1); }
+   | /* empty */
+      { $$ = NODE(sm_vars); }
+   ;
+sm_var_declarations: sm_var_declaration SEMICOLON
+   | sm_var_declarations sm_var_declaration SEMICOLON
+      { $$ = BINARY(sm_var_declarations, $1, $2); }
+   ;
+sm_var_declaration: SHARED VAR IDENT
+      { $$ = BINARY(sm_var_declaration, NODE(SHARED), $3); }
+   | SHARED VAR IDENT EQ expression
+      { $$ = TERTIARY(sm_var_declaration, NODE(SHARED), $3, $5); }
+   | PRIVATE VAR IDENT
+      { $$ = BINARY(sm_var_declaration, NODE(PRIVATE), $3); }
+   | PRIVATE VAR IDENT EQ expression
+      { $$ = TERTIARY(sm_var_declaration, NODE(PRIVATE), $3, $5); }
+   ;
+
+sm_functions: sm_function_definitions
+      { $$ = UNARY(sm_functions, $1); }
+   | /* empty */
+      { $$ = NODE(sm_functions); }
+   ;
+
+sm_function_definitions: function_definition
+   | sm_function_definitions function_definition
+      { $$ = BINARY(sm_function_definitions, $1, $2); }
+   ;
+
+sm_rules: sm_rule
+   | sm_rules sm_rule
+      { $$ = BINARY(sm_rules, $1, $2); }
+   ;
+
+sm_rule: sm_condition ARROW sm_block SEMICOLON
+      { $$ = BINARY(sm_rule, $1, $3); }
+   | sm_condition ARROW sm_block
+      { $$ = BINARY(sm_rule, $1, $3); }
+   | sm_condition sm_alternatives
+      { $$ = BINARY(sm_rule, $1, $2); }
+   // creation rule
+   | sm_condition ARROW CREATE block SEMICOLON
+      {
+	 $$ = BINARY(sm_rule, $1,
+		  BINARY(sm_block, UNARY(sm_action, NODE(CREATE)), $4));
+      }
+   | sm_condition ARROW CREATE block
+      {
+	 $$ = BINARY(sm_rule, $1,
+		  BINARY(sm_block, UNARY(sm_action, NODE(CREATE)), $4));
+      }
+   // handler
+   | ON CLOSE sm_handler
+      { $$ = UNARY(sm_rule, BINARY(ON, NODE(CLOSE), $3)); }
+   | ON CLOSE sm_handler SEMICOLON
+      { $$ = UNARY(sm_rule, BINARY(ON, NODE(CLOSE), $3)); }
+   ;
+
+sm_handler: ARROW block
+      { $$ = UNARY(sm_handler, $2); }
+   | WHEN sm_state_condition ARROW block
+      { $$ = BINARY(sm_handler, $2, $4); }
+   ;
+
+sm_condition: conditional_tree_expression
+      { $$ = UNARY(sm_condition, $1); }
+   | conditional_tree_expression AT cfg_node_expression
+      { $$ = BINARY(sm_condition, $1, $3); }
+   | AT cfg_node_expression
+      { $$ = UNARY(sm_condition, $2); }
+   ;
+cfg_node_expression: cfg_node_types
+      { $$ = UNARY(cfg_node_expression, $1); }
+   | cfg_node_types WHERE expression
+      { $$ = BINARY(cfg_node_expression, $1, $3); }
+   | STAR
+      { $$ = UNARY(cfg_node_expression, NODE(STAR)); }
+   | STAR WHERE expression
+      { $$ = BINARY(cfg_node_expression, NODE(STAR), $3); }
+   ;
+cfg_node_types: IDENT
+   | cfg_node_types OR IDENT
+      { $$ = BINARY(cfg_node_types, $1, $3); }
+   ;
+
+sm_block: block
+      { $$ = UNARY(sm_block, $1); }
+   | sm_action
+      { $$ = UNARY(sm_block, $1); }
+   | sm_action block
+      { $$ = BINARY(sm_block, $1, $2); }
+   ;
+
+sm_alternatives: sm_alternative
+   | sm_alternative SEMICOLON
+   | sm_alternatives sm_alternative
+      { $$ = BINARY(sm_alternatives, $1, $2); }
+   | sm_alternatives sm_alternative SEMICOLON
+      { $$ = BINARY(sm_alternatives, $1, $2); }
+   ;
+
+sm_alternative: WHEN sm_state_condition ARROW sm_block
+      { $$ = BINARY(sm_alternative, $2, $4); }
+   | IF cfg_edge_condition ARROW sm_block
+      { $$ = BINARY(sm_alternative, $2, $4); }
+   | IF cfg_edge_condition AND WHEN sm_state_condition ARROW sm_block
+      { $$ = TERTIARY(sm_alternative, $2, $5, $7); }
+   ;
+
+cfg_edge_condition: IDENT
+      { $$ = UNARY(cfg_edge_condition, $1); }
+   | cfg_edge_condition OR IDENT
+      { $$ = BINARY(cfg_edge_condition, $1, $3); }
+   ;
+
+sm_state_condition: IDENT
+      { $$ = UNARY(sm_state_condition, $1); }
+   | sm_state_condition OR IDENT
+      { $$ = BINARY(sm_state_condition, $1, $3); }
+   ;
+
+sm_action: CACHE LPAREN expression RPAREN
+      { $$ = UNARY(sm_action, UNARY(CACHE, $3)); }
+   | CLOSE
+      { $$ = UNARY(sm_action, NODE(CLOSE)); }
+   | CUT
+      { $$ = UNARY(sm_action, NODE(CUT)); }
+   | RETRACT
+      { $$ = UNARY(sm_action, NODE(RETRACT)); }
+   | IDENT
+      { $$ = UNARY(sm_action, $1); }
+   ;
+
+string_literal: STRING_LITERAL
+      { $$ = UNARY(string_literal, $1); }
+   ;
+
+%%
+
+NodePtr flatten(NodePtr node, NodePtr subnodes,
+      const Operator& op) {
+   if (!subnodes->is_leaf() &&
+	 subnodes->get_op() == op && subnodes->size() == 2) {
+      flatten(node, subnodes->get_operand(0), op);
+      *node += subnodes->get_operand(1);
+   } else {
+      *node += subnodes;
+   }
+   return node;
+}
+
+NodePtr fix_print_expression(NodePtr node, location& yylloc) {
+   assert(!node->is_leaf());
+   NodePtr fixed = NodePtr(new Node(node->get_location(), node->get_op()));
+   int i = 0;
+   while (i < node->size()) {
+      NodePtr subnode = node->get_operand(i);
+      if (subnode->is_leaf() &&
+	    subnode->get_token().get_tokenval() == parser::token::VARIABLE &&
+	    (i+1 < node->size() &&
+	       !node->get_operand(i+1)->is_leaf() &&
+	       node->get_operand(i+1)->get_op() == Op::DOTS ||
+	    i+2 < node->size() &&
+	       !node->get_operand(i+2)->is_leaf() &&
+	       node->get_operand(i+2)->get_op() == Op::DOTS &&
+	       node->get_operand(i+1)->is_leaf() &&
+	       node->get_operand(i+1)->get_token().get_tokenval() ==
+		  parser::token::TEXT_LITERAL)) {
+	 NodePtr nsubnode = NodePtr(new Node(subnode->get_location(),
+	    Op::print_expression_listvar, subnode));
+	 if (node->get_operand(i+1)->is_leaf()) {
+	    *nsubnode += node->get_operand(i+1);
+	    ++i;
+	 }
+	 i += 2;
+	 *fixed += nsubnode;
+      } else {
+	 if (!subnode->is_leaf() && subnode->get_op() == Op::DOTS) {
+	    yyerror(&yylloc, "'$...' must follow a variable");
+	 }
+	 *fixed += subnode; ++i;
+      }
+   }
+   return fixed;
+}

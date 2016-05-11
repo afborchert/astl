@@ -1,0 +1,94 @@
+#------------------------------------------------------------------------------
+# By default, string representations of operators are derived from
+# the name of the tokens used in the bison parser (see %token definitions);
+# this configuration file allows to override selected string representations
+# for the Astl language.
+#
+# Each configuration line consists of a token name, a colon, and
+# the string representation (any sequence of characters until end
+# of line).
+#
+# This file is processed by the gen_operators.pl script.
+#------------------------------------------------------------------------------
+
+# keywords
+ABSTRACT:abstract
+AND:and
+AS:as
+AT:at
+ATTRIBUTION:attribution
+CACHE:cache
+CREATE:create
+CLOSE:close
+CUT:cut
+DELETE:delete
+DIV:div
+ELSE:else
+ELSIF:elsif
+EXISTS:exists
+FOREACH:foreach
+IF:if
+IMPORT:import
+IN:in
+INPLACE:inplace
+LEFT:left
+LIBRARY:library
+MACHINE:machine
+MOD:mod
+NONASSOC:nonassoc
+NULL_T:null
+ON:on
+OPERATORS:operators
+OPSET:opset
+OR:or
+POST:post
+PRE:pre
+PRINT:print
+PRIVATE:private
+RETRACT:retract
+RIGHT:right
+RETURN:return
+RULES:rules
+SHARED:shared
+STATE:state
+SUB:sub
+TRANSFORMATION:transformation
+VAR:var
+WHERE:where
+WHEN:when
+WHILE:while
+X:x
+
+# operators and delimiters
+MATCHES:=~
+AMPERSAND:&
+LT:<
+GT:>
+LE:<=
+GE:>=
+EQEQ:==
+NE:!=
+EQEQ:==
+PLUS:+
+MINUS:-
+STAR:*
+POWER:^
+LBRACKET:[]
+LPAREN:()
+LBRACE:{}
+DOT:.
+ARROW:->
+EQ:=
+AMP_EQ:&=
+PLUS_EQ:+=
+MINUS_EQ:-=
+COMMA:,
+DOTS:...
+
+prefix_increment=prefix++
+prefix_decrement=prefix--
+postfix_increment=postfix++
+postfix_decrement=postfix--
+
+STRING_LITERAL:string_literal
+CARDINAL_LITERAL:cardinal_literal
