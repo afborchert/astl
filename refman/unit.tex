@@ -1,0 +1,125 @@
+\chapter{Units}
+
+A compilation unit begins with library and import clauses and
+provides an arbitrary number of rules and definitions:
+
+\begin{grammar}
+   \nonterminal{unit}
+      \produces \optional{\nonterminal{clauses}}
+	 \optional{\nonterminal{rules}} \\
+   \nonterminal{clauses}
+      \produces \nonterminal{clause} \\
+      \produces \nonterminal{clauses} \nonterminal{clause} \\
+   \nonterminal{clause}
+      \produces \nonterminal{import-clause} \\
+      \produces \nonterminal{library-clauses} \\
+      \produces \nonterminal{operator-set-clause} \\
+   \nonterminal{import-clause}
+      \produces \lexkeyword{import} \nonterminal{identifier} \lextoken{;} \\
+   \nonterminal{library-clause}
+      \produces \lexkeyword{library} \nonterminal{string-literal}
+	 \lextoken{;} \\
+   \nonterminal{rules}
+      \produces \nonterminal{rule} \\
+      \produces \nonterminal{rule} \lextoken{;} \\
+      \produces \nonterminal{rules} \nonterminal{rule} \\
+      \produces \nonterminal{rules} \nonterminal{rule} \lextoken{;} \\
+   \nonterminal{rule}
+      \produces \nonterminal{function-definition} \\
+      \produces \nonterminal{attribution-rules} \\
+      \produces \nonterminal{state-machine} \\
+      \produces \nonterminal{abstract-state-machine} \\
+      \produces \nonterminal{transformation-rules} \\
+      \produces \nonterminal{named-transformation-rules} \\
+      \produces \nonterminal{named-inplace-transformation-rules} \\
+      \produces \nonterminal{operator-rules} \\
+      \produces \nonterminal{print-rules} \\
+\end{grammar}
+
+\section{Libraries}
+
+Libraries are source files ending in the suffix ``.ast'' that can
+be loaded through an import clause and are looked for in all
+directories of the library path. The library path consists initially
+of the current directory only. Library clauses add the given directories
+to the end of the library path. Libraries must conform to the
+same syntax, i.e. they are considered as \nonterminal{unit}. All their
+rules and definitions are added to the global pool of rules and definitions.
+Multiple attempts to import the same library unit are permitted. In this
+case, just the first import clause is executed.
+
+A global name space in regard to function definitions, state machines,
+and some predefined bindings is shared among all units. Names must not
+conflict.
+
+Multiple operator rules are not permitted.
+
+\section{Operator set clauses}\label{opset}
+
+Operator sets can be defined through operator set clauses:
+
+\begin{grammar}
+   \nonterminal{operator-set-clause}
+      \produces \lexkeyword{opset} \nonterminal{identifier}
+	 \lextoken{=} \nonterminal{operator-expression} \lextoken{;}
+\end{grammar}
+
+\noindent
+Operator expressions (see \ref{opexpr}) can be used within
+tree expressions (see \ref{treeexpr}) and operator rules
+(see \ref{oprules}). Operator set clauses must textually precede the
+tree expressions or operator rules using them.
+
+\section{Order of appearance}
+
+In case of attribution, transformation, and print rules the order
+of appearance is significant. As all libraries can contribute to the
+global rule sets, their order is defined as follows:
+
+\begin{enumerate}
+   \item The first source file (usually presented at the command line)
+      is considered first.
+   \item Within a source file, the order is preserved.
+   \item Import directives are executed after a source file has been
+      loaded.
+   \item For each imported unit which has not been loaded yet, the
+      same process starts recursively.
+\end{enumerate}
+
+\section{Global scope}
+
+The global scope includes all predefined bindings (see \ref{predefined}),
+global functions (see \ref{functiondef}), named attribution rules
+(see \ref{named-atrules}), and named transformation rules (see
+\ref{named-trrules}). In case of the function definitions, the order
+of appearance does not matter as all global functions see all other
+global functions.  The name of state machines do not belong to the global
+bindings, i.e. a global function name can conflict with the name of a
+state machine but this is not recommended.
+
+\section{Execution order}\label{xorder}
+
+This section describes the standard behaviour as implemented by
+the \ident{run} module of the Astl library. Custom implementations
+can divert from this.
+
+The execution starts with the construction of the abstract syntax tree
+which is not controlled by the Astl program but by its environment.
+In case of syntax errors, the execution is aborted.
+
+Following steps are performed if a valid and non-empty
+abstract syntax tree is present:
+
+\begin{enumerate}
+   \item Attribution rules are executed, if they exist.
+   \item State machines are executed, if they exist and a control flow
+      graph has been constructed using attribution rules.
+   \item The \textit{main}\index{main} function is executed, if it exists.
+   \item The regular transformation rules are executed, provided
+      that print rules exist.
+      For each transformation, a new abstract syntax tree is generated
+      and printed, in dependence of the command line arguments, either
+      to standard output or into individual output files.
+\end{enumerate}
+
+\endinput

@@ -1,0 +1,47 @@
+%------------------------------------------------------------------------------
+% Report of the Astl Programming Language
+% (C) Copyright 2010 by Andreas F. Borchert
+%------------------------------------------------------------------------------
+
+\documentclass[
+   a4paper,
+   twoside,
+   bringhurst,
+   palatino,
+   english,
+   titlepage,
+   pdftex,
+   fleqn
+]{refman}
+
+\pdfinfo{
+   /Title   (Report of the Astl Programming Language)
+   /Author  (Andreas F. Borchert)
+}
+
+\makeindex
+
+\begin{document}
+   \input{title}
+   \cleardoublepage
+   \thispagestyle{empty}
+   \tableofcontents
+
+   \include{lex}
+   \include{types}
+   \include{expr}
+   \include{stmts}
+   \include{trees}
+   \include{functions}
+   \include{attr}
+   \include{sm}
+   \include{trans}
+   \include{operators}
+   \include{print}
+   \include{unit}
+   \include{predefined}
+
+   \printindex
+   % \addcontentsline{toc}{chapter}{Index}
+   \bibliography{main}
+\end{document}

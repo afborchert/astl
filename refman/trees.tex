@@ -1,0 +1,176 @@
+\chapter{Tree expressions}\label{treeexpr}\index{tree expression}
+
+Tree expressions are used in attribution rules (see \ref{attr},
+transformation rules (see \ref{trans}), and print rules (see
+\ref{print}). A tree expression matches or fails for a particular node
+in an abstract syntax tree. Whenever a tree expression matches and the
+associated rule gets executed, the bindings of the tree expression are
+visible in the lexical scope of the rule.
+
+\section{Simple tree expressions}
+
+A simple tree expression consists of a operator set\index{operator
+set} (see \ref{opset}) and an arbitrary number of subnodes, specified
+by nested tree expressions, variable names, variable-length lists
+using the ``...'' operator, or by using the wildcard operator
+``*''. Tree expressions containing the operator ``...'' or the wildcard
+operator\index{wildcard operator} ``*'' are of variable arity.  A tree
+expression matches if and only if the corresponding abstract syntax tree
+is an operator node with an operator that is included in the operator
+set and where the number of subnodes matches or the arity is variable and
+where each of the subtree expressions matches the corresponding subtree.
+
+Regular expressions\index{regular expression} match token nodes only
+where the token literal matches the regular expression. String literals
+match token only where the token literal is equal to the string literal.
+
+Whenever a named variable is used within \nonterminal{subnode}, it
+is, if defined, compared against the corresponding subtree, or, if
+undefined, bound to the corresponding subtree. In the former case the
+variable can be either an abstract syntax tree or an arbitrary value
+that can be converted into a string. In case of an abstract syntax tree,
+a comparison covering operators, operands and tokens but not attributes
+is done recursively. In case of a string, the match succeeds if and only
+if the corresponding subtree represents a token and if the texts are
+identical.
+
+Within a list of subnodes, one (and at maximum only one) named variable
+may be followed by a ``...'' operator. In this case the variable is
+either bound to a list consisting of the remaining subnodes or the list
+of remaining subnodes is matched against the already existing list by
+comparing the list length and by matching each list element against the
+corresponding subnode. This list can be empty if there are no additional
+subnodes.
+
+\begin{grammar}
+   \nonterminal{tree-expression}
+      \produces \lextoken{(} \nonterminal{operator-expression} \lextoken{)} \\
+      \produces \lextoken{(} \nonterminal{operator-expression}
+	 \nonterminal{subnodes} \lextoken{)} \\
+      \produces \lextoken{(} \nonterminal{operator-expression}
+	 \lextoken{*} \lextoken{)} \\
+   \nonterminal{subnodes}
+      \produces \nonterminal{subnode} \\
+      \produces \nonterminal{subnodes} \nonterminal{subnode} \\
+   \nonterminal{subnode}
+      \produces \nonterminal{named-tree-expression} \\
+      \produces \nonterminal{regular-expression} \\
+      \produces \nonterminal{string-literal} \\
+      \produces \nonterminal{identifier} \\
+      \produces \nonterminal{identifier} \lextoken{...} \\
+   \nonterminal{regular-expression}
+      \produces \nonterminal{regexp-literal} \\
+      \produces \nonterminal{regexp-literal} \lexkeyword{as}
+         \nonterminal{identifier} \\
+\end{grammar}
+
+\section{Operator sets}\index{operator set}\label{opexpr}
+
+Operator sets include at least one operator and are defined
+through operator expressions:
+
+\begin{grammar}
+   \nonterminal{operator-expression}
+      \produces \nonterminal{string-literal} \\
+      \produces \nonterminal{identifier} \\
+      \produces \lextoken{\leftbracketSY}
+	 \nonterminal{operators} \lextoken{\rightbracketSY} \\
+   \nonterminal{operators}
+      \produces \nonterminal{operator-term} \\
+      \produces \nonterminal{operators} \nonterminal{operator-term} \\
+   \nonterminal{operator-term}
+      \produces \nonterminal{string-literal} \\
+      \produces \nonterminal{identifier} \\
+\end{grammar}
+
+\noindent
+Named operator sets can be defined through the \keyword{opset} clause
+(see \ref{opset}) which must be declared before it can be used.
+
+\section{Named tree expressions}\index{named tree expression}\index{tree expression!named}
+
+Named tree expressions allow to bind a named variable to a
+matched subnode within the tree expression.
+
+\begin{grammar}
+   \nonterminal{named-tree-expression}
+      \produces \nonterminal{tree-expression} \\
+      \produces \nonterminal{tree-expression} \lexkeyword{as}
+	 \nonterminal{identifier} \\
+\end{grammar}
+
+\section{Contextual tree expressions}\index{tree expression!contextual}\index{contextual tree expression}
+
+Contextual tree expressions allow to specify patterns which must
+match for one of the parent nodes. If multiple parent nodes match,
+the innermost is taken for the bindings. If multiple contexts
+are given in an ``\keyword{and} \keyword{in}''-chain, the
+next context is always taken relative to the previous matched context node.
+Negated context expressions succeed if no matching parent node is
+found. No bindings result from negated context expressions and
+every negated context expression resets the context to the original node.
+
+\begin{grammar}
+   \nonterminal{contextual-tree-expression}
+      \produces \nonterminal{named-tree-expression} \\
+      \produces \nonterminal{named-tree-expression}
+	 \lexkeyword{in} \nonterminal{context-expression} \\
+      \produces \nonterminal{named-tree-expression}
+	 \lextoken{!} \lexkeyword{in} \nonterminal{context-expression} \\
+   \nonterminal{context-expression}
+      \produces \nonterminal{context-match} \\
+      \produces \nonterminal{context-match}
+	 \lexkeyword{and} \lexkeyword{in} \nonterminal{context-expression} \\
+      \produces \nonterminal{context-match}
+	 \lexkeyword{and} \lextoken{!} \lexkeyword{in}
+	 \nonterminal{context-expression} \\
+   \nonterminal{context-match}
+      \produces \nonterminal{named-tree-expression} \\
+\end{grammar}
+
+\noindent
+If a variable named \ident{here} is used within a context expression,
+it matches only if the original node or one of its parent nodes is equal
+to the node the variable \ident{here} is bound to. If multiple such
+special variables are needed in multiple consecutive context expressions,
+\ident{here1}, \ident{here2} etc. may be used in this order from left
+to right.
+
+Example: Following tree expression matches all identifiers that are
+used on the right-hand-side of an assignment expression in C:
+
+\begin{lstlisting}
+   ("identifier" id) in (assignment_operators lhs here) as assignment -> {
+      println(id, " used on rhs of ", gentext(assignment));
+   };
+\end{lstlisting}
+
+\noindent
+Following example matches all cases where an identifier is within
+the same expression once on the left-hand-side of an expression and
+then on the right-hand-side:
+
+\begin{lstlisting}
+   ("identifier" id)
+         in (assignment_operators here1 rhs) as inner_assignment and
+         in (assignment_operators lhs here2) as outer_assignment -> {
+      println(id, " is assigned to and used in ", gentext(outer_assignment));
+   };
+\end{lstlisting}
+
+\section{Conditional tree expressions}\index{tree expression!conditional}\index{conditional tree expression}
+
+Conditional tree expressions allow to augment a tree expression with
+a expression which may use any of the variables bound in the tree
+expression. The conditional expression is evaluated only if the
+contextual tree expression matches and before any of the associated
+rules are executed.
+
+\begin{grammar}
+   \nonterminal{conditional-tree-expression}
+      \produces \nonterminal{contextual-tree-expression} \\
+      \produces \nonterminal{contextual-tree-expression}
+	 \lexkeyword{where} \nonterminal{expression}
+\end{grammar}
+
+\endinput

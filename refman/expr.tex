@@ -1,0 +1,569 @@
+\chapter{Expressions}\index{expression}
+
+Expressions serve to compute values. They can have side effects.
+Following table summarizes all operators along with their priorities and
+associativity:\index{operator table}\index{priority}\index{associativity}
+
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{>{\raggedright\hspace{0pt}}p{1in}
+      @{\extracolsep{\fill}} p{1.5in} l r l}
+   \hline
+   Operators & Function & Type & Priority & Associativity \\
+   \hline
+   \endhead
+   \hline \multicolumn{5}{r}{\emph{Continued on the next page}}
+   \endfoot
+   \hline
+   \endlastfoot
+   identifiers and literals & simple symbols & primary & 14 & --- \\
+   \lstinline!d.f! & field selection & postfix & 14 & left to right \\
+   \lstinline!d{f}! & field selection & postfix & 14 & left to right \\
+   \lstinline!a[i]! & element selection & postfix & 14 & left to right \\
+   \lstinline!exists d.f! & existance operator & prefix & 13 & left to right \\
+   \lstinline!++i! & prefix increment & prefix & 13 & non-associative \\
+   \lstinline!i++! & postfix increment & postfix & 13 & non-associative \\
+   \lstinline!--i! & prefix decrement & prefix & 13 & non-associative \\
+   \lstinline!i--! & postfix decrement & postfix & 13 & non-associative \\
+   \lstinline!(e)! & grouping & prefix & 13 & non-associative \\
+   \lstinline![]! & list aggregate & prefix & 13 & non-associative \\
+   \lstinline!{}! & dictionary aggregate & prefix & 13 & non-associative \\
+   \lstinline!f()! & function call & postfix & 13 & left to right \\
+   \lstinline!sub {}! & function constructor & prefix & 13 & non-associative \\
+   \lstinline!-! & negation & prefix & 12 & non-associative \\
+   \lstinline+!+ & logical negation & prefix & 12 & non-associative \\
+   \lstinline!^! & power & infix & 11 & left to right \\
+   \lstinline!* div mod!
+      & multiplicative operators & infix & 10 & left to right \\
+   \lstinline!+ -! & additive operators & infix & 9 & left to right \\
+   \lstinline!< > <= >= == !=! & comparison operators & infix & 8 & left to right \\
+   \lstinline!x! & repetition & infix & 7 & left to right \\
+   \lstinline!&! & concatenation & infix & 6 & left to right \\
+   \lstinline!=~! & regexp match & infix & 5 & non-associative \\
+   \lstinline!&&! & logical and & infix & 4 & left ro right\\
+   \lstinline!||! & logical or & infix & 3 & left to right \\
+   \lstinline!? :! & selection & infix & 2 & non-associative \\
+   \lstinline!= &= += -=!
+      & assignment & prefix & 1 & right to left \\
+\end{longtable}
+
+\section{Designators}\index{designator}
+
+A designator allows to specify an object that can be assigned to.
+Possible designators are named variables or selected elements of
+a variable:
+
+\begin{grammar}
+   \nonterminal{designator}
+      \produces \nonterminal{identifier} \\
+      \produces \nonterminal{designator}
+         \lextoken{.} \nonterminal{identifier} \\
+      \produces \nonterminal{designator}
+         \lextoken{\{} \nonterminal{expression} \lextoken{\}} \\
+      \produces \nonterminal{designator} \lextoken{\leftbracketSY}
+         \nonterminal{expression} \lextoken{\rightbracketSY} \\
+\end{grammar}
+
+\noindent
+Identifiers refer to one of the bound or locally declared variables.
+The visibility of a variable name is determined by its lexical scope.
+In case of name conflicts, the innermost declaration takes precedence.
+
+Objects of dictionary\index{dictionary} or abstract syntax
+tree\index{abstract syntax tree} type accept a selector in the form
+of a key\index{key} using the ``.''-construct for identifiers or the
+\lstinline!{...}!-construct using arbitrary expressions which are
+converted into a string. Unused keys may only be used if no further
+selectors are following and if the designator is used at the left side
+of an assignment or as parameter to the \keyword{exists} operator.
+Otherwise, the use of a non-existing key causes a run-time error to be
+raised.
+
+Objects of list\index{list}, match result\index{match result},
+or abstract syntax tree\index{abstract syntax tree} type
+accept a selector in the form of a list index using the
+\lstinline![...]!-construct using arbitrary expressions which are
+converted into an integer (see \ref{intconv}).
+(In case of abstract syntax trees,
+an index is only accepted if the root element of the tree is
+an operator node.) Indices must fall into the range $[0..n-1]$
+where $n$ is the length of the list or match result or the number
+of operands in case of an abstract syntax tree. Individual
+elements of a match result that represent captured substrings or
+subtrees selected out of an abstract syntax tree must
+not be assigned to. Lists can be extended only through the
+\ident{push}\index{push} standard function.
+
+\section{Increment and decrement operators}
+\index{increment operators}\index{decrement operators}
+
+Designators can be incremented or decremented using prefix
+or postfix operators:
+
+\begin{grammar}
+   \nonterminal{prefix-increment}
+      \produces \lextoken{++} \nonterminal{designator} \\
+   \nonterminal{prefix-decrement}
+      \produces \lextoken{-{}-} \nonterminal{designator} \\
+   \nonterminal{postfix-increment}
+      \produces \nonterminal{designator} \lextoken{++} \\
+   \nonterminal{postfix-decrement}
+      \produces \nonterminal{designator} \lextoken{-{}-}
+\end{grammar}
+
+\noindent
+In case of the prefix increment and decrement operators,
+the resulting value of the expression is the value of
+the designator \emph{after} it has been incremented or decremented.
+In case of the postfix increment and decrement operators,
+the resulting value of the expression is the value
+the designator \emph{before} it has been incremented or decremented.
+
+\section{List aggregates}\index{list!aggregate}\index{aggregate!list}
+
+List aggregates construct list values:
+
+\begin{grammar}
+   \nonterminal{list-aggregate}
+      \produces \lextoken{\leftbracketSY} \lextoken{\rightbracketSY} \\
+      \produces \lextoken{\leftbracketSY}
+         \nonterminal{expression-list} \lextoken{\rightbracketSY} \\
+   \nonterminal{expression-list}
+      \produces \nonterminal{expression} \\
+      \produces \nonterminal{expression-list} \lextoken{,}
+         \nonterminal{expression}
+\end{grammar}
+
+\noindent
+Nested list aggregates construct nested data structures. Example:
+
+\begin{lstlisting}
+   var matrix = [[1 2 3] [4 5 6] [7 8 9]];
+\end{lstlisting}
+
+\section{Dictionary aggregates}
+\index{dictionary!aggregate}\index{aggregate!dictionary}
+
+Dictionary aggregates construct dictionary values:
+
+\begin{grammar}
+   \nonterminal{dictionary-aggregate}
+      \produces \lextoken{\{} \lextoken{\}} \\
+      \produces \lextoken{\{} \nonterminal{key-value-pairs} \lextoken{\}} \\
+      \produces \lextoken{\{} \nonterminal{key-value-pairs}
+         \lextoken{,} \lextoken{\}} \\
+   \nonterminal{key-value-pairs}
+      \produces \nonterminal{key-value-pair} \\
+      \produces \nonterminal{key-value-pairs} \lextoken{,}
+         \nonterminal{key-value-pair} \\
+   \nonterminal{key-value-pair}
+      \produces \nonterminal{identifier} \lextoken{->}
+         \nonterminal{expression}
+\end{grammar}
+
+\noindent
+Identifiers on the left-hand-side of a \token{->} operator do not
+refer to equally-named variables in the current lexical scope but are
+interpreted literally. In the following example \ident{member} is a
+dictionary with one entry where the key is ``name'' and its associated
+value ``Andreas'':
+
+\begin{lstlisting}
+   var name = "Andreas";
+   var member = {name -> name};
+\end{lstlisting}
+
+\noindent
+Key values which are not of string type are converted implicitly
+to strings (see \ref{stringconv}). Null values are not permitted.
+
+\section{Function constructors}\index{function!constructor}
+
+Function constructors define local functions. Their lexical closure,
+i.e. the lexical scope at the location of the function construction
+including the instances of the local variables, remains visible within
+the body of the function and continues to exist as long as the function
+can be refered to.
+
+\begin{grammar}
+   \nonterminal{function-constructor}
+      \produces \lexkeyword{sub} \nonterminal{block}
+\end{grammar}
+
+\section{Function calls}\index{function!invocation}
+
+Functions can be invoked with an arbitrary number of parameters.
+All parameters are evaluated left to right and their results
+bound to the elements of the list \ident{args}. This list is
+empty if no parameters are passed.
+
+\begin{grammar}
+   \nonterminal{function-call}
+      \produces \nonterminal{primary} \lextoken{(} \lextoken{)} \\
+   \nonterminal{function-call}
+      \produces \nonterminal{primary}
+         \lextoken{(} \nonterminal{expression-list} \lextoken{)}
+\end{grammar}
+
+\noindent
+The value of a function call is determined by its return value
+(see \ref{return}). If a function, has no \keyword{return}
+statement, \keyword{null} is returned.
+
+Note that function can also be implicitly invoked through an implicit
+conversion of a function value to a string (see \ref{functionconv}).
+In this case, \ident{args} is bound to \keyword{null}.
+
+\section{Primaries}
+
+\begin{grammar}
+   \nonterminal{primary}
+      \produces \nonterminal{designator} \\
+      \produces \lexkeyword{exists} \nonterminal{designator} \\
+      \produces \lexkeyword{exists}
+         \lextoken{(} \nonterminal{designator} \lextoken{)} \\
+      \produces \nonterminal{prefix-increment} \\
+      \produces \nonterminal{prefix-decrement} \\
+      \produces \nonterminal{postfix-increment} \\
+      \produces \nonterminal{postfix-decrement} \\
+      \produces \lextoken{(} \nonterminal{assignment} \lextoken{)} \\
+      \produces \nonterminal{list-aggregate} \\
+      \produces \nonterminal{dictionary-aggregate} \\
+      \produces \nonterminal{function-call} \\
+      \produces \nonterminal{function-constructor} \\
+      \produces \nonterminal{cardinal-literal} \\
+      \produces \nonterminal{string-literal} \\
+      \produces \lexkeyword{null}
+\end{grammar}
+
+\noindent
+The \keyword{exists} operator returns true if a given key of a designator
+is used within a dictionary or not. Example:
+
+\begin{lstlisting}
+var dict = {a -> "a", b -> null};
+var b1 = exists dict.a; // is true
+var b2 = exists dict.b; // is true, even if the value is null
+var b3 = defined(dict.b); // is false as dict.b is null
+var b4 = exists dict.c; // is false
+var b5 = exists dict.c.d; // not permitted as dict.c does not exist
+\end{lstlisting}
+
+\section{Factors}
+
+\begin{grammar}
+   \nonterminal{factor}
+      \produces \nonterminal{primary} \\
+      \produces \lextoken{-} \nonterminal{primary} \\
+      \produces \lextoken{!} \nonterminal{primary}
+\end{grammar}
+
+\noindent
+The unary minus operator \token{-} converts its operand into an integer
+and toggles its sign. The logical negation operator \token{!} converts
+its operand into a boolean value and negates it.
+
+\section{Power expressions}
+
+\begin{grammar}
+   \nonterminal{power-expression}
+      \produces \nonterminal{factor} \\
+      \produces \nonterminal{power-expression}
+         \lextoken{\caretSY} \nonterminal{factor}
+\end{grammar}
+
+\noindent
+If both operands are dictionaries, the binary operator \token{\caretSY}
+is interpreted as set operator implementing the symmetric difference
+(see \ref{sets}).\index{set operators!symmetric difference}
+
+Otherwise, the binary operator \token{\caretSY} converts its operands
+$a$ and $b$ to integer values and returns $a^b$. Note that
+the value of $b$ must be non-negative and not be larger than $2^{31}-1$.
+
+\section{Multiplicative expressions}
+
+\begin{grammar}
+   \nonterminal{multiplicative-expression}
+      \produces \nonterminal{power-expression} \\
+      \produces \nonterminal{multiplicative-expression}
+         \lextoken{*} \nonterminal{power-expression} \\
+      \produces \nonterminal{multiplicative-expression}
+         \lexkeyword{div} \nonterminal{power-expression} \\
+      \produces \nonterminal{multiplicative-expression}
+         \lexkeyword{mod} \nonterminal{power-expression}
+\end{grammar}
+
+\noindent
+If both operands are dictionaries, the binary operator \token{*}
+is interpreted as intersection\index{set operators!intersection}
+operator for sets (see \ref{sets}).
+
+Otherwise, all multiplicative operators convert their operands into integer
+values (see \ref{intconv}) and return an integer value.
+
+The operators \keyword{div} and \keyword{mod} follow
+Knuth's definition of these operators if $b \not= 0$ \cite{Knuth:divmod}:
+
+\begin{eqnarray*}
+   a ~ \mbox{\keyword{div}} ~ b & := &
+      \left\lfloor \frac{a}{b} \right\rfloor \\
+   a ~ \mbox{\keyword{mod}} ~ b & := &
+      a - b \left\lfloor \frac{a}{b} \right\rfloor
+\end{eqnarray*}
+
+\noindent
+A runtime error is raised if the second operand is zero.
+
+\section{Additive expressions}
+
+\begin{grammar}
+   \nonterminal{additive-expression}
+      \produces \nonterminal{multiplicative-expression} \\
+      \produces \nonterminal{additive-expression}
+         \lextoken{+} \nonterminal{multiplicative-expression} \\
+      \produces \nonterminal{additive-expression}
+         \lextoken{-} \nonterminal{multiplicative-expression}
+\end{grammar}
+
+\noindent
+If both operands are dictionaries, the additive operators
+are interpreted as set operators (see \ref{sets}),
+\token{+} delivering the union\index{set operators!union},
+and \token{-} the difference\index{set operators!difference}.
+
+Otherwise, all additive operators convert their operands into integer
+values (see \ref{intconv}) and return an integer value.
+
+\section{Comparison operators}
+
+\begin{grammar}
+   \nonterminal{comparison}
+      \produces \nonterminal{additive-expression} \\
+      \produces \nonterminal{comparison}
+         \lextoken{==} \nonterminal{additive-expression} \\
+      \produces \nonterminal{comparison}
+         \lextoken{!=} \nonterminal{additive-expression} \\
+      \produces \nonterminal{comparison}
+         \lextoken{<} \nonterminal{additive-expression} \\
+      \produces \nonterminal{comparison}
+         \lextoken{<=} \nonterminal{additive-expression} \\
+      \produces \nonterminal{comparison}
+         \lextoken{>=} \nonterminal{additive-expression} \\
+      \produces \nonterminal{comparison}
+         \lextoken{>} \nonterminal{additive-expression}
+\end{grammar}
+
+\noindent
+In case of the comparison operators \token{==} (equality)
+and \token{!=} (inequality), \keyword{null} is considered equal
+to \keyword{null} only. Non-scalar types, i.e. lists, dictionaries,
+functions, abstract syntax trees, matching results of regular
+expressions, and control flow graph nodes, are considered equal
+only if they refer to the same object.
+
+If one of the operands of integer type (see \ref{integer}),
+the other operand, if it is not of integer type, is converted to an
+integer value (see \ref{intconv}). The comparison is then performed
+on two integers.
+
+Otherwise, both operands are converted to string type (see \ref{stringconv})
+and the comparison is then performed octet by octet in comparing
+their numerical values in the local encoding.
+
+\section{String repetition}
+
+\begin{grammar}
+   \nonterminal{repetitive-expression}
+      \produces \nonterminal{comparison} \\
+      \produces \nonterminal{repetitive-expression}
+         \lexkeyword{x} \nonterminal{comparison}
+\end{grammar}
+
+\noindent
+The repetition operator converts its left operand into a string
+(see \ref{stringconv}) and its right operand into an integer
+(see \ref{intconv}). If the right operand is zero or negative,
+the empty string is returned. Otherwise, a string is generated
+which consists of $n$ repetitions of the left operand where
+$n$ is the value of the right operand.
+
+\section{String and list concatenation}
+
+\begin{grammar}
+   \nonterminal{concatenation-expression}
+      \produces \nonterminal{repetitive-expression} \\
+      \produces \nonterminal{concatenation-expression}
+         \lextoken{\&} \nonterminal{repetitive-expression}
+\end{grammar}
+
+\noindent
+If any of the operands is of list type, the other operand is, if
+necessary, converted into a list (see \ref{listconv}) and a
+concatenated list consisting of all elements of the first operand
+and the second operand is returned.
+
+Otherwise, both operands are converted to strings (see \ref{stringconv})
+and the concatenated string of the first and second operand is returned.
+
+\section{Matching strings against regular expressions}
+
+\begin{grammar}
+   \nonterminal{match-expression}
+      \produces \nonterminal{concatenation-expression} \\
+      \produces \nonterminal{concatenation-expression}
+         \lextoken{=\tildeSY} \nonterminal{regular-expression} \\
+      \produces \nonterminal{concatenation-expression}
+         \lextoken{=\tildeSY} \nonterminal{concatenation-expression}
+\end{grammar}
+
+\noindent
+The matching operator converts its left operand into a string
+(see \ref{stringconv}) and matches its against the regular
+expression\index{regular expression}. If any substring of the
+left operand matches the regular expression, an object of match
+result\index{match result} type (see \ref{matchresult})
+is constructed and returned. Otherwise, \keyword{null} is returned.
+
+The regular expression can be either specified by a literal
+(see \ref{regexlit}) or by an arbitrary expression. In the latter
+case, it is converted to a string (see \ref{stringconv}) and
+then interpreted as an regular expression like the corresponding
+literals but without the enclosing braces.
+
+Invalid regular expressions cause runtime exceptions.
+
+Example: The following function \textit{ast\_summary} takes
+an abstract syntax tree node as argument and returns a
+text representation of it. If this representation extends over
+multiple lines, the intermediate lines are replaced by dots:
+
+\begin{lstlisting}
+sub ast_summary {
+   var tree = args[0];
+   var text = gentext(tree);
+   var res;
+   if (res = text =~ m{([^\n]*)\n.*\n(.*)}) {
+      text = res[0] & " ... " & res[1];
+   } elsif (res = text =~ m{([^\n]*)\n}) {
+      text = res[0] & " ...";
+   }
+   return text;
+}
+\end{lstlisting}
+
+\section{Logical expressions}
+
+\begin{grammar}
+   \nonterminal{and-expression}
+      \produces \nonterminal{match-expression} \\
+      \produces \nonterminal{and-expression}
+         \lextoken{\&\&} \nonterminal{match-expression} \\
+   \nonterminal{or-expression}
+      \produces \nonterminal{and-expression} \\
+      \produces \nonterminal{or-expression}
+         \lextoken{\barSY\barSY} \nonterminal{and-expression}
+\end{grammar}
+
+\noindent
+The logical operators evaluate the first operand and convert
+it to Boolean type (see \ref{boolconv}). If in case of the
+logical and operator \token{\&\&} the first operand evaluates
+to \ident{false}, the logical expression returns \ident{false}
+without evaluating the right operand (\textit{short circuit
+evaluation}\index{short circuit evaluation}). Similarly, if
+in case of the logical or operator \token{\barSY\barSY} the
+first operand evaluates to \ident{true}, the logical expression
+returns \ident{true} without evaluating the right operand.
+
+Otherwise, the second operand is evaluated and converted to
+Boolean type and its value is returned.
+
+\section{Conditional expressions}
+
+\begin{grammar}
+   \nonterminal{conditional}
+      \produces \nonterminal{and-expression} \\
+      \produces \nonterminal{and-expression} \lextoken{?}
+         \nonterminal{and-expression} \lextoken{:}
+         \nonterminal{and-expression}
+\end{grammar}
+
+\noindent
+The conditional operator \token{?} evaluates its first operand
+and converts it to Boolean type (see \ref{boolconv}). If it
+is \ident{true}, the second operand is evaluated and returned,
+otherwise the third.
+
+\section{Assignments and expressions}\label{assignments}
+
+\begin{grammar}
+   \nonterminal{assignment}
+      \produces \nonterminal{conditional} \\
+      \produces \nonterminal{designator} \lextoken{=}
+         \nonterminal{assignment} \\
+      \produces \nonterminal{designator} \lextoken{\&=}
+         \nonterminal{assignment} \\
+      \produces \nonterminal{designator} \lextoken{+=}
+         \nonterminal{assignment} \\
+      \produces \nonterminal{designator} \lextoken{-=}
+         \nonterminal{assignment} \\
+   \nonterminal{expression}
+      \produces \nonterminal{assignment}
+\end{grammar}
+
+\noindent
+The regular assignment operator \token{=} implements reference semantics,
+i.e. values do not get copied or cloned but references are shared. In
+case of elementary data types like strings or integers, the effect is
+not seen as values do not change. Instead, even in case of an increment
+or decrement operator, new values are represented by new objects. The
+effect, however, can be observed in case of updatable structured data types
+like lists and dictionaries. Example:
+
+\begin{lstlisting}
+   var l1 = [1, 2, 3];
+   var l2 = l1; // both, l1 and l2, refer to the same list
+   l1[0] = 4;
+   // l2[0] == 4;
+\end{lstlisting}
+
+\noindent
+The updating assignment operators \token{\&=}, \token{+=}, and \token{-=},
+if used on elementary data types (i.e. strings or integers),
+compute a new value from the old value of the left-hand-side
+and the given right-hand-side and assign it to the designator.
+In case of lists and the \token{\&=} operator, the referenced list
+is extended by the right-hand-side.
+
+\label{setassignment}
+The assignment operators \token{+=} and \token{-=} are interpreted
+as corresponding set operators if the designator is a
+dictionary.\index{set operators!assignment operators}
+In this case, if the right operand is converted into a dictionary,
+if necessary (see \ref{dictconv}). Example:
+
+\begin{lstlisting}
+   var set = {};
+   set += 1; set += 2;
+   // set: {1 -> true, 2 -> true}
+   set -= 1;
+   // set: {2 -> true}
+\end{lstlisting}
+
+\noindent
+Note that \lstinline!set1 += set2! is a short form of
+\lstinline!set1 = set1 + set2!, i.e. a reference to a newly
+created dictionary is assigned to. The old dictionary remains
+untouched. This behaviour is different from following loop
+which extends the existing dictionary:
+
+\begin{lstlisting}
+   foreach (key, value) in (set2) {
+      if (!exists set1{key}) {
+	 set1{key} = value;
+      }
+   }
+\end{lstlisting}
+
+\endinput

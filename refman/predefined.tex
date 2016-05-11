@@ -1,0 +1,116 @@
+\chapter{Predefined bindings}\label{predefined}
+
+Some bindings are provided at a global scope. Non of these values
+may be redefined at the global level nor modified (i.e. by referencing
+them on the left side of an assignment) but it is possible
+to override them by local declarations.
+
+\noindent
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{>{\raggedright\hspace{0pt}}l l p{3.5in}}
+   \hline
+   name & type & description \\
+   \hline
+   \endhead
+   \hline \multicolumn{3}{r}{\emph{Continued on the next page}}
+   \endfoot
+   \hline
+   \endlastfoot
+   \ident{assert} & function &
+      aborts the execution if its operand is false \\
+   \ident{cfg\_connect} & function &
+      creates a directed edge between the two given control flow
+      nodes; a label can be optionally specified through a third
+      parameter \\
+   \ident{cfg\_node} & function &
+      creates a control flow node and
+      expects a control flow node type in form of a string,
+      or an abstract syntax tree, or
+      a node type as first and an abstract syntax tree as
+      second parameter \\
+   \ident{cfg\_type} & function &
+      returns the type of a control flow node \\
+   \ident{clone} & function &
+      creates a clone of dictionaries and lists
+      (one level deep copy, not done recursively);
+      in all other cases it is similar to a regular assignment \\
+   \ident{copy} & function &
+      accepts a target and a source argument which must be both
+      non-null and of the same type; the contents of the source
+      is then copied to the target \\
+   \ident{defined} & function &
+      returns true if the value is non-\keyword{null} \\
+   \ident{false} & boolean &
+      boolean value of false \\
+   \ident{gentext} & function &
+      requires the print rules to be available and converts
+      an ast node into a string \\
+   \ident{integer} & function &
+      converts its argument into an integer value \\
+   \ident{isoperator} & function &
+      its operand must be a node of an abstract syntax tree;
+      true is returned if it is an operator node \\
+   \ident{isstring} & function &
+      returns true if the value is of type string \\
+   \ident{len} & function &
+      returns the length of the list, or the number of keys
+      in a dictionary, or the length of a string, or the
+      number of captured substrings in a match result \\
+   \ident{location} & function &
+      its operand must be a node of an abstract syntax tree;
+      returns a string representing its source location \\
+   \ident{operator} & function &
+      its operand must be an operator node of an abstract syntax tree;
+      returns a string representing its operator \\
+   \ident{push} & function &
+      its first operand is a list which is extended by appending
+      all the remaining arguments to it \\
+   \ident{println} & function &
+      prints all arguments and a line terminator to standard output \\
+   \ident{root}\index{root} & ast & points to the root node of the
+      abstract syntax tree; within named attribution rules
+      (see \ref{named-atrules}) and transformation rules
+      (see \ref{named-trrules} and \ref{named-inplace-trrules})
+      \ident{root} is bound to the abstract syntax tree passed
+      to the corresponding
+      function \\
+   \ident{string} & function &
+      converts its argument into a string value \\
+   \ident{tokenliteral} & function &
+      returns the literal text of a token; this usually
+      includes the delimiters, e.g. the string quotes in case of
+      a string \\
+   \ident{tokentext} & function &
+      returns the processed text of a token; this usually
+      does not include the delimiters or the escape characters \\
+   \ident{true} & boolean &
+      boolean value of true \\
+   \ident{type} & function &
+      returns the type of its argument as a string \\
+\end{longtable}
+
+\bigskip
+\noindent
+Whenever print rules are executed for a transformed program text,
+some additional predefined bindings are added:
+
+\noindent
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{>{\raggedright\hspace{0pt}}l l p{3.5in}}
+   \hline
+   name & type & description \\
+   \hline
+   \endhead
+   \hline \multicolumn{3}{r}{\emph{Continued on the next page}}
+   \endfoot
+   \hline
+   \endlastfoot
+   \ident{location} & string & the string representation of
+      the location of the transformed program text \\
+   \ident{rulename} & string & the name of the applied
+      transformation rule, if defined and \keyword{null} otherwise. \\
+\end{longtable}
+
+\endinput

@@ -1,0 +1,94 @@
+\chapter{Operator rules}\label{oprules}
+
+Operator rules, if present, are processed before a program text is
+generated using the print rules. Whenever an associativity is expressed
+by the abstract syntax tree which would get lost by a program generation
+without parenthesizing everything, an operator node is inserted with
+``LPAREN'' as operator to override the precedence and associativity of
+the language. The operator used for parenthesizing can be changed by
+definining an operator set named \ident{parentheses} which consists of
+one operator only. This means that, whenever operator rules are employed,
+an additional rule is required in the print rules that generates the
+required parenthesis, e.g. by
+
+\begin{lstlisting}
+   ("LPAREN" expr) -> q{($expr)};
+\end{lstlisting}%stopzone
+
+\noindent
+or by defining an operator set first (see \ref{opset}):
+
+\begin{lstlisting}
+   opset parentheses = ["()"];
+
+   // ...
+
+   print rules {
+      ("()" expr) -> q{($expr)};
+   }
+\end{lstlisting}%stopzone
+
+\begin{grammar}
+   \nonterminal{operator-rules}
+      \produces \lexkeyword{operators} \lextoken{\{}
+	 \nonterminal{operator-lists} \lextoken{\}} \\
+   \nonterminal{operator-lists}
+      \produces \nonterminal{operator-list} \lextoken{;} \\
+      \produces \nonterminal{operator-lists}
+	 \nonterminal{operator-list} \lextoken{;} \\
+   \nonterminal{operator-list}
+      \produces \lexkeyword{left} \nonterminal{operators} \\
+      \produces \lexkeyword{right} \nonterminal{operators} \\
+      \produces \lexkeyword{nonassoc} \nonterminal{operators} \\
+   \nonterminal{operators}
+      \produces \nonterminal{operator-term} \\
+      \produces \nonterminal{operators} \nonterminal{operator-term} \\
+   \nonterminal{operator-term}
+      \produces \nonterminal{string-literal} \\
+      \produces \nonterminal{identifier} \\
+\end{grammar}
+
+\noindent
+Operators are to be grouped and sorted by precedence in ascending order.
+For each group of operators, the associativity has be to specified
+by one of the keywords \keyword{left}, \keyword{right}, or \keyword{nonassoc}.
+The keyword is followed by a list of strings representing the
+corresponding operators of the abstract syntax tree.
+
+Named operator sets can be defined through the \keyword{opset} clause
+(see \ref{opset}) which must be declared before it can be used.
+
+The following example shows the operator rules for the C
+programming language:
+
+\begin{lstlisting}
+opset assignment_operators = [
+   "=" "+=" "-=" "*=" "/=" "%=" "<<=" ">>=" "&=" "^=" "|="
+];
+
+operators {
+   left ",";
+   right assignment_operators;
+   right "conditional_expression";
+   left "||";
+   left "&&";
+   left "|";
+   left "^";
+   left "&";
+   left "==" "!=";
+   left "<" ">" "<=" ">=";
+   left "<<" ">>";
+   left "+" "-";
+   left "*" "/" "%";
+
+   right "cast_expression";
+   right "pointer_dereference" "&"
+	 "unary+" "unary-" "!" "~" "sizeof"
+	 "prefix++" "prefix--";
+   left "{}";
+   left "postfix++" "postfix--" "function_call"
+	 "->" "." "[]";
+};
+\end{lstlisting}
+
+\endinput

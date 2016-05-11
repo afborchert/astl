@@ -1,0 +1,456 @@
+\chapter{Types}\index{type}
+
+Variables are untyped but values are typed. There exist nine different
+type of values: \keyword{null}, Boolean values, integers, strings,
+lists, dictionaries, functions, abstract syntax trees, and matching
+results of a regular expression.
+
+\section{Null value}\index{null}\label{null}
+
+Null values can have the value \keyword{null} only.
+Uninitialized variables are initially bound to \keyword{null}
+(see \ref{var}).
+
+\section{Boolean values}\index{Boolean}
+
+Boolean values can be either \ident{true} or \ident{false}.
+
+The standard identifiers \ident{true} and \ident{false}
+may be used to denote the two possible Boolean values. In
+the following example, a variable named \ident{flag} is
+declared and set to \ident{false}. In the following statement
+the Boolean value of a logical expression is assigned to \ident{flag}.
+
+\begin{lstlisting}
+var flag = false;
+flag = flag || (i == 7);
+\end{lstlisting}
+
+\section{Integer values}\index{integer}\label{integer}
+
+Integer values can be of arbitrary size as their implementation is based
+on the GNU Multiple Precision Library\index{GNU Multiple Precision
+Library}. Please note that floating point\index{floating point}
+values are not supported.
+
+\section{String values}\index{string}\label{string}
+
+Strings are sequences of octets which can be of arbitrary length.
+
+The following example demonstrates how implicitly strings can be
+converted to integers or integers to strings. Firstly, the variable
+\ident{i} is initialized to the integer value 17. Secondly, \ident{j}
+is initialized to the concatenation of the strings \lstinline!"17"!
+(implicitly converted from the integer value of \textit{i}) and
+\lstinline!"8"!. Finally, the sum of \textit{i} and \textit{j} is
+computed where \textit{j} is converted to an integer first. These
+implicit conversions are enforced by the operators \lstinline!&!
+which expects strings and \lstinline!+! which expects integers.
+
+\begin{lstlisting}
+var i = 17;
+var j = i & "8";
+var k = i + j; // k is set to 195
+\end{lstlisting}
+
+When strings are converted to integers and vice versa,
+a decimal representation is expected or generated, respectively.
+Conversions of strings to integers are implemented using
+the \ident{mpz\_set\_str} function of the
+GNU Multiple Precision Library\index{GNU Multiple Precision Library}
+with base set to 10. This means that initial white space characters are
+permitted in the string. However, trailing non-whitespace characters
+are not permitted.\footnote{In this regard, the semantics diverts from that of
+Perl which evaluates "10x" + 1 as 11.}
+
+\section{Lists}\index{list}
+
+Lists are ordered sets of elements which can be accessed by
+using indices $0..n-1$.
+
+The following example shows how lists can be constructed
+using the \lstinline![...]!-syntax and how to iterate through
+lists using a \keyword{foreach}- or \keyword{while}-statement:
+
+\begin{lstlisting}
+var cities = ["Berlin", "Hamburg", "Stuttgart", "Ulm"];
+foreach city in (cities) {
+   println(city);
+}
+// alternatively, indices can be used:
+var index = 0;
+while (index < len(cities)) {
+   println(cities[index]);
+   ++index;
+}
+\end{lstlisting}
+
+\noindent
+Expressions of list type reference the data structure that is
+actually representing the list. Consequently,
+an assignment of a list causes a list to be shared
+(shallow copy). Example:
+
+\begin{lstlisting}
+var numbers = [1, 3, 5];
+var more_numbers = numbers;
+push(more_numbers, 7);
+// len(numbers) == 4
+\end{lstlisting}
+
+\section{Dictionaries}\index{dictionary}\label{dictionary}
+
+Dictionaries are data structures that map string-valued keys
+to values of arbitrary type (including \keyword{null}).
+
+The attribution rule in the following example shows how dictionaries
+can be used to construct symbol tables. Abstract syntax trees that
+are bound to variables (\ident{id}, \ident{declarator} and \ident{block}
+in this example) can be used as dictionaries to attach attributes to
+a node of the syntax tree. In this example, \textit{block.vars}
+designates the entry of the dictionary \ident{block} selected
+by the key \ident{vars}. Whenever a key is constant and an identifier,
+the dot-operator can be used as a selecting operator of dictionaries.
+Selector expressions can be put into \lstinline!{...}! as demonstrated
+by \lstinline!{id}! in this example. As shown below, dictionaries
+can be constructed using the \lstinline!{...}! syntax. In this
+case the keys in front of the ``\lstinline!->!'' delimiter must be
+identifiers.
+
+\begin{lstlisting}
+("direct_declarator" ("identifier" id)) as declarator
+      in ("compound_statement" *) as block -> {
+   block.vars{id} = {
+      decl -> declarator,
+      used -> false,
+      minlevel -> -1,
+      minblock -> null,
+   };
+};
+\end{lstlisting}
+
+\noindent
+Individual keys and their associated entries in a dictionary
+may be deleted through a deletion statement.
+
+\bigskip
+\noindent
+Example:\index{delete}
+
+\begin{lstlisting}
+delete block.vars{id}; // delete entry for id in block.vars
+\end{lstlisting}
+
+\noindent
+Expressions of type dictionary just reference the data structure
+representing the actual dictionary. Consequently, an assignment of a
+dictionary causes a dictionary to be shared
+(shallow copy).\index{shallow copy}
+
+Dictionaries can also be interpreted as sets\index{sets}\label{sets}
+where the key values represent the members and the associated values
+are ignored.  Following set operators are supported which expect both
+operands to be of the dictionary type:\footnote{The set operators
+resemble those of Pascal. Unlike Modula-2 that added an
+operator for the symmetric difference, however, \token{/} is
+not used for this operator. Instead, \token{\caretSY} has been taken because
+C uses it as operator for XOR which is similar to the symmetric
+difference.}\index{set operators}
+
+\begin{tabular}{l p{4in}}
+   \token{+} & union of two sets \\
+   \token{-} & difference, i.e. taking the first set
+      and removing all keys belonging to the second set \\
+   \token{*} & intersection of two sets \\
+   \token{\caretSY} & symmetric difference, i.e. the result
+      includes keys only which belong either to the first or
+      to the second set but not to both \\
+\end{tabular}
+
+\noindent
+All set operators\index{set operators} work on the keys only.
+The associated values are taken from the first operand of a
+set operator, if present, and otherwise taken from the second.
+In addition, the assignment operators \token{+=} and \token{-=}
+are supported for sets (see \ref{setassignment}).
+
+\section{Functions}\index{function}\label{function}
+
+Function values consist of a function body and a closure\index{closure}.
+A closure of an anonymous function\index{function!anonymous} allows a
+function body to refer to all lexically visible bindings at the point
+where the function was constructed.
+
+In the following example, the anonymous functions assigned to
+\ident{incr} and \ident{decr} refer both to the same instance
+of the local variable \ident{counter} (see \ref{var}).
+
+\begin{lstlisting}
+var counter = 0;
+var incr = sub { return ++counter; };
+var decr = sub { return --counter; };
+\end{lstlisting}
+
+\section{Abstract syntax trees}\index{abstract syntax tree}
+
+An abstract syntax tree is either a token\index{token} or a
+node\index{node}\index{operator node} consisting of an operator
+represented by a string and an ordered list of subtrees\index{subtree}.
+Please note that there exist two kinds of leafs\index{leaf}, i.e. token
+leafs or operator nodes with an empty list of subtrees.
+
+Each node (be it a regular node or a leaf node representing a token)
+has an associated set of attributes that is organized in the form
+of a dictionary.
+
+Tokens provide a textual string in two variants. The token
+literal value\index{token!literal value} preserves the original
+text sequence while the token text value\index{token!text value}
+provides the processed contents of a token. Example: In case of a
+string literal \lstinline+"Hello, world!"+, the token literal value
+returns the entire sequence including the quotes while the token
+text value returns the contents of the string literal without the
+quotes. The token literal value and the token text value of a token
+can be retrieved through \ident{tokenliteral}\index{tokenliteral} and
+\ident{tokentext}\index{tokentext} standard functions, respectively.
+
+Examples: The following function \ident{traverse} traverses an
+abstract syntax tree recursively to generate a string representing it.
+The standard function \ident{isoperator} is used to distinguish between
+operator and token nodes. An operator node can be examined like a list
+to retrieve the individual subtrees.
+
+\begin{lstlisting}
+sub traverse {
+   var result = "";
+   if (isoperator(args[0])) {
+      result = "(" & operator(args[0]);
+      foreach operand in (args[0]) {
+         result &= " " & traverse(operand);
+      }
+      result &= ")";
+   } else {
+      result = tokenliteral(args[0]);
+   }
+   return result;
+};
+\end{lstlisting}
+
+\noindent
+Alternatively, the individual operands can be indexed:
+
+\begin{lstlisting}
+sub traverse {
+   var result = "";
+   if (isoperator(args[0])) {
+      result = "(" & operator(args[0]);
+      var index = 0;
+      while (index < len(args)) {
+         result &= " " & traverse(operand[index]);
+	 ++index;
+      }
+      result &= ")";
+   } else {
+      result = tokenliteral(args[0]);
+   }
+   return result;
+};
+\end{lstlisting}
+
+\noindent
+In the following attribution rule, \ident{block} is bound
+to a operator node with the operator \lstinline!"compound_statement"!.
+The assignments set the attributes \ident{vars}, \ident{level}, and
+\ident{up} of \ident{block} to various values.
+
+\begin{lstlisting}
+("compound_statement" *) as block -> {
+   block.vars = {};
+   block.level = 0;
+   block.up = null;
+};
+\end{lstlisting}
+
+\noindent
+Expressions of type abstract syntax tree reference a node within an
+abstract syntax tree. Consequently, an assignment of an abstract syntax
+tree causes the tree to be shared.
+
+\section{Matching results of regular expressions}\label{matchresult}
+
+If a regular expression matches, a variable can be bound to its
+result. This result consists of the matched text and a list
+of captured substrings, if ``\lstinline!(...)!''-constructs
+where used within the regular expression. Objects of this
+type can be interpreted as strings, in this case the whole
+matched text is delivered. Alternatively, when indices are
+used, beginning with an index of 0 for the first captured substring,
+or when objects of this type are put into a list context,
+the captured substrings are delivered.
+
+Examples: In the following transformation rule\index{transformation rule}
+\ident{dec} is bound to the sequence of digits recognized by the
+regular expression. Variables bound to matching results can be
+used like scalars to refer to the matched text.
+
+\begin{lstlisting}
+("decimal_literal" m{^\d+$} as dec) ->
+   ("decimal_literal" {dec + 1});
+\end{lstlisting}%stopzone
+
+\noindent
+In the following transformation rule the regular expression
+captures one substring which is refered to by \lstinline!dec[0]!.
+
+\begin{lstlisting}
+("decimal_literal" m{^\d+(\d)$} as dec) ->
+   ("decimal_literal" {dec & dec[0]});
+\end{lstlisting}%stopzone
+
+\section{Control flow graph nodes}\index{control flow graph}
+
+Attribution rules can be used to construct a interprocedural control
+flow graph in conformance to the IFDS framework by
+\cite{Reps:1995}. In this framework, a program is represented by a
+set of directed graphs $G = \{G_1, ..., G_n\}$ where each individual
+graph $G_i$ represents a procedure. Each graph $G_i = (N_i, E_i, n_i)$
+consists of nodes $N_i$, directed edges $E_i$, and a unique name $n_i$.
+
+Nodes can be freely typed using strings. Typical types are
+\lstinline!"entry"! and \lstinline!"exit"! for the entry and
+the exit node of a function, respectively.
+Edges can be labeled with strings. In this case, however, all edges
+diverting from a node must have distinct labels. Labels are used
+to tag conditional branches. Typically \lstinline!"t"! is chosen
+for true and \lstinline!"f"! for false.
+
+Each control flow node has a set of attributes that is
+organized as a dictionary. If a control flow node is associated
+to a node of an abstract syntax tree, the \ident{astnode} field
+allows to access it. In addition, a \keyword{foreach} loop
+may be used to iterate through all the successor nodes.
+In case of labeled edges, the branches can be examined in
+the \ident{branch} dictionary.
+
+The set of graphs $G$ is represented by the predefined
+dictionary \ident{graph}\index{graph}. Per convention
+this graph shall have the following attributes:
+
+\bigskip
+\noindent
+\begin{tabular}{l l l}
+   \hline
+   attribute & type & description \\
+   \hline
+   \ident{entries} & dictionary & entry nodes by name \\
+   \ident{exits} & dictionary & exit nodes by name \\
+   \ident{nodes} & list & list of all nodes \\
+   \hline
+\end{tabular}
+
+\bigskip
+\noindent
+Expressions of type control flow graph node reference a node within a
+control flow graph. Consequently, an assignment of a node causes the
+node to be shared.
+
+\section{Implicit Conversions}\index{conversion}
+
+In dependence of their context, values may be implicitly converted
+into another type, if possible. A run time error is raised whenever
+a conversion cannot be done.
+
+\subsection{Conversions to string type}\index{string}\label{functionconv}
+\label{stringconv}
+
+Null values\index{null} are converted to the empty string,
+integers\index{integer} are converted into their decimal representation,
+Boolean\index{Boolean} into \lstinline!"1"! or \lstinline!"0"!,
+match results\index{match result} into the matched substring, and
+flow graph nodes\index{flow graph node} into their type. In case of
+abstract syntax trees, a conversion delivers either the result of
+the standard function \ident{operator}\index{operator} in case of
+operator nodes or \ident{tokentext}\index{tokentext} otherwise. In case
+of lists and dictionaries, the size is returned (equivalent to the
+\ident{len}\index{len} standard function). Functions are invoked with
+\ident{args} bound to \keyword{null} and their result is converted
+into string type. An empty string is delivered if \keyword{null} is
+returned.
+
+\subsection{Conversions to integer type}\index{integer}\label{intconv}
+
+Null values are converted to 0, Boolean values \ident{false} and
+\ident{true} are converted to 0 and 1, respectively. All other types are
+converted into a string first and then interpreted as a decimal integer,
+i.e. an optional minus sign followed by a non-empty sequence of digits
+``0'' to ``9'' of arbitrary length. If the string does not conform to
+this format, a run time error is raised.
+
+\subsection{Conversions to Boolean type}\index{Boolean}\label{boolconv}
+
+Null values are converted to \ident{false}.
+Non-zero integer values are converted to \ident{true}, zero to \ident{false}.
+All abstract syntax trees, match results, and flow graph nodes are
+converted to \ident{true} irrespectively of their value. (Note that
+even an empty match result is evaluated as \ident{true} to distinguish
+it from a failed match.) Values of other types are converted into
+strings first. The string values \lstinline!""! and \lstinline!"0"!
+are converted to \ident{false}, all other values to \ident{true}.
+
+\subsection{Conversions to list type}\index{list}
+
+\label{listconv}
+A null value is converted into an empty list. An abstract syntax tree
+is, if its root is an operator node, converted to a list of subtrees of
+its root, or, if it is a token, converted to a list of one string-valued
+element representing the token text. A dictionary is converted into a
+sorted list of keys. In case of match results, a list of all strings
+is generated that were captured by the regular subexpressions. (This
+list is empty if there were no subexpressions.) For control flow graph
+nodes a list of successor nodes is generated. All other types are
+converted into a string and from this string a list is contructed with
+that element.
+
+\subsection{Conversions to dictionary type}\index{dictionary}
+
+\label{dictconv}
+A null value is converted into an empty dictionary. All other
+types are converted to list first (see \ref{listconv}). Then
+each element of the list gets converted into a string
+(see \ref{stringconv}) which is subsequently used as a key.
+For the associated values the Boolean value \ident{true} is used.
+
+\subsection{Conversion to abstract syntax tree type}
+\index{abstract syntax tree}
+
+\label{treeconv}
+The value is converted to a string and the string value is turned
+into an abstract syntax tree consisting just of a token whose
+token text is identical to the string. A null value is treated
+similarly but an empty string is taken.
+
+\section{Examining the type of an object}
+
+The predefined function \ident{type} takes an arbitrary object as
+value and returns its type as string:
+
+\bigskip
+\noindent
+\begin{tabular}{l l}
+   \hline
+   object type & returned string \\
+   \hline
+   \keyword{null} & \lstinline!"null"! \\
+   Boolean value & \lstinline!"boolean"! \\
+   integer value & \lstinline!"integer"! \\
+   string value & \lstinline!"string"! \\
+   list & \lstinline!"list"! \\
+   dictionary & \lstinline!"dictionary"! \\
+   function & \lstinline!"function"! \\
+   abstract syntax tree & \lstinline!"tree"! \\
+   matching results & \lstinline!"match_result"! \\
+   control flow graph node & \lstinline!"flow_graph_node"! \\
+   \hline
+\end{tabular}
+
+\endinput

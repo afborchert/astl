@@ -1,0 +1,150 @@
+\chapter{Transformations}\label{trans}
+
+Transformation rules allow to generate new abstract syntax trees
+on base of a given tree, or to modify an abstract syntax tree in-place.
+Like attribution rules, transformation rules can be collected in named
+rule sets which are executed only by invoking them.
+
+\section{Regular transformation rules}
+
+Regular transformation rules do not belong to a named rule set and do not
+operate in-place. Instead, if specified, they allow to generate mutants
+in conjunction with the printing rules. They are executed implicitly at
+the end if print rules exist. If a \ident{main}\index{main} function is
+defined, they are processed as soon as the execution of the \ident{main}
+function is finished.
+
+In dependence of the command line arguments, a set of files is generated
+where each contains a variant of the original source where exactly
+one transformation rule at one point in the abstract syntax tree
+was executed. The print rules are free to use the special bindings
+\ident{location}\index{location} and \ident{rulename}\index{location}
+to insert the information of the transformed location and the rulename,
+if given, in the generated output (see \ref{predefined}).
+
+If the set of regular transformation rules is executed and none of
+them matches, a runtime exception is raised (``no matching transformation
+rule found'').
+
+\begin{grammar}
+   \nonterminal{transformation-rules}
+      \produces \lexkeyword{transformation} \lexkeyword{rules}
+	 \lextoken{\{} \nonterminal{transformations}
+	 \lextoken{\}} \\
+   \nonterminal{transformations}
+      \produces \nonterminal{transformation} \lextoken{;} \\
+      \produces \nonterminal{transformations}
+	 \nonterminal{transformation} \lextoken{;} \\
+   \nonterminal{transformation}
+      \produces \optional{\nonterminal{identifier} \lextoken{:}}
+	 \nonterminal{conditional-tree-expression}
+	 \lextoken{->} \nextline
+	 \nonterminal{transformation-instructions} \\
+      \produces \optional{\nonterminal{identifier} \lextoken{:}}
+	 \nonterminal{conditional-tree-expression}
+	 \lextoken{->} \nextline \lexkeyword{pre}
+	 \nonterminal{transformation-instructions} \\
+      \produces \optional{\nonterminal{identifier} \lextoken{:}}
+	 \nonterminal{conditional-tree-expression}
+	 \lextoken{->} \nextline \lexkeyword{post}
+	 \nonterminal{transformation-instructions} \\
+\end{grammar}
+
+\noindent
+The right-hand side of a transformation rule consists of the replacement
+tree construct and optional blocks that are executed before and after
+the actual transformation takes place.  If a variable name is followed
+by the ``...'' operator, the variable must be a list of subnodes whose
+elements are inserted at the corresponding place.
+
+\begin{grammar}
+   \nonterminal{transformation-instructions}
+      \produces \optional{\nonterminal{pre-transformation-block}} \nextline
+	 \nonterminal{transformed-subnode} \nextline
+	 \optional{\nonterminal{post-transformation-block}} \\
+   \nonterminal{transformed-subnode}
+      \produces \nonterminal{identifier} \\
+      \produces \nonterminal{identifier} \lextoken{...} \\
+      \produces \nonterminal{transformed-tree-expression} \\
+      \produces \lextoken{\{} \nonterminal{expression} \lextoken{\}} \\
+   \nonterminal{transformed-tree-expression}
+      \produces \lextoken{(} \nonterminal{string-literal}
+	 \lextoken{)} \\
+      \produces \lextoken{(} \nonterminal{string-literal}
+	 \nonterminal{transformed-subnodes} \lextoken{)} \\
+   \nonterminal{transformed-subnodes}
+      \produces \nonterminal{transformed-subnode} \\
+      \produces \nonterminal{transformed-subnodes}
+	 \nonterminal{transformed-subnode} \\
+   \nonterminal{pre-transformation-block}
+      \produces \nonterminal{block} \\
+   \nonterminal{post-transformation-block}
+      \produces \nonterminal{block} \\
+\end{grammar}
+
+\noindent
+Example: Following simple mutating transformation rule replaces
+an addition by a multiplication and exchanges the two operands:
+
+\begin{lstlisting}
+transformation rules {
+   ("+" op1 op2) -> ("*" op2 op1);
+}
+\end{lstlisting}
+
+\section{Named sets of generating transformation rules}\label{named-trrules}
+
+Named sets of generating transformation rules are not implicitly
+executed as the regular transformation rules (see \ref{xorder}). Instead the
+given name is bound to a function that
+
+\begin{itemize}
+   \item expects a to be transformed abstract syntax tree
+      as parameter or, if no parameter is given, uses \ident{root},
+   \item generates a clone of \ident{root} where the transformation
+      rule is applied
+   \item and returns the generated abstract syntax tree.
+\end{itemize}
+
+\noindent
+Within this rule set, \ident{root}\index{root} is bound to the
+to be transformed abstract syntax tree.
+
+\begin{grammar}
+   \nonterminal{named-transformation-rules}
+      \produces \lexkeyword{transformation} \lexkeyword{rules}
+	 \nonterminal{identifier}
+	 \lextoken{\{} \nonterminal{transformations}
+	 \lextoken{\}}
+\end{grammar}
+
+\section{Named sets of in-place transformation rules}
+\label{named-inplace-trrules}
+
+Named sets of in-place transformation rules are not implicitly executed
+as the regular transformation rules (see \ref{xorder}). Instead the
+given name is bound to a function that
+
+\begin{itemize}
+   \item expects a to be transformed abstract syntax tree
+      as parameter or, if no parameter is given, uses \ident{root},
+   \item performs the transformations in-place,
+   \item suppresses the execution of any possibly conflicting rule, and
+   \item returns the number of transformations performed.
+\end{itemize}
+
+Please note that in-place transformation rules never match the
+given root node to preserve the referential integrity.
+Within this rule set, \ident{root}\index{root} is bound to the
+to be transformed abstract syntax tree.
+
+\begin{grammar}
+   \nonterminal{named-inplace-transformation-rules}
+      \produces \lexkeyword{inplace}
+	 \lexkeyword{transformation} \lexkeyword{rules}
+	 \nonterminal{identifier} \nextline
+	 \lextoken{\{} \nonterminal{transformations}
+	 \lextoken{\}}
+\end{grammar}
+
+\endinput

@@ -1,0 +1,379 @@
+\chapter{State machines}
+
+\section{Regular state machines}
+\index{state machine!regular}
+
+A state machine consists of a finite number of named states, a set of
+variables, and a set of rules. Rules can create instances of a state machine,
+change their states, execute arbitrary code, or stop their execution.
+State machines without creation rules are called \textit{global}
+state machines\index{state machine!global}. All other state machines are
+called \textit{local}\index{state machine!local}.\footnote{This property
+conforms to the chosen abstract state machine (see below). However,
+it is well possible to have a local state machine which is derived from
+\textit{global} or \textit{global\_tracker}. In this case, you will get
+an interprocedural analysis for a local object.}
+
+State machines may be derived from an abstract state machine. In this
+case, the name of the abstract state machine is to be given after a
+colon.
+
+\begin{grammar}
+   \nonterminal{state-machine}
+      \produces \lexkeyword{state} \lexkeyword{machine} \nonterminal{identifier}
+	 \lextoken{(}
+	 \nonterminal{states} \lextoken{)} \nextline
+	 \lextoken{\{} \nonterminal{sm-vars} \nonterminal{sm-functions}
+	    \nonterminal{sm-rules}
+	 \lextoken{\}} \\
+      \produces \lexkeyword{state} \lexkeyword{machine}
+	 \nonterminal{identifier} \lextoken{:} \nonterminal{identifier}
+	 \lextoken{(} \nonterminal{states} \lextoken{)} \nextline
+	 \lextoken{\{} \nonterminal{sm-vars} \nonterminal{sm-functions}
+	    \nonterminal{sm-rules}
+	 \lextoken{\}}
+\end{grammar}%stopzone
+
+\noindent
+State machine instances are executed during a recursive traverse
+of the control flow graph. Initially, all global state machines
+are instantiated. Local state machines are instantiated whenever a
+\keyword{create} clause fires the first time for a control flow graph
+node. State machines instances continue to run through the traverse
+until they are explicitly stopped. If a node of the control flow graph
+has multiple exits, a copy of a state machine is created for each of
+the possible paths.
+
+All global state machine instances derived from the same state machine are
+\textit{related}\index{state machines!related} to each other. All local
+state machine instances that are derived from the same instance that was
+created at a particular control flow graph node are also \textit{related}
+to each other.
+
+Variables declared within a state machine are
+either \textit{shared}\index{variable!shared} or
+\textit{private}\index{variable!private}. Shared variables are shared
+among all state machine instances that are related to each other.
+Private variables are never shared among instances of a state machine
+but kept private for each path taken by a state machine.
+
+\begin{grammar}
+   \nonterminal{sm-vars}
+      \produces \optional{\nonterminal{sm-var-declarations}} \\
+   \nonterminal{sm-var-declarations}
+      \produces \nonterminal{sm-var-declaration} \\
+      \produces \nonterminal{sm-var-declarations}
+	 \nonterminal{sm-var-declaration} \\
+   \nonterminal{sm-var-declaration}
+      \produces \lexkeyword{shared} \lexkeyword{var} \nonterminal{identifier} \\
+      \produces \lexkeyword{shared} \lexkeyword{var}
+	 \lextoken{=} \nonterminal{expression} \\
+      \produces \lexkeyword{private} \lexkeyword{var}
+	 \nonterminal{identifier} \\
+      \produces \lexkeyword{private} \lexkeyword{var}
+	 \nonterminal{identifier} \lextoken{=} \nonterminal{expression}
+\end{grammar}
+
+\noindent
+Local functions can be declared within a state machine. They inherit
+the scope from their state machine instance including all shared and
+private variables.
+
+\begin{grammar}
+   \nonterminal{sm-functions}
+      \produces \optional{\nonterminal{sm-function-definitions}} \\
+   \nonterminal{sm-function-definitions}
+      \produces \nonterminal{function-definition} \\
+      \produces \nonterminal{sm-function-definitions}
+	 \nonterminal{function-definition}
+\end{grammar}
+
+\noindent
+State machines are executed if a control flow graph\index{control
+flow graph} has been constructed through the attribution rules and if
+\ident{graph.root}\index{graph.root} exists and points to a node of the
+control flow graph.
+
+State machines instances, when executed, have a state and begin initially
+with the very first state of their list of named states. State machines
+traverse through the control flow graph. The execution of a state
+machine instance stops if a control flow graph node has already been
+visited by a related state machine instance with the same state. For
+every edge leaving the actual control flow graph node, a new instance of a
+state machine is constructed which inherits the state and the values of
+the private variables from its predecessor and continues to share the
+shared variables with its predecessors. All these new instances are
+related to each other and to the instance they have been derived from.
+
+While traversing a control flow graph, the rules of a state machine
+can consider
+
+\begin{enumerate}
+   \item[(1)] the node of the abstract syntax tree associated with the
+      control flow graph node including its associated data structures,
+      if existant (see \nonterminal{conditional-tree-expression}),
+   \item[(2)] the current node of the control flow graph includes its
+      type and its associated data structures
+      (using the \keyword{at} keyword,
+      see \nonterminal{cfg-node-expression}),
+   \item[(3)] the label of the edge leaving the current node of the control
+      flow graph (using the \keyword{if} keyword,
+      see \nonterminal{cfg-edge-condition}), and
+   \item[(4)] the current state (using the \keyword{when} keyword,
+      see \nonterminal{sm-state-condition}).
+\end{enumerate}
+
+\noindent
+Combinations of (3) and (4) can be grouped (see
+\nonterminal{sm-alternatives}) and associated to a combination of (1)
+and (2) (see \nonterminal{sm-condition}):
+
+\begin{grammar}
+   \nonterminal{sm-rule}
+      \produces \nonterminal{sm-condition} \lextoken{->}
+	 \nonterminal{sm-block} \optional{\lextoken{;}} \\
+      \produces \nonterminal{sm-condition} \nonterminal{sm-alternatives} \\
+      \produces \nonterminal{sm-condition} \lextoken{->}
+	 \lexkeyword{create} \nonterminal{block} \optional{\lextoken{;}} \\
+      \produces \lexkeyword{on} \lexkeyword{close}
+	 \nonterminal{sm-handler} \optional{\lextoken{;}} \\
+   \nonterminal{sm-condition}
+      \produces \nonterminal{conditional-tree-expression} \\
+      \produces \lexkeyword{at} \nonterminal{cfg-node-expression} \\
+      \produces \nonterminal{conditional-tree-expression}
+	 \lexkeyword{at} \nonterminal{cfg-node-expression} \\
+   \nonterminal{cfg-node-expression}
+      \produces \nonterminal{cfg-node-types} \\
+      \produces \nonterminal{cfg-node-types}
+	 \lexkeyword{where} \nonterminal{expression} \\
+      \produces \lextoken{*} \\
+      \produces \lextoken{*} \lexkeyword{where} \nonterminal{expression} \\
+   \nonterminal{cfg-node-types}
+      \produces \nonterminal{identifier} \\
+      \produces \nonterminal{cfg-node-types} \lexkeyword{or}
+	 \nonterminal{identifier} \\
+   \nonterminal{sm-alternatives}
+      \produces \nonterminal{sm-alternative} \optional{\lextoken{;}} \\
+      \produces \nonterminal{sm-alternatives}
+	 \nonterminal{sm-alternative} \optional{\lextoken{;}} \\
+   \nonterminal{sm-alternative}
+      \produces \lexkeyword{if} \nonterminal{cfg-edge-condition}
+	 \lextoken{->} \nonterminal{sm-block} \\
+      \produces \lexkeyword{when}
+	 \nonterminal{sm-state-condition} \lextoken{->}
+	 \nonterminal{sm-block} \\
+      \produces \lexkeyword{if} \nonterminal{cfg-edge-condition}
+	 \lexkeyword{and} \nextline \lexkeyword{when}
+	 \nonterminal{sm-state-condition} \lextoken{->}
+	 \nonterminal{sm-block} \\
+   \nonterminal{cfg-edge-condition}
+      \produces \nonterminal{identifier} \\
+      \produces \nonterminal{cfg-edge-condition} \lexkeyword{or}
+	 \nonterminal{identifier} \\
+   \nonterminal{sm-state-condition}
+      \produces \nonterminal{identifier} \\
+      \produces \nonterminal{sm-state-condition} \lexkeyword{or}
+	 \nonterminal{identifier}
+\end{grammar}
+
+\noindent
+If a star is given in a \nonterminal{cfg-node-expression}, all
+control flow graph nodes are matched. This allows to write a
+rule that fires in all cases:
+
+\begin{lstlisting}
+   at * -> {
+      // ...
+   }
+\end{lstlisting}
+
+\noindent
+The expressions that are given as conditions to
+\nonterminal{conditional-tree-expression} or
+\nonterminal{cfg-node-expression} have access to all shared and
+private variables of the state machine. In addition, the name
+\ident{node} is bound to the control flow graph node in the
+condition of \nonterminal{cfg-node-expression} (but not in the
+condition of \nonterminal{conditional-tree-expression}). (The node
+of the abstract syntax tree, if defined, can be accessed through
+\ident{node.astnode}.\index{node.astnode})
+
+When a rule fires, i.e. if its condition is true, an optional action
+gets performed and an optional block is executed. If multiple rule
+conditions are true, the associated actions and blocks are executed
+in the order of appearance.
+
+\begin{grammar}
+   \nonterminal{sm-block}
+      \produces \nonterminal{block} \\
+      \produces \nonterminal{sm-action} \\
+      \produces \nonterminal{sm-action} \nonterminal{block} \\
+   \nonterminal{sm-action}
+      \produces \lexkeyword{cache}
+	 \lextoken{(} \nonterminal{expression} \lextoken{)} \\
+      \produces \lexkeyword{close} \\
+      \produces \lexkeyword{cut} \\
+      \produces \lexkeyword{retract} \\
+      \produces \nonterminal{identifier}
+\end{grammar}
+
+\noindent
+The actions \keyword{close}, \keyword{cut}, and \keyword{retract} stop
+the execution of a state machine instance. In addition, \keyword{close}
+causes the close handler to be invoked, and \keyword{retract} undoes the
+visit of that particular control flow graph node. Whenever a state machine
+instance stops, the stop is immediate, i.e. no further rules are
+evaluated.
+
+The \keyword{cache} action expects a parameter designating a control
+flow graph node and checks if the successor node has already been
+visited. If this has been the case, the state machine continues at the
+given node with the resulting states of the state machine instance
+with the same entry state. This allows an interprocedural execution of
+state machines. For this to work, a function call requires at least two
+special nodes, one for the call and one for the return position. The
+function call is linked to the entry node of the function which must
+be used by all function calls to that function. The exit node of the
+function is expected to be linked to all return nodes that are paired
+with a call node to that function. Note that the state machine must
+explicitly cut off all the return nodes that are not paired with the
+corresponding call node (see the example below). The close handler,
+if defined, is invoked if the instance that hit the function first is
+unable to find a path leading to the exit node. As \keyword{cache}
+considers the actual state when deciding how to go on, the current
+state must not be changed by any of the rules matching the particular
+control flow graph node.
+
+If a state machine stops at the end of a path, i.e. if the
+action \lexkeyword{close} is executed or if the current node of
+the control flow graph has no edges departing from it, all close
+handlers are invoked, possibly in dependence of the current state.
+
+\begin{grammar}
+   \nonterminal{sm-handler}
+      \produces \lextoken{->} \nonterminal{block} \\
+      \produces \lexkeyword{when} \nonterminal{sm-state-condition}
+	 \lextoken{->} \nonterminal{block}
+\end{grammar}
+
+\noindent
+Within a \nonterminal{cfg-node-expression}, the blocks, and close
+handlers all local variables and functions of the state machine
+including those inherited from the abstract state machines are visible.
+In addition, the variables bound by a
+\nonterminal{conditional-tree-expression} and the following list
+of bindings is visible within a \nonterminal{cfg-node-expression}
+or a block:
+
+\bigskip
+\noindent
+\begin{tabularx}{\textwidth}{l l X}
+   \hline
+   name & type & description \\
+   \hline
+   \ident{current\_state} & string &
+      textual representation of the current state when
+      the current control flow graph node was entered \\
+   \ident{label} & string &
+      string representation of the label of the current edge
+      in the control flow graph; this string is empty if no
+      such label has been defined \\
+   \ident{node} & control flow graph node &
+      refers to the actual control flow graph node;
+      note that \lstinline!node.astnode!, if it exists,
+      refers to the associated node of the abstract syntax tree \\
+   \hline
+\end{tabularx}
+
+\bigskip
+\noindent
+Example: The following state machine is derived from \textit{global\_tracker},
+an abstract state machine which is itself
+derived from \ident{global} (see \ref{smglobal}) and which supports
+the \ident{err} method that delivers a backtrace documenting the
+path that lead to an error. This state machine tracks all global
+interprocedural paths and checks that the invocations of \ident{lock}
+and \ident{unlock} are properly balanced:
+
+\begin{lstlisting}
+state machine lock_checker: global_tracker (unlocked, locked, broken) {
+   ("function_call" ("identifier" "lock")) at before_call
+      when unlocked -> locked
+      when locked -> broken { err("lock possibly called twice"); }
+   ("function_call" ("identifier" "unlock")) at before_call
+      when locked -> unlocked
+      when unlocked -> broken { err("unlock possibly called unbalanced"); }
+
+   on close when locked -> {
+      if (!endless_recursion) {
+         err("missing invocation of unlock at end of path");
+      }
+   }
+   on close -> {
+      if (endless_recursion) {
+         err("endless recursion detected");
+      }
+   }
+}
+\end{lstlisting}
+
+\section{Abstract state machines}
+\index{state machine!abstract}
+
+Abstract state machines allow to factorize common rule sets out of
+regular state machines. Abstract state machines are never instantiated.
+If a state machine (be it regular or abstract) is derived from an
+abstract state machine, all its variables and rules are inherited.
+
+All blocks associated to a rule of a state machine share the same
+scope. This includes all blocks inherited from the abstract state
+machine a regular state machine has been derived from. In consequence,
+all variables of a state machine, independent from the location
+of their declaration, are visible to all blocks of that state machine.
+
+\begin{grammar}
+   \nonterminal{abstract-state-machine}
+      \produces \lexkeyword{abstract} \lexkeyword{state}
+	 \lexkeyword{machine} \nonterminal{identifier} \nextline
+	 \lextoken{\{} \nonterminal{sm-vars} \nonterminal{sm-functions}
+	    \nonterminal{sm-rules}
+	 \lextoken{\}} \\
+      \produces \lexkeyword{abstract} \lexkeyword{state}
+	 \lexkeyword{machine} \nonterminal{identifier}
+	 \lextoken{:} \nonterminal{identifier} \nextline
+	 \lextoken{\{} \nonterminal{sm-vars} \nonterminal{sm-functions}
+	    \nonterminal{sm-rules}
+	 \lextoken{\}}
+\end{grammar}
+
+\noindent
+Example: The follow abstract state machine serves as common rule set
+of global state machines. Global state machines do not follow
+the local links at a function call but follow the extern links to
+the entry node of the called function. Whenever they return from
+the exit node of a called function back to the rtn node paired
+to the call node they cut all paths that are not properly nested.
+The nesting is checked through the private variable \ident{chain}.
+
+\index{state machine!global}
+\label{smglobal}
+\begin{lstlisting}
+abstract state machine global {
+   private var chain = {nestlevel -> 0};
+   at call
+      if local -> cut;
+      if extern -> cache(node.branch.local) {
+	 chain = {
+	    nestlevel -> chain.nestlevel + 1,
+	    next -> chain,
+	    callid -> node.callid
+	 };
+      }
+   at rtn where chain.nestlevel == 0 || chain.callid != node.callid -> retract;
+   at rtn where chain.nestlevel > 0 && chain.callid == node.callid -> {
+      chain = chain.next;
+   }
+}
+\end{lstlisting}
+
+\endinput

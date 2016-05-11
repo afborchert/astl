@@ -1,0 +1,236 @@
+\chapter{Lexical elements}
+
+\section{Source files}
+
+Astl program source files\index{source file} must end in the
+suffix ``.ast''\index{suffix} which is to be omitted when
+source files are refered to.
+
+\section{Character set}\index{character set}
+
+Astl program sources are sequences of octets that are interpreted as
+ASCII characters. Octets within string literals, program text literals,
+and comments are not interpreted except to find the end of the lexical
+construct or to find embedded references within program text literals.
+
+Case is significant.
+
+\section{Lines and columns}
+
+To provide locations\index{location} for error messages,
+lines\index{line} and columns\index{column} are tracked while reading a
+program source\index{source file}. The newline\index{newline} character
+(ASCII 10) is interpreted as line terminator\index{line terminator}
+and considered otherwise as being equivalent to the space\index{space}
+character (ASCII 32). Tabs\index{tab} (ASCII 9) are similarly treated as
+space characters but cause the current column to be advanced to the next
+multiply of 8 plus 1.
+
+\section{Comments}\index{comment}
+
+Comments can be delimited by ``/*'' and ``*/''. Nested comments
+are not supported. Alternatively, comments start with ``//'' and
+are ended by the next line terminator\index{line terminator}.
+Comments are handled like space characters.
+
+\section{Tokens}\index{token}
+
+Each program source is converted into a sequence of tokens during
+the lexical analysis\index{lexical analysis}. Tokens can be
+delimiters\index{delimiter} consisting of one or more special
+characters\index{special character}, reserved keywords\index{keyword},
+identifiers\index{identifier}, or literals\index{literal}. Tokens end if
+the next character is a space or if the next character cannot be added
+to it.
+
+Example: The character sequence \lstinline!a[i2]+=exists f{i2}? 12: existsf!
+consists of the following tokens:
+
+\begin{tabular}{l l}
+   \lstinline!a! & an identifier \\
+   \lstinline![! & a single-character delimiter \\
+   \lstinline!i2! & an identifier \\
+   \lstinline!]! & a single-character delimiter \\
+   \lstinline!+=! & a compound delimiter \\
+   \lstinline!exists! & a keyword \\
+   \lstinline!f! & an identifier \\
+   \lstinline!{! & a single-character delimiter \\
+   \lstinline!i2! & an identifier \\
+   \lstinline!}! & a single-character delimiter \\
+   \lstinline!?! & a single-character delimiter \\
+   \lstinline!12! & a decimal literal \\
+   \lstinline!:! & a single-character delimiter \\
+   \lstinline!existsf! & an identifier \\
+\end{tabular}
+
+\section{Single-character delimiters}\index{delimiter}
+
+Following delimiters consist of one character only and cannot
+be part of a longer token which is not a literal:
+
+\bigskip
+\noindent
+\begin{tabular}{l l l l}
+   \lstinline!(! & \lstinline!)! & \lstinline!{! & \lstinline!}! \\
+   \lstinline![! & \lstinline!]! & \lstinline!^! & \lstinline!*! \\
+   \lstinline!.! & \lstinline!,! & \lstinline!?! & \lstinline!:! \\
+   \lstinline!;! \\
+\end{tabular}
+
+\section{Compound delimiters}\index{delimiter}
+
+Following delimiter consists of one or multiple characters:
+
+\bigskip
+\noindent
+\begin{tabular}{l l l l}
+   \lstinline!-! & \lstinline!->! & \lstinline!--! & \lstinline!-=! \\
+   \lstinline!+! & \lstinline!+=! & \lstinline!++! \\
+   \lstinline!&! & \lstinline!&&! & \lstinline!&=! \\
+   \lstinline!<! & \lstinline!<=! \\
+   \lstinline!>! & \lstinline!>=! \\
+   \lstinline/!/ & \lstinline/!=/ \\
+   \lstinline!=! & \lstinline!=~! & \lstinline!==! \\
+   \lstinline!||! \\
+\end{tabular}
+
+\section{Keywords}\index{keyword}
+
+Following keywords are reserved. They cannot be used as identifiers.
+
+\bigskip
+\noindent
+\input{keywords}
+
+\section{Identifiers}\index{identifier}
+
+Identifiers begin with a letter, i.e. ``A'' to ``Z'' and ``a'' to ``z'',
+or an underscore ``\_'', and are optionally continued with a sequence
+of more letters, underscores, or decimal digits ``0'' to ``9''.
+
+\section{Literals}\index{literal}
+
+Literals can be decimal literals, string literals, regular expressions,
+and program text literals.
+
+\subsection{Decimal literals}\index{decimal literal}\index{literal!decimal}
+
+Decimal literals begin with a decimal digit\index{digit} ``0'' to ``9'' and
+optionally more digits. Decimal constants are unsigned and can
+be of arbitrary size.
+
+\subsection{String literals}\index{string literal}\index{literal!string}
+
+String literals are delimited by ``"''. Backslashes\index{backslash},
+i.e. ``\lstinline!\!'',
+are escape characters, i.e. they remove the special meaning of
+the following character or allow to insert special characters into a
+string:
+
+\bigskip
+
+\noindent
+\begin{tabular}{| l l l |}
+\hline
+new-line & NL (LF) & \lstinline!\n! \\
+horizontal tab & HT & \lstinline!\t! \\
+vertical tab & VT & \lstinline!\v! \\
+backspace & BS & \lstinline!\b! \\
+form feed & FF & \lstinline!\f! \\
+alert & BEL & \lstinline!\a! \\
+backslash & \backslashSY{} & \lstinline!\\! \\
+question mark & ? & \lstinline!\?! \\
+single quote & ' & \lstinline!\'! \\
+double quote & " & \lstinline!\"! \\
+octal number & \textit{ooo} & \lstinline!\!\textit{ooo} \\
+\hline
+\end{tabular}
+
+\bigskip
+
+\noindent
+(This covers the set of \nonterminal{simple-escape-sequence} and
+\nonterminal{octal-escape-sequence} of the C language as defined
+by the ISO standard 9899-1999.)
+
+Examples: \lstinline!"Hello, world"! represents the text ``Hello, world'',
+\lstinline!"\""! represents the double quote ``"'',
+\lstinline!"\\"! represents the backslash ``\lstinline!\!'',
+and \lstinline!"Two\nlines"! represents ``Two'', followed by
+a line terminator, and ``lines''.
+
+\subsection{Regular expressions}\label{regexlit}
+\index{regular expression}\index{literal!regular expression}
+
+A regular expression is a literal that is enclosed by the
+delimiters ``\lstinline!m{!'' and ``\lstinline!}!''. Regular
+expressions are interpreted by the Boost C++ library and
+follow the Perl regular expression syntax.\footnote{See
+\url{http://www.boost.org/doc/libs/1\_41\_0/libs/regex/doc/html/boost\_regex/syntax/perl\_syntax.html}}
+
+Example: \lstinline!m{[a-zA-Z_][a-zA-Z_0-9]*}!
+
+\subsection{Program text literals}
+\index{literal!program text}\index{program text literal}
+
+A program text literal begins with ``\lstinline!q{!'' and
+is ended by a balanced ``\lstinline!}!''.\footnote{This
+type of literal is perhaps familiar to those knowing Perl.
+However, its semantics follows that of the ``\lstinline!qq\{...\}!''
+construct in Perl which allows interpolation.}
+These literals are designed to support the generation of program text within
+the print rules.\index{print rule} They may include embedded
+references to variables or embedded expressions that are
+interpolated when the literal is evaluated. As in
+string literals, the backslash ``\lstinline!\!'' may be used to
+escape following characters. Braces may be used without preceding
+backslashes within a program text literal as long as they are
+balanced.
+
+Examples: \lstinline!q{{}}! is equivalent to \lstinline!q{\{\}}!.
+
+\subsubsection{Embedded variable references}
+
+An embedded variable reference begins with the character
+``\lstinline!$!''%stopzone
+and is followed by an identifier. Spaces between
+``\lstinline!$!''%stopzone
+and the identifier following it are not permitted.
+
+\subsubsection{Embedded expressions}
+
+An embedded expression begins with the character sequence
+``\lstinline!${!'', %stopzone%stopzone
+is followed by an arbitrary expression, and closed by
+``\lstinline!}!''.
+
+\subsubsection{Interpretation of multi-line literals}
+
+Program text literals may extend over multiple lines. In this
+case, initial and trailing white space are to some extent ignored
+and the indentations of the individual lines are interpreted
+relatively to each other.
+
+Example: Following program text literal generates an
+if-else-statement construct that references the variables
+\ident{condition}, \ident{then\_statement}, and \ident{else\_statement}.
+The white space between the opening ``\lstinline!{!''
+and ``if'' is ignored. Similarly, the trailing whitespace between
+\lstinline!$else_statement! %stopzone
+and the closing
+``\lstinline!}!''
+is skipped.
+However, the relative indentations are noted, i.e.
+``\lstinline!$then_statement!'' %stopzone
+is to be indented by three additional spaces.
+
+\begin{lstlisting}
+   q{
+      if ($condition)
+         $then_statement
+      else
+         $else_statement
+   };
+\end{lstlisting}
+
+\endinput

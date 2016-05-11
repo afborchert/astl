@@ -1,0 +1,34 @@
+\chapter{Function definitions}\index{function!definition}\label{functiondef}
+
+Global functions can be declared at the global level. They are
+globally visible and their closures\index{closure} are restricted
+to the set of predefined bindings and the other function definitions.
+
+\begin{grammar}
+   \nonterminal{function-definition}
+      \produces \keyword{sub} \nonterminal{identifier} \nonterminal{block}
+\end{grammar}
+
+\noindent
+As in the case of locally constructed functions, arguments are passed
+through the list \ident{args}.
+
+Example: The following function computes the greatest common divisor
+of the two arguments:
+
+\begin{lstlisting}
+sub gcd {
+   var a = args[0];
+   var b = args[1];
+   while (a != b) {
+      if (a > b) {
+	 a -= b;
+      } else {
+	 b -= a;
+      }
+   }
+   return a;
+}
+\end{lstlisting}
+
+\endinput

@@ -1,0 +1,89 @@
+\chapter{Attribution rules}\label{attr}
+
+\section{Regular attribution rules}
+An attribution rule consists of a tree expression and a block.
+When attribution rules are executed, the abstract syntax tree
+is traversed depth-first. For each visited node of the abstract
+syntax tree, all attribution rules are executed whose tree
+expressions match the visited node. When multiple rules match
+for the same node they are executed in the order of
+appearance in the source.
+
+Attributes rules are executed in pre- or postorder in respect
+to the traversal of the subnodes. By default, rules are executed
+in preorder. The keywords \keyword{pre} and \keyword{post} can
+be used to specify the order.
+
+\begin{grammar}
+   \nonterminal{attribution-rules}
+      \produces \lexkeyword{attribution} \lexkeyword{rules}
+	 \lextoken{\{} \nonterminal{attributions}
+	 \lextoken{\}} \\
+   \nonterminal{attributions}
+      \produces \nonterminal{attribution} \lextoken{;} \\
+      \produces \nonterminal{attributions}
+	 \nonterminal{attribution} \lextoken{;} \\
+   \nonterminal{attribution}
+      \produces \nonterminal{conditional-tree-expressions}
+	 \lextoken{->} \nonterminal{block} \\
+      \produces \nonterminal{conditional-tree-expressions}
+	 \lextoken{->} \lexkeyword{pre} \nonterminal{block} \\
+      \produces \nonterminal{conditional-tree-expressions}
+	 \lextoken{->} \lexkeyword{post} \nonterminal{block} \\
+\end{grammar}
+
+\noindent
+Example: In the following example we have three attribution rules
+that focus on operator nodes with the operator
+\lstinline!"compound_statement"!. The first rule is executed
+first. Afterwards, the second rule is executed whenever a
+compound statement is nested within another compound statement.
+Then all the attribution rules are executed that match the subnodes.
+Finally, the third rule is executed last as it is a postfix rule.
+
+\begin{lstlisting}
+   ("compound_statement" *) as block -> {
+      block.vars = {};
+      block.level = 0;
+      block.up = null;
+   };
+   ("compound_statement" *) as inner_block
+         in ("compound_statement" *) as outer_block -> {
+      inner_block.level = outer_block.level + 1;
+      inner_block.up = outer_block;
+   };
+   ("compound_statement" *) as block in ("translation_unit" *) as root -> post {
+      foreach varname in (block.vars) {
+	 var entry = block.vars{varname};
+	 if (entry.used) {
+	    if (entry.minblock != block) {
+	       println(location(entry.decl) & ": variable " & varname &
+		  " should be moved into " & location(entry.minblock));
+	    }
+	 } else {
+	    println(location(entry.decl) & ": unused variable " & varname);
+	 }
+      }
+   };
+\end{lstlisting}
+
+\section{Named attribution rules}\label{named-atrules}
+
+Named attribution rules are similar to regular attribution rules but
+they are not implicitly executed (see \ref{xorder}). The given name
+is bound to a function which executes the associated attribute rule
+set. The function takes one optional parameter that specifies the
+root node of the to be traversed tree. Otherwise, if no parameter is
+given, \ident{root} is taken (see \ref{predefined}).
+Within this rule set, \ident{root}\index{root} is bound to the
+to be attributed abstract syntax tree.
+
+\begin{grammar}
+   \nonterminal{attribution-rules}
+      \produces \lexkeyword{attribution} \lexkeyword{rules}
+	 \nonterminal{identifier}
+	 \lextoken{\{} \nonterminal{attributions}
+	 \lextoken{\}}
+\end{grammar}
+
+\endinput

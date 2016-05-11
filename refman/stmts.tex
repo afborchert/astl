@@ -1,0 +1,146 @@
+\chapter{Statements}\index{statement}
+
+\section{Blocks}
+
+A blocks groups a sequence of instructions and opens a nested scope,
+i.e. variables declared within a block are not visible outside the
+block. Whenever a block is executed, a new instance of it is created
+with its own set of local variables (see \ref{var}). Blocks and
+their variables are implicitly refered to through closures\index{closure}
+(see \ref{function}).
+
+\begin{grammar}
+   \nonterminal{block}
+      \produces \lextoken{\{} \lextoken{\}} \\
+      \produces \lextoken{\{} \nonterminal{statements} \lextoken{\}} \\
+   \nonterminal{statements}
+      \produces \nonterminal{statement} \\
+      \produces \nonterminal{statements} \nonterminal{statement} \\
+   \nonterminal{statement}
+      \produces \nonterminal{expression} \lextoken{;} \\
+      \produces \nonterminal{delete-statement} \lextoken{;} \\
+      \produces \nonterminal{if-statement} \\
+      \produces \nonterminal{while-statement} \\
+      \produces \nonterminal{foreach-statement} \\
+      \produces \nonterminal{return-statement} \lextoken{;} \\
+      \produces \nonterminal{var-statement} \lextoken{;} \\
+\end{grammar}
+
+\section{Deletion statement}
+\index{statement!deletion}
+
+A deletion statement allows to delete a key and its entry
+in a dictionary. If the given key does not exist, the operation
+has no effect.
+
+\begin{grammar}
+   \nonterminal{delete-statement}
+      \produces \lexkeyword{delete} \nonterminal{designator}
+\end{grammar}
+
+\section{Conditional statement}
+\index{statement!conditional}\index{conditional statement}
+
+An \keyword{if}-statement allows to execute code conditionally. It
+consists of a sequence of conditions and associated blocks with an
+optional \keyword{else}-part at the end. The conditions are evaluated
+and converted to boolean type (see \ref{boolconv}) in the given order
+until one of them evaluates to \ident{true}. Then the associated
+block is executed. Otherwise, if none of the conditions evaluates to
+\ident{true}, the \keyword{else}-part is executed, if present.
+
+\begin{grammar}
+   \nonterminal{if-statement}
+      \produces \lexkeyword{if}
+	 \lextoken{(} \nonterminal{expression} \lextoken{)}
+	 \nonterminal{block} \\
+      \produces \lexkeyword{if}
+	 \lextoken{(} \nonterminal{expression} \lextoken{)}
+	 \nonterminal{block} \lexkeyword{else} \nonterminal{block} \\
+      \produces \lexkeyword{if}
+	 \lextoken{(} \nonterminal{expression} \lextoken{)}
+	 \nonterminal{block} \nonterminal{elsif-chain} \\
+      \produces \lexkeyword{if}
+	 \lextoken{(} \nonterminal{expression} \lextoken{)}
+	 \nonterminal{block} \nonterminal{elsif-chain}
+	 \lexkeyword{else} \nonterminal{block} \\
+   \nonterminal{elsif-chain}
+      \produces \nonterminal{elsif-statement} \\
+      \produces \nonterminal{elsif-chain} \nonterminal{elsif-statement} \\
+   \nonterminal{elsif-statement}
+      \produces \lexkeyword{elsif}
+	 \lextoken{(} \nonterminal{expression} \lextoken{)}
+	 \nonterminal{block}
+\end{grammar}
+
+\section{Loop statements}
+
+\begin{grammar}
+   \nonterminal{while-statement}
+      \produces \lexkeyword{while}
+	 \lextoken{(} \nonterminal{expression} \lextoken{)}
+	 \nonterminal{block} \\
+   \nonterminal{foreach-statement}
+      \produces \lexkeyword{foreach} \nonterminal{identifier}
+	 \lexkeyword{in}
+	 \lextoken{(} \nonterminal{expression} \lextoken{)}
+	 \nonterminal{block} \\
+      \produces \lexkeyword{foreach} \lextoken{(}
+	 \nonterminal{identifier} \lextoken{,}
+	 \nonterminal{identifier} \lextoken{)}
+	 \lexkeyword{in}
+	 \lextoken{(} \nonterminal{expression} \lextoken{)}
+	 \nonterminal{block} \\
+\end{grammar}
+
+\noindent
+A \keyword{while} statement evaluates first the condition,
+converts it to boolean (see \ref{boolconv}). If the condition
+is \ident{true} the associated block is executed. This process
+repeats until the condition evaluates to \ident{false}.
+
+The first variant of the \keyword{foreach} statement converts its
+expression into a list (see \ref{listconv}) and binds the given identifier
+to each list member in turn and executes the associated block for it.
+
+The second variant with two variable names expects a dictionary
+(see \ref{dictionary}) and binds the given variables to each
+key and its associated value in the dictionary and executes the
+associated block for it.
+
+\section{Return statement}\label{return}
+
+A return statement is valid within functions only (see \ref{function}
+and \ref{functiondef}). In its first variant, \keyword{null} is
+returned (see \ref{null}). The second variant evaluates the
+given expression and returns its result. In each case, the
+execution of the current function is terminated and the execution
+continues after the function call.
+
+\begin{grammar}
+   \nonterminal{return-statement}
+      \produces \lexkeyword{return} \\
+      \produces \lexkeyword{return} \nonterminal{expression} \\
+\end{grammar}
+
+\section{Variable declarations}\label{var}
+
+Variable declarations bind the given variable name to the value of the
+given expression or, if no expression has been given, to \keyword{null}
+in the current instance of the local block. Multiple declarations of the
+same variable name within the same block are not permitted. Variables
+must not be used before being declared and references to equally-named
+variables of outer blocks in the same block are prohibited.
+
+\begin{grammar}
+   \nonterminal{var-statement}
+      \produces \lexkeyword{var} \nonterminal{identifier} \\
+      \produces \lexkeyword{var} \nonterminal{identifier}
+	 \lextoken{=} \nonterminal{expression} \\
+\end{grammar}
+
+\noindent
+The binding of a variable can be changed through one of the
+assignment operators in a expression statement (see \ref{assignments}).
+
+\endinput
