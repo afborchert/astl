@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009, 2010 Andreas Franz Borchert
+   Copyright (C) 2009, 2010, 2016 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -238,7 +238,7 @@ AttributePtr gen_text(NodePtr root,
       throw Exception("no print rules defined");
    }
    const RuleTable& print_rules(rules.get_print_rule_table());
-   gen_text(print_rules, root, bindings);
+   return gen_text(print_rules, root, bindings);
 }
 
 } // namespace Astl
