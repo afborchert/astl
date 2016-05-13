@@ -31,8 +31,8 @@ namespace Astl {
 
    class Candidate {
       public:
-	 Candidate(NodePtr root_param, NodePtr& node_param, RulePtr rule_param,
-	    BindingsPtr bindings_param);
+	 Candidate(NodePtr root, NodePtr& node, RulePtr rule,
+	    BindingsPtr bindings);
 
 	 // accessors
 	 RulePtr get_rule() const;

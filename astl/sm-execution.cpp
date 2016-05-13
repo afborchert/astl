@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <cstdlib>
 #include <stack>
 #include <memory>
 #include <astl/sm-execution.hpp>
@@ -89,8 +90,9 @@ struct Instance {
 */
 struct InstanceThread {
    InstanceThread(InstancePtr smi_param) :
-	 smi(smi_param), state(0), close_id(0),
-	 bindings(smi->sm->add_private_bindings(smi->bindings)) {
+	 smi(smi_param), state(0),
+	 bindings(smi->sm->add_private_bindings(smi->bindings)),
+	 close_id(0) {
    }
    void fork_bindings() {
       // get shared bindings
@@ -136,7 +138,7 @@ struct CacheKey {
    unsigned int entry_id;
    bool operator<(const CacheKey& other) const {
       return state < other.state ||
-             state == other.state && entry_id < other.entry_id;
+             (state == other.state && entry_id < other.entry_id);
    }
    bool operator==(const CacheKey& other) const {
       return state == other.state && entry_id == other.entry_id;
@@ -264,8 +266,8 @@ void check_creation(ExecutionContext& ec, StateMachinePtr sm,
       if (smr->tree_expr_defined()) {
 	 if (!ast) continue;
 	 if (ast->is_leaf()) continue;
-	 if (smr->get_arity() != -1 &&
-	       smr->get_arity() != ast->size()) continue;
+	 Arity arity = smr->get_arity();
+	 if (!arity.first && arity.second != ast->size()) continue;
 	 std::string opname(ast->get_op().get_name());
 	 if (!smr->get_opset()->includes(opname)) continue;
 	 NodePtr tree_expr = smr->get_tree_expression();
@@ -342,8 +344,8 @@ bool execute_rules(ExecutionContext& ec, InstanceThread& t,
       if (smr->tree_expr_defined()) {
 	 if (!ast) continue;
 	 if (ast->is_leaf()) continue;
-	 if (smr->get_arity() != -1 &&
-	       smr->get_arity() != ast->size()) continue;
+	 Arity arity = smr->get_arity();
+	 if (!arity.first && arity.second != ast->size()) continue;
 	 std::string opname(ast->get_op().get_name());
 	 if (!smr->get_opset()->includes(opname)) continue;
 	 NodePtr tree_expr = smr->get_tree_expression();
@@ -460,7 +462,7 @@ bool execute_rules(ExecutionContext& ec, InstanceThread& t,
 	    case StateMachineRuleAlternative::null:
 	       break;
 	    default:
-	       assert(false);
+	       assert(false); std::abort();
 	 }
       }
    }

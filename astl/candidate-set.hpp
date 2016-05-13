@@ -41,14 +41,12 @@ namespace Astl {
       public:
 	 CandidateSet(NodePtr root, const RuleTable& rules);
 	 CandidateSet(NodePtr root, const RuleTable& rules,
-	    ConsumerPtr consumer_param,
-	    PseudoRandomGeneratorPtr prg_param);
+	    ConsumerPtr consumer, PseudoRandomGeneratorPtr prg);
 	 CandidateSet(NodePtr root, const RuleTable& rules,
-	    BindingsPtr bindings_param);
+	    BindingsPtr bindings);
 	 CandidateSet(NodePtr root, const RuleTable& rules,
-	    BindingsPtr bindings_param,
-	    ConsumerPtr consumer_param,
-	    PseudoRandomGeneratorPtr prg_param);
+	    BindingsPtr bindings, ConsumerPtr consumer,
+	    PseudoRandomGeneratorPtr prg);
 
 	 // accessors
 	 unsigned int size() const;

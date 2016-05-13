@@ -95,7 +95,7 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
       if (name) {
 	 std::string varname(name->get_token().get_text());
 	 Attribute::SubtokenVector subtokens(what.size());
-	 for (int i = 0; i < what.size(); ++i) {
+	 for (unsigned int i = 0; i < what.size(); ++i) {
 	    subtokens[i] = what[i];
 	 }
 	 bind_variable(bindings, name->get_location(), varname,
@@ -138,15 +138,15 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 	 if (root->size() != arity) return false;
       }
       // do the subtrees match?
-      for (int i = 0; i < arity; ++i) {
+      for (unsigned int i = 0; i < arity; ++i) {
 	 if (!recursive_matches(root->get_operand(i),
 	       expression->get_operand(i+1), bindings, context)) {
 	    return false;
 	 }
       }
       if (remaining_subnodes) {
-	 int root_arity = root->size();
-	 for (int i = 0; i < remaining_arity; ++i) {
+	 unsigned int root_arity = root->size();
+	 for (unsigned int i = 0; i < remaining_arity; ++i) {
 	    int j = root_arity - remaining_arity + i;
 	    if (!recursive_matches(root->get_operand(j),
 		  remaining_subnodes->get_operand(i), bindings, context)) {
@@ -162,7 +162,7 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 	    AttributePtr at = bindings->get(varname);
 	    if (!at || at->get_type() != Attribute::list) return false;
 	    if (at->size() != remaining) return false;
-	    for (int i = 0; i < remaining; ++i) {
+	    for (unsigned int i = 0; i < remaining; ++i) {
 	       AttributePtr element = at->get_value(i);
 	       NodePtr node = root->get_operand(arity + i);
 	       if (!element) return false;
@@ -182,7 +182,7 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 	 } else {
 	    /* place holder */
 	    AttributePtr list(new Attribute(Attribute::list));
-	    for (int i = 0; i < remaining; ++i) {
+	    for (unsigned int i = 0; i < remaining; ++i) {
 	       NodePtr node = root->get_operand(arity + i);
 	       list->push_back(AttributePtr(new Attribute(node)));
 	    }

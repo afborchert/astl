@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009 Andreas Franz Borchert
+   Copyright (C) 2009, 2016 Andreas F. Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -25,7 +25,6 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <astl/config.hpp>
 #include <astl/types.hpp>
 #include <astl/syntax-tree.hpp>
 #include <astl/exception.hpp>
@@ -62,10 +61,6 @@ namespace Astl {
 	 template <typename T> Attribute(T val) : type(string) {
 	    std::ostringstream os; os << val; svalue = os.str();
 	 }
-#ifdef USE_UNRESTRICTED_UNIONS
-	 // destructor
-	 ~Attribute();
-#endif
 
 	 // mutators
 
@@ -142,7 +137,6 @@ namespace Astl {
 	 friend std::ostream& operator<<(std::ostream& out, AttributePtr at);
 	 Type type;
 
-#ifdef USE_FLAT_UNIONS
 	 /* if type == dictionary: */
 	 Dictionary dict;
 
@@ -169,21 +163,6 @@ namespace Astl {
 
 	 /* if type == bool: */
 	 bool bval;
-#endif
-
-#ifdef USE_UNRESTRICTED_UNIONS
-	 union {
-	    Dictionary dict;
-	    Vector values;
-	    SubtokenVector subtokens;
-	    NodePtr node;
-	    FlowGraphNodePtr fgnode;
-	    FunctionPtr func;
-	    std::string svalue;
-	    IntegerPtr ivalue;
-	    bool bval;
-	 };
-#endif
    };
 
    std::ostream& operator<<(std::ostream& out, AttributePtr at);

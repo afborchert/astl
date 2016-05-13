@@ -16,9 +16,10 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <cstdlib>
+#include <gmp.h>
 #include <astl/string-ops.hpp>
 #include <astl/operators.hpp>
-#include <gmp.h>
 
 namespace Astl {
 
@@ -68,7 +69,7 @@ AttributePtr string_binary_op(const Operator& op,
 	 return AttributePtr(new Attribute(
 	    (left > right) == (op.get_opcode() == ASTL_OPERATOR_EQEQ_TK)));
       default:
-	 assert(false);
+	 assert(false); std::abort();
    }
 }
 

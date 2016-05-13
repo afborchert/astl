@@ -39,12 +39,12 @@ namespace Astl {
 	    BranchIterator;
 
 	 // constructors
-	 FlowGraphNode(BindingsPtr bindings_param);
-	 FlowGraphNode(BindingsPtr bindings_param,
-	    const std::string& type_param);
-	 FlowGraphNode(BindingsPtr bindings_param, NodePtr node_param);
-	 FlowGraphNode(BindingsPtr bindings_param,
-	    const std::string& type_param, NodePtr node_param);
+	 FlowGraphNode(BindingsPtr bindings);
+	 FlowGraphNode(BindingsPtr bindings,
+	    const std::string& type);
+	 FlowGraphNode(BindingsPtr bindings, NodePtr node);
+	 FlowGraphNode(BindingsPtr bindings,
+	    const std::string& type, NodePtr node);
 
 	 // mutators
 	 void link(FlowGraphNodePtr fgnode);

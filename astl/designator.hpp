@@ -30,9 +30,9 @@ namespace Astl {
 
    class Designator {
       public:
-	 Designator(AttributePtr at_param);
-	 Designator(BindingsPtr bindings_param,
-	    const std::string& varname_param);
+	 Designator(AttributePtr at);
+	 Designator(BindingsPtr bindings,
+	    const std::string& varname);
 
 	 // mutators
 	 void add_index(AttributePtr indexAt,

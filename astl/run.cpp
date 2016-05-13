@@ -39,11 +39,11 @@ namespace Astl {
 class MyConsumer: public Consumer {
    public:
       MyConsumer(const char* p, Rules& r, unsigned int count,
-	    const Operator& parentheses, std::ostream& out_param,
-	    BindingsPtr bindings_param) :
-	    pattern(p), counter(0), rules(r),
-	    lparen(parentheses), out(out_param),
-	    bindings(bindings_param) {
+	    const Operator& parentheses, std::ostream& out,
+	    BindingsPtr bindings) :
+	    counter(0), width(0), pattern(p),
+	    rules(r), bindings(bindings),
+	    lparen(parentheses), out(out) {
 	 assert(count > 0);
 	 --count;
 	 width = 1;

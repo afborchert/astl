@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009, 2010 Andreas Franz Borchert
+   Copyright (C) 2009, 2010, 2016 Andreas F. Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -19,10 +19,9 @@
 #ifndef ASTL_SYNTAX_TREE_H
 #define ASTL_SYNTAX_TREE_H
 
-#include <list>
 #include <iostream>
 #include <string>
-#include <astl/config.hpp>
+#include <vector>
 #include <astl/types.hpp>
 #include <astl/operator.hpp>
 #include <astl/token.hpp>
@@ -31,13 +30,6 @@
 #include <astl/context.hpp>
 
 namespace Astl {
-
-   /**
-    * SubnodePtr is an alias of NodePtr which is used to
-    * stress that we are handling a subnode which belongs
-    * to another node.
-    */
-   typedef NodePtr SubnodePtr;
 
    /**
     * A syntax tree is represented by a node which, if it
@@ -77,23 +69,23 @@ namespace Astl {
 	 /**
 	  * Construction of a leaf node that represents a lexical token.
 	  */
-	 Node(const Location& loc_param, const Token& token_param);
+	 Node(const Location& loc, const Token& token);
 
 	 // operator node constructors
-	 Node(const Location& loc_param, const Operator& op_param);
-	 Node(const Location& loc_param, const Operator& op_param,
+	 Node(const Location& loc, const Operator& op);
+	 Node(const Location& loc, const Operator& op,
 	    NodePtr subnode1);
-	 Node(const Location& loc_param, const Operator& op_param,
+	 Node(const Location& loc, const Operator& op,
 	    NodePtr subnode1, NodePtr subnode2);
-	 Node(const Location& loc_param, const Operator& op_param,
+	 Node(const Location& loc, const Operator& op,
 	    NodePtr subnode1, NodePtr subnode2, NodePtr subnode3);
-	 Node(const Location& loc_param, const Operator& op_param,
+	 Node(const Location& loc, const Operator& op,
 	    NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
 	    NodePtr subnode4);
-	 Node(const Location& loc_param, const Operator& op_param,
+	 Node(const Location& loc, const Operator& op,
 	    NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
 	    NodePtr subnode4, NodePtr subnode5);
-	 Node(const Location& loc_param, const Operator& op_param,
+	 Node(const Location& loc, const Operator& op,
 	    NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
 	    NodePtr subnode4, NodePtr subnode5, NodePtr subnode6);
 
@@ -182,28 +174,12 @@ namespace Astl {
 	    on a 64 bit architecture we just need 8 instead of 48 bytes */
 	 Context* context;
 
-	 typedef std::list<NodePtr> NodePtrList;
-#ifdef USE_UNRESTRICTED_UNIONS
-	 union {
-	    // leaf node
-	    Token token;
-
-	    // operator node
-	    struct {
-	       Operator _op;
-	       NodePtrList _subnode;
-	    } opnode;
-	 };
-#endif
-
-#ifdef USE_FLAT_UNIONS
 	 // leaf node
 	 Token token;
 
 	 // operator node
 	 Operator op;
-	 NodePtrList subnode;
-#endif
+	 std::vector<NodePtr> subnodes;
    };
    bool deep_tree_equality(NodePtr node1, NodePtr node2);
 

@@ -31,7 +31,7 @@ namespace Astl {
    class RuleTable {
       public:
 	 typedef unsigned int Rank;
-	 typedef std::pair<std::string, unsigned int> key_pair;
+	 typedef std::pair<std::string, Arity> key_pair;
 	 typedef std::map<Rank, RulePtr> submap_type;
 	 typedef std::pair<Rank, RulePtr> value_pair;
 	 typedef std::pair<const key_pair, submap_type> pair;
@@ -49,19 +49,19 @@ namespace Astl {
 	  * Returns an iterator that delivers the prefix rules
 	  * that match the given operator and arity.
 	  */
-	 iterator find_prefix(const Operator& op, unsigned int arity,
+	 iterator find_prefix(const Operator& op, Arity arity,
 	    iterator& end) const;
 	 /**
 	  * Returns an iterator that delivers the postfix rules
 	  * that match the given operator and arity.
 	  */
-	 iterator find_postfix(const Operator& op, unsigned int arity,
+	 iterator find_postfix(const Operator& op, Arity arity,
 	    iterator& end) const;
 	 /**
 	  * Returns an iterator that delivers print rules
 	  * in the reverse order of appearance in the source.
 	  */
-	 print_iterator reversed_find(const Operator& op, unsigned int arity,
+	 print_iterator reversed_find(const Operator& op, Arity arity,
 	    print_iterator& end) const;
 	 unsigned int size() const;
 
@@ -70,7 +70,7 @@ namespace Astl {
 	 map_type table[2]; // prefix and postfix tables
 	 void traverse(NodePtr node,
 	    const Operator& ruleop, const Rules& rules);
-	 iterator find(const Operator& op, unsigned int arity,
+	 iterator find(const Operator& op, Arity arity,
 	    Rule::Type rtype, iterator& end) const;
    };
    typedef std::shared_ptr<RuleTable> RuleTablePtr;

@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <cstdlib>
 #include <astl/operator-table.hpp>
 #include <astl/operators.hpp>
 #include <astl/opset.hpp>
@@ -47,9 +48,11 @@ void OperatorTable::scan(NodePtr root, const Rules& rules) {
       } else if (operators->get_op() == Op::NONASSOC) {
 	 assoc = nonassoc;
       } else {
-	 assert(false);
+	 assert(false); std::abort();
+	 /* unnecessary but helps to suppress the warning */
+	 return;
       }
-      for (int opindex = 0; opindex < operators->size(); ++opindex) {
+      for (unsigned int opindex = 0; opindex < operators->size(); ++opindex) {
 	 NodePtr opnode = operators->get_operand(opindex);
 	 OperatorSet opset(opnode, rules);
 	 for (OperatorSet::Iterator opit = opset.begin();

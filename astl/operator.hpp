@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009 Andreas Franz Borchert
+   Copyright (C) 2009, 2016 Andreas F. Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -16,8 +16,8 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef SYNTAX_TREE_OPERATOR_H
-#define SYNTAX_TREE_OPERATOR_H
+#ifndef ASTL_OPERATOR_H
+#define ASTL_OPERATOR_H
 
 #include <cassert>
 #include <iostream>
@@ -30,14 +30,14 @@ namespace Astl {
    class Operator {
       public:
 	 // constructors
-	 Operator() : opcode(0), opname(0), opstring() {}
-	 Operator(unsigned int opcode_param, const char* opname_param) :
-	       opcode(opcode_param), opname(opname_param) {
-	    assert(opname_param != 0); assert(opcode_param != 0);
+	 Operator() : opcode(0), opname(nullptr), opstring() {}
+	 Operator(unsigned int opcode, const char* opname) :
+	       opcode(opcode), opname(opname) {
+	    assert(opname != nullptr); assert(opcode != 0);
 	 }
-	 Operator(const std::string& opname_param) :
-	       opcode(0), opstring(opname_param), opname(0) {
-	    assert(opname_param != "");
+	 Operator(const std::string& opname) :
+	       opcode(0), opname(nullptr), opstring(opname) {
+	    assert(!opname.empty());
 	 }
 	 Operator(const Operator& other) :
 	       opcode(other.opcode), opname(other.opname),

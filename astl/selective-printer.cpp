@@ -37,7 +37,7 @@ static void recursive_selective_print(std::ostream& out,
       ++counter;
    } else {
       unsigned int arity = root->size();
-      for (int i = 0; i < arity; ++i) {
+      for (unsigned int i = 0; i < arity; ++i) {
 	 recursive_selective_print(out, begin_text, join_text,
 	    counter, root->get_operand(i), op, rules);
       }

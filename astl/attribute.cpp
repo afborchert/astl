@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <cstdlib>
 #include <astl/attribute.hpp>
 #include <astl/flow-graph.hpp>
 
@@ -24,7 +25,6 @@ using namespace std;
 
 namespace Astl {
 
-#ifdef USE_FLAT_UNIONS
 Attribute::Attribute() : type(dictionary) {
 }
 
@@ -76,127 +76,6 @@ Attribute::Attribute(FlowGraphNodePtr fgnode_param) :
 Attribute::Attribute(Type type_param) :
       type(type_param) {
 }
-#endif
-
-#ifdef USE_UNRESTRICTED_UNIONS
-Attribute::Attribute() : type(dictionary) {
-   new(&dict) Dictionary;
-}
-
-Attribute::Attribute(NodePtr node_param) : type(tree) {
-   new(&node) NodePtr(node_param);
-}
-
-Attribute::Attribute(FunctionPtr func_param) : type(function) {
-   new(&func) FunctionPtr(func_param);
-}
-
-Attribute::Attribute(const std::string& string_val) : type(string) {
-   new(&svalue) std::string(string_val);
-}
-
-Attribute::Attribute(IntegerPtr int_val) : type(integer) {
-   new(&ivalue) IntegerPtr(int_val);
-}
-
-Attribute::Attribute(int intval) : type(integer) {
-   new(&ivalue) IntegerPtr(IntegerPtr(new Integer(intval)));
-}
-
-Attribute::Attribute(unsigned int intval) : type(integer) {
-   new(&ivalue) IntegerPtr(IntegerPtr(new Integer(intval)));
-}
-
-Attribute::Attribute(long intval) : type(integer) {
-   new(&ivalue) IntegerPtr(IntegerPtr(new Integer(intval)));
-}
-
-Attribute::Attribute(unsigned long intval) : type(integer) {
-   new(&ivalue) IntegerPtr(IntegerPtr(new Integer(intval)));
-}
-
-Attribute::Attribute(bool bool_val) : type(boolean) {
-   bval = bool_val;
-}
-
-Attribute::Attribute(const std::vector<std::string>& subtokens_param) :
-      type(match_result) {
-   assert(subtokens_param.size() > 0);
-   new(&subtokens) SubtokenVector(subtokens_param);
-}
-
-Attribute::Attribute(FlowGraphNodePtr fgnode_param) : type(flow_graph_node) {
-   assert(fgnode_param);
-   new(&fgnode) FlowGraphNodePtr(fgnode_param);
-}
-
-Attribute::Attribute(Type type_param) : type(type_param) {
-   switch(type) {
-      case dictionary:
-	 new(&dict) Dictionary;
-	 break;
-      case list:
-	 new(&values) Vector;
-	 break;
-      case match_result:
-	 new(&subtokens) SubtokenVector;
-	 break;
-      case tree:
-	 new(&node) NodePtr;
-	 break;
-      case flow_graph_node:
-	 new(&fgnode) FlowGraphNodePtr;
-	 break;
-      case function:
-	 new(&func) FunctionPtr;
-	 break;
-      case string:
-	 new(&svalue) std::string;
-	 break;
-      case integer:
-	 new(&ivalue) IntegerPtr;
-	 break;
-      case boolean:
-	 bval = false;
-	 break;
-      default:
-	 assert(false);
-   }
-}
-
-Attribute::~Attribute() {
-   /*
-   switch(type) {
-      case dictionary:
-	 dict.~Dictionary();
-	 break;
-      case list:
-	 values.~Vector();
-	 break;
-      case match_result:
-	 subtokens.~SubtokenVector();
-	 break;
-      case tree:
-	 node.~NodePtr();
-	 break;
-      case flow_graph_node:
-	 fgnode.~FlowGraphNodePtr();
-	 break;
-      case function:
-	 func.~FunctionPtr();
-	 break;
-      case string:
-	 svalue.~string();
-	 break;
-      case integer:
-	 ivalue.~IntegerPtr();
-	 break;
-      case boolean:
-	 break;
-   }
-   */
-}
-#endif
 
 void Attribute::update(const std::string& key, AttributePtr val) {
    assert(type == dictionary);
@@ -303,7 +182,7 @@ AttributePtr Attribute::get_value(unsigned int index) const {
 	 return AttributePtr(new Attribute(subtokens[index + 1]));
 
       default:
-	 assert(false);
+	 assert(false); std::abort();
    }
 }
 
@@ -333,6 +212,10 @@ unsigned int Attribute::size() const {
 
       case match_result:
 	 return subtokens.size() - 1;
+
+      default:
+	 /* not needed but helps to suppress the warning */
+	 return 0;
    }
 }
 
@@ -363,7 +246,7 @@ const std::string& Attribute::get_string() const {
       case match_result:
 	 return subtokens[0];
       default:
-	 assert(false);
+	 assert(false); std::abort();
    }
 }
 
@@ -407,6 +290,9 @@ std::string Attribute::convert_to_string() const throw(Exception) {
 	 {
 	    std::ostringstream os; os << size(); return os.str();
 	 }
+      default:
+	 /* not needed but helps to suppress the warning */
+	 return "";
    }
 }
 
@@ -457,7 +343,7 @@ AttributePtr Attribute::convert_to_list() throw(Exception) {
       if (!n->is_leaf()) {
 	 // generate a list with all the subnodes of n
 	 AttributePtr l = AttributePtr(new Attribute(Attribute::list));
-	 for (int i = 0; i < n->size(); ++i) {
+	 for (unsigned int i = 0; i < n->size(); ++i) {
 	    l->push_back(AttributePtr(new Attribute(n->get_operand(i))));
 	 }
 	 return l;
@@ -467,7 +353,7 @@ AttributePtr Attribute::convert_to_list() throw(Exception) {
    } else if (type == Attribute::match_result) {
       // generate a list with all the matched subtokens
       AttributePtr l = AttributePtr(new Attribute(Attribute::list));
-      for (int i = 0; i < size(); ++i) {
+      for (unsigned int i = 0; i < size(); ++i) {
 	 l->push_back(get_value(i));
       }
       return l;
@@ -495,7 +381,7 @@ AttributePtr Attribute::convert_to_dict() throw(Exception) {
    AttributePtr l = convert_to_list();
    AttributePtr set = AttributePtr(new Attribute(Attribute::dictionary));
    // and use all the list members as keys
-   for (int index = 0; index < l->size(); ++index) {
+   for (unsigned int index = 0; index < l->size(); ++index) {
       AttributePtr member = l->get_value(index);
       if (member) {
 	 // convert member to string to use it as a key
@@ -569,7 +455,7 @@ AttributePtr Attribute::clone() const {
 	 break;
 
       default:
-	 assert(false);
+	 assert(false); std::abort();
    }
    return cat;
 }
@@ -619,7 +505,7 @@ void Attribute::copy(AttributePtr other) throw(Exception) {
 	 break;
 
       default:
-	 assert(false);
+	 assert(false); std::abort();
    }
 }
 
@@ -645,7 +531,7 @@ std::ostream& operator<<(std::ostream& out, AttributePtr at) {
 
 	 case Attribute::list:
 	    out << "[";
-	    for (int i = 0; i < at->size(); ++i) {
+	    for (unsigned int i = 0; i < at->size(); ++i) {
 	       if (i > 0) out << ", ";
 	       out << at->values[i];
 	    }
@@ -654,7 +540,7 @@ std::ostream& operator<<(std::ostream& out, AttributePtr at) {
 	 
 	 case Attribute::match_result:
 	    out << "[";
-	    for (int i = 0; i < at->size(); ++i) {
+	    for (unsigned int i = 0; i < at->size(); ++i) {
 	       if (i > 0) out << ", ";
 	       out << '"' << at->subtokens[i] << '"';
 	    }

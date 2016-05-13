@@ -29,8 +29,8 @@ namespace Astl {
 const unsigned int TAB_STOP = 8;
 
 bool is_letter(char ch) {
-   return (ch >= 'a') && (ch <= 'z') ||
-      (ch >= 'A') && (ch <= 'Z') || ch == '_';
+   return ((ch >= 'a') && (ch <= 'z')) ||
+      ((ch >= 'A') && (ch <= 'Z')) || ch == '_';
 }
 
 bool is_digit(char ch) {
@@ -47,10 +47,10 @@ bool is_whitespace(char ch) {
 
 // constructor ===============================================================
 
-Scanner::Scanner(std::istream& in_param, const std::string& input_name_param) :
-      in(in_param), input_name(input_name_param),
-      eof(false), ch(0), tokenstr(0) {
-   pos.initialize(&input_name);
+Scanner::Scanner(std::istream& in, const std::string& input_name) :
+      in(in), input_name(input_name), ch(0),
+      eof(false), tokenstr(nullptr) {
+   pos.initialize(&this->input_name);
    nextch();
    if (!eof && ch == '#') {
       // skip #! line
@@ -342,7 +342,8 @@ void Scanner::scan_text() {
 	       }
 	       if (last_current_whitespace || current_text.size() == 0) {
 		  if (current_indent > indent) {
-		     for (int i = 0; i < current_indent - indent; ++i) {
+		     for (unsigned int i = 0;
+			i < current_indent - indent; ++i) {
 			current_text += ' ';
 		     }
 		  }
@@ -369,7 +370,7 @@ void Scanner::scan_text() {
 		  while (!get_next_token(yylval, yylloc, token))
 		     ; // already added to the token buffer
 		  if (!token ||
-			token == parser::token::RBRACE && nestlevel == 0) {
+			(token == parser::token::RBRACE && nestlevel == 0)) {
 		     break;
 		  }
 		  if (token == parser::token::LBRACE) {
@@ -424,7 +425,7 @@ void Scanner::scan_text() {
 	    }
 	    if (last_current_whitespace) {
 	       if (current_indent > indent) {
-		  for (int i = 0; i < current_indent - indent; ++i) {
+		  for (unsigned int i = 0; i < current_indent - indent; ++i) {
 		     current_text += ' ';
 		  }
 	       }

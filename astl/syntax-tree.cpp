@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009 Andreas Franz Borchert
+   Copyright (C) 2009, 2016 Andreas F. Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -21,228 +21,103 @@
 
 namespace Astl {
 
-#ifdef USE_UNRESTRICTED_UNIONS
-#define op opnode._op
-#define subnode opnode._subnode
-#endif
-
 // constructors ==============================================================
 
 Node::Node() :
       at(new Attribute()), leaf(true), context(0) {
-#ifdef USE_UNRESTRICTED_UNIONS
-      new(&token) Token;
-#endif
 }
 
-#ifdef USE_FLAT_UNIONS
 Node::Node(const Node& other) :
-      at(new Attribute()), context(0),
-      loc(other.loc), leaf(other.leaf), token(other.token),
-      op(other.op), subnode(other.subnode) {
+      loc(other.loc),
+      at(new Attribute()),
+      leaf(other.leaf),
+      context(nullptr),
+      token(other.token),
+      op(other.op), subnodes(other.subnodes) {
 }
 
-Node::Node(const Location& loc_param, const Token& token_param) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(true), token(token_param) {
+Node::Node(const Location& loc, const Token& token) :
+      loc(loc), at(new Attribute()), leaf(true),
+      context(nullptr), token(token) {
 }
 
-Node::Node(const Location& loc_param, const Operator& op_param) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false), op(op_param) {
+Node::Node(const Location& loc, const Operator& op) :
+      loc(loc), at(new Attribute()), leaf(false),
+      context(nullptr), op(op) {
 }
 
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false), op(op_param) {
-   assert(subnode1);
-   subnode.push_back(subnode1);
+Node::Node(const Location& loc, const Operator& op, NodePtr subnode) :
+      loc(loc), at(new Attribute()), leaf(false),
+      context(nullptr), op(op) {
+   assert(subnode);
+   subnodes.push_back(subnode);
 }
 
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1, NodePtr subnode2) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false), op(op_param) {
+Node::Node(const Location& loc, const Operator& op,
+	 NodePtr subnode1, NodePtr subnode2) :
+      loc(loc), at(new Attribute()), leaf(false),
+      context(nullptr), op(op) {
    assert(subnode1); assert(subnode2);
-   subnode.push_back(subnode1);
-   subnode.push_back(subnode2);
+   subnodes.push_back(subnode1);
+   subnodes.push_back(subnode2);
 }
 
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1, NodePtr subnode2, NodePtr subnode3) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false), op(op_param) {
+Node::Node(const Location& loc, const Operator& op,
+	 NodePtr subnode1, NodePtr subnode2, NodePtr subnode3) :
+      loc(loc), at(new Attribute()), leaf(false),
+      context(nullptr), op(op) {
    assert(subnode1); assert(subnode2); assert(subnode3);
-   subnode.push_back(subnode1);
-   subnode.push_back(subnode2);
-   subnode.push_back(subnode3);
+   subnodes.push_back(subnode1);
+   subnodes.push_back(subnode2);
+   subnodes.push_back(subnode3);
 }
 
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
-      NodePtr subnode4) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false), op(op_param) {
+Node::Node(const Location& loc, const Operator& op,
+	 NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
+	 NodePtr subnode4) :
+      loc(loc), at(new Attribute()), leaf(false),
+      context(nullptr), op(op) {
    assert(subnode1); assert(subnode2); assert(subnode3); assert(subnode4);
-   subnode.push_back(subnode1);
-   subnode.push_back(subnode2);
-   subnode.push_back(subnode3);
-   subnode.push_back(subnode4);
+   subnodes.push_back(subnode1);
+   subnodes.push_back(subnode2);
+   subnodes.push_back(subnode3);
+   subnodes.push_back(subnode4);
 }
 
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
-      NodePtr subnode4, NodePtr subnode5) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false), op(op_param) {
+Node::Node(const Location& loc, const Operator& op,
+	 NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
+	 NodePtr subnode4, NodePtr subnode5) :
+      loc(loc), at(new Attribute()), leaf(false),
+      context(nullptr), op(op) {
    assert(subnode1); assert(subnode2); assert(subnode3);
    assert(subnode4); assert(subnode5);
-   subnode.push_back(subnode1);
-   subnode.push_back(subnode2);
-   subnode.push_back(subnode3);
-   subnode.push_back(subnode4);
-   subnode.push_back(subnode5);
+   subnodes.push_back(subnode1);
+   subnodes.push_back(subnode2);
+   subnodes.push_back(subnode3);
+   subnodes.push_back(subnode4);
+   subnodes.push_back(subnode5);
 }
 
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
-      NodePtr subnode4, NodePtr subnode5, NodePtr subnode6) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false), op(op_param) {
+Node::Node(const Location& loc, const Operator& op,
+	 NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
+	 NodePtr subnode4, NodePtr subnode5, NodePtr subnode6) :
+      loc(loc), at(new Attribute()), leaf(false),
+      context(nullptr), op(op) {
    assert(subnode1); assert(subnode2); assert(subnode3);
    assert(subnode4); assert(subnode5); assert(subnode6);
-   subnode.push_back(subnode1);
-   subnode.push_back(subnode2);
-   subnode.push_back(subnode3);
-   subnode.push_back(subnode4);
-   subnode.push_back(subnode5);
-   subnode.push_back(subnode6);
+   subnodes.push_back(subnode1);
+   subnodes.push_back(subnode2);
+   subnodes.push_back(subnode3);
+   subnodes.push_back(subnode4);
+   subnodes.push_back(subnode5);
+   subnodes.push_back(subnode6);
 }
-#endif
-
-#ifdef USE_UNRESTRICTED_UNIONS
-Node::Node(const Node& other) :
-      at(new Attribute()), context(0),
-      loc(other.loc), leaf(other.leaf) {
-   if (leaf) {
-      new(&token) Token(other.token);
-   } else {
-      new(&op) Operator(other.op);
-      new(&subnode) NodePtrList(other.subnode);
-   }
-}
-
-Node::Node(const Location& loc_param, const Token& token_param) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(true) {
-   new(&token) Token(token_param);
-}
-
-Node::Node(const Location& loc_param, const Operator& op_param) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false) {
-   new(&op) Operator(op_param);
-   new(&subnode) NodePtrList();
-}
-
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false) {
-   new(&op) Operator(op_param);
-   new(&subnode) NodePtrList();
-   assert(subnode1);
-   subnode.push_back(subnode1);
-}
-
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1, NodePtr subnode2) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false) {
-   new(&op) Operator(op_param);
-   new(&subnode) NodePtrList();
-   assert(subnode1); assert(subnode2);
-   subnode.push_back(subnode1);
-   subnode.push_back(subnode2);
-}
-
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1, NodePtr subnode2, NodePtr subnode3) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false) {
-   new(&op) Operator(op_param);
-   new(&subnode) NodePtrList();
-   assert(subnode1); assert(subnode2); assert(subnode3);
-   subnode.push_back(subnode1);
-   subnode.push_back(subnode2);
-   subnode.push_back(subnode3);
-}
-
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
-      NodePtr subnode4) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false) {
-   new(&op) Operator(op_param);
-   new(&subnode) NodePtrList();
-   assert(subnode1); assert(subnode2); assert(subnode3); assert(subnode4);
-   subnode.push_back(subnode1);
-   subnode.push_back(subnode2);
-   subnode.push_back(subnode3);
-   subnode.push_back(subnode4);
-}
-
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
-      NodePtr subnode4, NodePtr subnode5) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false) {
-   new(&op) Operator(op_param);
-   new(&subnode) NodePtrList();
-   assert(subnode1); assert(subnode2); assert(subnode3);
-   assert(subnode4); assert(subnode5);
-   subnode.push_back(subnode1);
-   subnode.push_back(subnode2);
-   subnode.push_back(subnode3);
-   subnode.push_back(subnode4);
-   subnode.push_back(subnode5);
-}
-
-Node::Node(const Location& loc_param, const Operator& op_param,
-      NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
-      NodePtr subnode4, NodePtr subnode5, NodePtr subnode6) :
-      at(new Attribute()), context(0),
-      loc(loc_param), leaf(false) {
-   new(&op) Operator(op_param);
-   new(&subnode) NodePtrList();
-   assert(subnode1); assert(subnode2); assert(subnode3);
-   assert(subnode4); assert(subnode5); assert(subnode6);
-   subnode.push_back(subnode1);
-   subnode.push_back(subnode2);
-   subnode.push_back(subnode3);
-   subnode.push_back(subnode4);
-   subnode.push_back(subnode5);
-   subnode.push_back(subnode6);
-}
-#endif
 
 // destructor ================================================================
 Node::~Node() {
    if (context) {
       delete context;
-      context = 0;
    }
-#ifdef USE_UNRESTRICTED_UNIONS
-   /*
-   if (leaf) {
-      token.~Token();
-   } else {
-      op.~Operator();
-      subnode.~NodePtrList();
-   }
-   */
-#endif
 }
 
 // accessors =================================================================
@@ -276,43 +151,35 @@ Operator Node::get_op() const {
 
 unsigned int Node::size() const {
    assert(!leaf);
-   return subnode.size();
+   return subnodes.size();
 }
 
 const NodePtr& Node::get_operand(unsigned int index) const {
-   assert(!leaf && index < subnode.size());
-   NodePtrList::const_iterator it = subnode.begin();
-   while (index-- > 0) {
-      ++it;
-   }
-   return *it;
+   assert(!leaf && index < subnodes.size());
+   return subnodes[index];
 }
 
 // mutators ==================================================================
 
 Node& Node::operator=(const Node& other) {
    leaf = other.leaf; token = other.token;
-   op = other.op; subnode = other.subnode;
+   op = other.op; subnodes = other.subnodes;
    if (context) {
       delete context;
-      context = 0;
+      context = nullptr;
    }
    return *this;
 }
 
-Node& Node::operator+=(NodePtr subnode1) {
-   assert(!leaf && subnode1 != 0);
-   subnode.push_back(subnode1);
+Node& Node::operator+=(NodePtr subnode) {
+   assert(!leaf && subnode != nullptr);
+   subnodes.push_back(subnode);
    return *this;
 }
 
 NodePtr& Node::get_operand(unsigned int index) {
-   assert(!leaf && index < subnode.size());
-   NodePtrList::iterator it = subnode.begin();
-   while (index-- > 0) {
-      ++it;
-   }
-   return *it;
+   assert(!leaf && index < subnodes.size());
+   return subnodes[index];
 }
 
 // context ===================================================================
@@ -320,7 +187,7 @@ NodePtr& Node::get_operand(unsigned int index) {
 void Node::set_context(const Context& context_param) {
    if (context) {
       delete context;
-      context = 0;
+      context = nullptr;
    }
    context = new Context(context_param);
 }
@@ -337,11 +204,9 @@ bool Node::deep_tree_equality(NodePtr other) const {
    if (leaf != other->leaf) return false;
    if (leaf) return token.get_text() == other->token.get_text();
    if (op != other->op) return false;
-   if (subnode.size() != other->subnode.size()) return false;
-   std::list<NodePtr>::const_iterator
-      it1(subnode.begin()), it2(other->subnode.begin());
-   while (it1 != subnode.end()) {
-      if (!(*it1++)->deep_tree_equality(*it2++)) return false;
+   if (subnodes.size() != other->subnodes.size()) return false;
+   for (unsigned int i = 0; i < subnodes.size(); ++i) {
+      if (!subnodes[i]->deep_tree_equality(other->subnodes[i])) return false;
    }
    return true;
 }
@@ -365,15 +230,15 @@ static void visit_node(std::ostream& out, unsigned int level,
       }
       if (node->size() > 0) {
 	 out << std::endl;
-	 for (int i = 0; i < node->size(); ++i) {
-	    for (int j = 0; j < level+1; ++j) out << "   ";
+	 for (unsigned int i = 0; i < node->size(); ++i) {
+	    for (unsigned int j = 0; j < level+1; ++j) out << "   ";
 	    visit_node(out, level+1, node->get_operand(i));
 	    if (i + 1 < node->size()) {
 	       out << ", ";
 	    }
 	    out << std::endl;
 	 }
-	 for (int i = 0; i < level; ++i) out << "   ";
+	 for (unsigned int i = 0; i < level; ++i) out << "   ";
       }
       out << ")";
    }

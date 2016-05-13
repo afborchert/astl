@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 	 exit(1);
       }
       Scanner scanner(source, source_name);
-      SubnodePtr root;
+      NodePtr root;
       parser p(scanner, root);
       if (p.parse() != 0) exit(1);
 

@@ -41,7 +41,7 @@ void RuleTable::traverse(NodePtr node,
       }
       RulePtr rule(new Rule(tree_expr, rhs, rulename, rules));
 
-      unsigned int arity = rule->get_arity();
+      Arity arity = rule->get_arity();
       Rule::Type rtype = rule->get_type();
 
       // insert rule for all operators in its operator set
@@ -61,7 +61,7 @@ void RuleTable::traverse(NodePtr node,
       }
    } else {
       /* recursive traverse */
-      for (int i = 0; i < node->size(); ++i) {
+      for (unsigned int i = 0; i < node->size(); ++i) {
 	 traverse(node->get_operand(i), ruleop, rules);
       }
    }
@@ -72,16 +72,16 @@ void RuleTable::scan(NodePtr root, const Operator& ruleop, const Rules& rules) {
 }
 
 RuleTable::iterator RuleTable::find_prefix(const Operator& op,
-      unsigned int arity, iterator& end) const {
+      Arity arity, iterator& end) const {
    return find(op, arity, Rule::prefix, end);
 }
 
 RuleTable::iterator RuleTable::find_postfix(const Operator& op,
-      unsigned int arity, iterator& end) const {
+      Arity arity, iterator& end) const {
    return find(op, arity, Rule::postfix, end);
 }
 
-RuleTable::iterator RuleTable::find(const Operator& op, unsigned int arity,
+RuleTable::iterator RuleTable::find(const Operator& op, Arity arity,
 	    Rule::Type rtype, iterator& end) const {
    std::string opname(op.get_name());
    map_type::const_iterator it = table[rtype].find(key_pair(opname, arity));
@@ -94,7 +94,7 @@ RuleTable::iterator RuleTable::find(const Operator& op, unsigned int arity,
 }
 
 RuleTable::print_iterator RuleTable::reversed_find(const Operator& op,
-      unsigned int arity, print_iterator& end) const {
+      Arity arity, print_iterator& end) const {
    std::string opname(op.get_name());
    map_type::const_iterator it =
       table[Rule::prefix].find(key_pair(opname, arity));

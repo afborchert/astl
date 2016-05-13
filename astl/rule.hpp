@@ -26,6 +26,12 @@
 
 namespace Astl {
 
+   using Arity = std::pair<bool, unsigned int>;
+      /* first: true if the arity is variable,
+         second: the arity, if it is fixed, i.e. first is false */
+   constexpr auto variable_arity = Arity(false, 0);
+   constexpr auto no_parameters = Arity(true, 0);
+
    class BasicRule {
       public:
 	 // attribution rules can be prefix or postfix rules,
@@ -38,7 +44,7 @@ namespace Astl {
 
 	 // accessors
 	 OperatorSetPtr get_opset() const;
-	 const unsigned int get_arity() const;
+	 Arity get_arity() const;
 	 const NodePtr get_tree_expression() const;
 	 const Type get_type() const;
 
@@ -47,7 +53,7 @@ namespace Astl {
 	 NodePtr tree_expr;
 	 // cache opset, arity, and type from the tree expression
 	 OperatorSetPtr opset;
-	 int arity;
+	 Arity arity;
 	 Type type;
    };
 

@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <astl/bindings.hpp>
@@ -67,11 +68,11 @@ static int get_indent(const std::string text) {
 static void expand_text(std::ostream& out, const Token& t,
       unsigned int indent) {
    std::string text = t.get_text();
-   for (int i = 0; i < text.size(); ++i) {
+   for (unsigned int i = 0; i < text.size(); ++i) {
       char ch = text[i];
       out << ch;
       if (ch == '\n') {
-	 for (int wi = 0; wi < indent; ++wi) {
+	 for (unsigned int wi = 0; wi < indent; ++wi) {
 	    out << ' ';
 	 }
       }
@@ -85,7 +86,7 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
    if (root->is_leaf()) {
       return !!(out << root->get_token().get_literal());
    } else {
-      unsigned int arity = root->size();
+      Arity arity(false, root->size());
       Operator op = root->get_op();
       BindingsPtr local_bindings;
       RuleTable::print_iterator it, end;
@@ -98,7 +99,8 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
       }
       if (it == end) {
 	 // try wildcard rules
-	 for (it = rules.reversed_find(op, -1, end); it != end; ++it) {
+	 for (it = rules.reversed_find(op, variable_arity, end);
+	       it != end; ++it) {
 	    ++found;
 	    local_bindings = BindingsPtr(new Bindings(bindings));
 	    if (matches(root, it->second->get_tree_expression(),
@@ -112,14 +114,14 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
 	       os << "no ";
 	    }
 	    os << "rule found for '" << op.get_name() << "' with " <<
-	       arity << " parameters";
+	       root->size() << " parameters";
 	    throw Exception(root->get_location(), os.str());
 	 }
       }
       context.descend(root);
       const NodePtr& node = it->second->get_rhs();
       unsigned int add_indent = 0;
-      for (int pi = 0; pi < node->size(); ++pi) {
+      for (unsigned int pi = 0; pi < node->size(); ++pi) {
 	 const NodePtr& subnode = node->get_operand(pi);
 	 if (subnode->is_leaf()) {
 	    Token t = subnode->get_token();
@@ -141,7 +143,7 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
 		  }
 		  break;
 	       default:
-		  assert(false);
+		  assert(false); std::abort();
 	    }
 	 } else if (subnode->get_op() == Op::print_expression_listvar) {
 	    std::string varname =
@@ -162,7 +164,7 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
 	       recursive_print(out, list->get_value(0)->get_node(),
 		  rules, bindings, indent + add_indent, context);
 	    }
-	    for (int i = 1; i < list->size(); ++i) {
+	    for (unsigned int i = 1; i < list->size(); ++i) {
 	       if (subnode->size() == 2) {
 		  Token t = subnode->get_operand(1)->get_token();
 		  expand_text(out, t, indent);

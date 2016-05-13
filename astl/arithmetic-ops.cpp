@@ -16,10 +16,11 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <cstdlib>
+#include <gmp.h>
 #include <astl/arithmetic-ops.hpp>
 #include <astl/operators.hpp>
 #include <astl/integer.hpp>
-#include <gmp.h>
 
 namespace Astl {
 
@@ -27,9 +28,9 @@ AttributePtr arithmetic_binary_op(const Operator& op,
       AttributePtr leftAt, AttributePtr rightAt,
       const Location& loc) throw(Exception) {
    IntegerPtr left = leftAt? leftAt->convert_to_integer(loc): 
-      IntegerPtr(new Integer((long)0));
+      IntegerPtr(new Integer((long) 0));
    IntegerPtr right = rightAt? rightAt->convert_to_integer(loc): 
-      IntegerPtr(new Integer((long)0));
+      IntegerPtr(new Integer((long) 0));
    switch (op.get_opcode()) {
       case ASTL_OPERATOR_EQEQ_TK:
       case ASTL_OPERATOR_NE_TK:
@@ -49,7 +50,7 @@ AttributePtr arithmetic_binary_op(const Operator& op,
 	       case ASTL_OPERATOR_GE_TK: cmp_result = cmp >= 0; break;
 	       case ASTL_OPERATOR_GT_TK: cmp_result = cmp > 0; break;
 	       default:
-		  assert(0);
+		  assert(false); std::abort();
 	    }
 	    return AttributePtr(new Attribute(cmp_result));
 	 }
@@ -96,13 +97,13 @@ AttributePtr arithmetic_binary_op(const Operator& op,
 		  }
 		  break;
 	       default:
-		  assert(false);
+		  assert(false); std::abort();
 	    }
 	    return AttributePtr(new Attribute(IntegerPtr(
 	       new Integer(result_value))));
 	 }
       default:
-	 assert(false);
+	 assert(false); std::abort();
    }
 }
 

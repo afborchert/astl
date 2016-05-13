@@ -54,7 +54,7 @@ AttributePtr TransformationRuleSetFunction::eval(AttributePtr args)
    local_bindings->define("root", AttributePtr(new Attribute(root)));
    CandidateSet candidates(root, rtab, local_bindings);
    AttributePtr list = AttributePtr(new Attribute(Attribute::list));
-   for (int i = 0; i < candidates.size(); ++i) {
+   for (unsigned int i = 0; i < candidates.size(); ++i) {
       NodePtr newroot = candidates[i]->transform();
       list->push_back(AttributePtr(new Attribute(newroot)));
    }
@@ -93,7 +93,7 @@ AttributePtr InplaceTransformationRuleSetFunction::eval(AttributePtr args)
    local_bindings->define("root", AttributePtr(new Attribute(root)));
    CandidateSet candidates(root, rtab, local_bindings);
    candidates.suppress_transformation_conflicts();
-   for (int i = 0; i < candidates.size(); ++i) {
+   for (unsigned int i = 0; i < candidates.size(); ++i) {
       candidates[i]->transform_inplace();
    }
    return AttributePtr(new Attribute(candidates.size()));

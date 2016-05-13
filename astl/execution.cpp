@@ -26,26 +26,6 @@
 
 namespace Astl {
 
-static AttributePtr get_list(NodePtr expr, BindingsPtr bindings)
-      throw(Exception) {
-   Expression e(expr, bindings);
-   assert(e.is_lvalue());
-   DesignatorPtr desat = e.get_designator();
-   AttributePtr list;
-   if (desat->exists()) {
-      // extension of an already existing list
-      list = desat->get_value(expr->get_location());
-      if (list->get_type() != Attribute::list) {
-	 throw Exception(expr->get_location(), "list expected");
-      }
-   } else {
-      // create an empty list
-      list = AttributePtr(new Attribute(Attribute::list));
-      desat->assign(list, expr->get_location());
-   }
-   return list;
-}
-
 #define EXEC(block) \
    if (recursive_execute(block, local_bindings, rval)) { \
       return true; \
@@ -57,7 +37,7 @@ bool recursive_execute(NodePtr block, BindingsPtr bindings,
       throw(Exception) {
    BindingsPtr local_bindings = BindingsPtr(new Bindings(bindings));
    assert(block->get_op() == Op::block);
-   for (int i = 0; i < block->size(); ++i) {
+   for (unsigned int i = 0; i < block->size(); ++i) {
       NodePtr statement = block->get_operand(i);
       switch (statement->get_op().get_opcode()) {
 	 case ASTL_OPERATOR_IF_STATEMENT:
@@ -116,7 +96,7 @@ bool recursive_execute(NodePtr block, BindingsPtr bindings,
 	       NodePtr inner_block = statement->get_operand(2);
 	       Expression list_expr(statement->get_operand(1), local_bindings);
 	       AttributePtr list = list_expr.convert_to_list();
-	       for (int i = 0; i < list->size(); ++i) {
+	       for (unsigned int i = 0; i < list->size(); ++i) {
 		  AttributePtr indexVal = list->get_value(i);
 		  BindingsPtr for_bindings =
 		     BindingsPtr(new Bindings(local_bindings));
@@ -224,7 +204,7 @@ void execute(NodePtr root, const RuleTable& rules,
 }
 
 void execute(const CandidateSet& candidates) throw(Exception) {
-   for (int i = 0; i < candidates.size(); ++i) {
+   for (unsigned int i = 0; i < candidates.size(); ++i) {
       CandidatePtr candidate = candidates[i];
       RulePtr rule(candidate->get_rule());
       BindingsPtr bindings = candidate->get_bindings();

@@ -182,8 +182,9 @@ namespace Astl {
 	  * (see the introduction).
 	  */
 	 bool operator==(const Token& other) const {
-	    return token && other.token && token == other.token ||
-	       (token == 0 || other.token == 0) && tokenval == other.tokenval;
+	    return (token && other.token && token == other.token) ||
+	       ((token == 0 || other.token == 0) &&
+		  (tokenval == other.tokenval));
 	 }
 
 	 /**

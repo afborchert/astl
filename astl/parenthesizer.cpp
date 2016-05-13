@@ -27,7 +27,7 @@ void parenthesize(NodePtr root, const OperatorTable& optab,
    if (optab.included(op) && root->size() > 0) {
       OperatorTable::Associativity assoc = optab.get_associativity(op);
       OperatorTable::Rank rank = optab.get_rank(op);
-      for (int i = 0; i < root->size(); ++i) {
+      for (unsigned int i = 0; i < root->size(); ++i) {
 	 NodePtr& subnode(root->get_operand(i));
 	 if (!subnode->is_leaf() && subnode->size() > 0) {
 	    NodePtr dnode(subnode);
@@ -38,10 +38,10 @@ void parenthesize(NodePtr root, const OperatorTable& optab,
 	       OperatorTable::Rank inner_rank = optab.get_rank(inner_op);
 	       assert(rank != inner_rank || assoc == inner_assoc);
 	       if (rank > inner_rank ||
-		     rank == inner_rank &&
+		     (rank == inner_rank &&
 			(assoc == OperatorTable::nonassoc ||
-			assoc == OperatorTable::left && i > 0 ||
-			assoc == OperatorTable::right && i == 0)) {
+			(assoc == OperatorTable::left && i > 0) ||
+			(assoc == OperatorTable::right && i == 0)))) {
 		  /* parentheses are required */
 		  NodePtr node(new Node(subnode->get_location(),
 		     parentheses, subnode));
@@ -53,7 +53,7 @@ void parenthesize(NodePtr root, const OperatorTable& optab,
 	 }
       }
    } else {
-      for (int i = 0; i < root->size(); ++i) {
+      for (unsigned int i = 0; i < root->size(); ++i) {
 	 parenthesize(root->get_operand(i), optab, parentheses);
       }
    }

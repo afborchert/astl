@@ -17,6 +17,7 @@
 */
 
 #include <algorithm>
+#include <cstdlib>
 #include <astl/set-ops.hpp>
 #include <astl/operators.hpp>
 #include <astl/integer.hpp>
@@ -60,7 +61,7 @@ AttributePtr set_binary_op(const Operator& op,
 	 break;
 
       default:
-	 assert(false);
+	 assert(false); std::abort();
    }
    return result;
 }

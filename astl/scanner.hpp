@@ -30,7 +30,7 @@ namespace Astl {
 
    class Scanner {
       public:
-	 Scanner(std::istream& in_param, const std::string& input_name_param);
+	 Scanner(std::istream& in, const std::string& input_name);
 
 	 // mutators
 	 int get_token(semantic_type& yylval, location& yylloc);

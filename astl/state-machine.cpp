@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <cstdlib>
 #include <astl/rules.hpp>
 #include <astl/attribute.hpp>
 #include <astl/state-machine.hpp>
@@ -29,15 +30,16 @@ namespace Astl {
 
 // ========== StateMachine =================================================
 
-StateMachine::StateMachine(BindingsPtr bindings_param,
-      const std::string& name_param, unsigned int id_param) :
-   abstract(false),
-   id(id_param), name(name_param), bindings(bindings_param), global(true) {
+StateMachine::StateMachine(BindingsPtr bindings,
+      const std::string& name, unsigned int id) :
+   abstract(false), global(true),
+   name(name), bindings(bindings), id(id) {
 }
 
-StateMachine::StateMachine(BindingsPtr bindings_param,
-      const std::string& name_param) :
-   abstract(true), name(name_param), bindings(bindings_param), global(true) {
+StateMachine::StateMachine(BindingsPtr bindings,
+      const std::string& name) :
+   abstract(true), global(true),
+   name(name), bindings(bindings) {
 }
 
 void StateMachine::import_asm(StateMachinePtr sm) {
@@ -123,7 +125,7 @@ void StateMachine::add_var(VarKind varkind, const std::string& varname,
 	 shared_var_list.push_back(var);
 	 break;
       default:
-	 assert(false);
+	 assert(false); std::abort();
    }
 }
 
@@ -194,7 +196,7 @@ unsigned int StateMachine::get_nofxstates() const {
 }
 
 const std::string& StateMachine::get_state_by_number(int index) const {
-   assert(!abstract && index >= 0 && index < stateByName.size());
+   assert(!abstract && index >= 0 && index < (int)stateByName.size());
    std::map<int, std::string>::const_iterator it = stateByNumber.find(index);
    assert(it != stateByNumber.end());
    return it->second;
@@ -237,7 +239,7 @@ void StateMachine::run_close_handlers(int state,
 	 AttributePtr(new Attribute(get_state_by_number(state))));
    for (std::list<Handler>::const_iterator it = close_handlers.begin();
 	 it != close_handlers.end(); ++it) {
-      if (state >= it->states.size() || it->states.test(state)) {
+      if (state >= (int)it->states.size() || it->states.test(state)) {
 	 execute(it->block, local_bindings);
       }
    }
@@ -324,29 +326,29 @@ bool StateMachineRule::non_creating() const {
 
 // ========== StateMachineRuleAlternative ==================================
 
-StateMachineRuleAlternative::StateMachineRuleAlternative(NodePtr block_param) :
-      block(block_param), action(null), newstate(-1) {
+StateMachineRuleAlternative::StateMachineRuleAlternative(NodePtr block) :
+      newstate(-1), action(null), block(block) {
    assert(block);
 }
 
-StateMachineRuleAlternative::StateMachineRuleAlternative(Action action_param) :
-      action(action_param), newstate(-1) {
+StateMachineRuleAlternative::StateMachineRuleAlternative(Action action) :
+      newstate(-1), action(action) {
 }
 
-StateMachineRuleAlternative::StateMachineRuleAlternative(int newstate_param) :
-      action(null), newstate(newstate_param) {
-   assert(newstate_param >= 0);
+StateMachineRuleAlternative::StateMachineRuleAlternative(int newstate) :
+      newstate(newstate), action(null) {
+   assert(newstate >= 0);
 }
 
-StateMachineRuleAlternative::StateMachineRuleAlternative(Action action_param,
-	 NodePtr block_param) :
-      block(block_param), action(action_param), newstate(-1) {
+StateMachineRuleAlternative::StateMachineRuleAlternative(Action action,
+	 NodePtr block) :
+      newstate(-1), action(action), block(block) {
    assert(block);
 }
 
-StateMachineRuleAlternative::StateMachineRuleAlternative(int newstate_param,
-	 NodePtr block_param) :
-      block(block_param), action(null), newstate(newstate_param) {
+StateMachineRuleAlternative::StateMachineRuleAlternative(int newstate,
+	 NodePtr block) :
+      newstate(newstate), action(null), block(block) {
    assert(block && newstate >= 0);
 }
 
@@ -432,7 +434,7 @@ static StateMachineRuleAlternativePtr create_alternative(StateMachinePtr sm,
    StateMachineRuleAlternative::Action action =
       StateMachineRuleAlternative::null;
    int newstate = -1;
-   int nextop = 0;
+   unsigned int nextop = 0;
    NodePtr return_node;
    if (smblock->get_operand(0)->get_op() == Op::sm_action) {
       NodePtr action_node = smblock->get_operand(0)->get_operand(0);
@@ -455,7 +457,7 @@ static StateMachineRuleAlternativePtr create_alternative(StateMachinePtr sm,
 	 action = StateMachineRuleAlternative::cache;
 	 return_node = action_node->get_operand(0);
       } else {
-	 assert(false);
+	 assert(false); std::abort();
       }
       ++nextop;
    }
@@ -593,7 +595,7 @@ static void add_alternatives(StateMachinePtr sm, StateMachineRulePtr rule,
    assert(root->get_op() == Op::sm_alternative);
    NodePtr smblock = root->get_operand(root->size() - 1);
    StateMachineRuleAlternativePtr alternative = create_alternative(sm, smblock);
-   int nextop = 0;
+   unsigned int nextop = 0;
    if (root->get_operand(nextop)->get_op() == Op::cfg_edge_condition) {
       NodePtr edge_cond = root->get_operand(nextop++);
       LabelSet labels(nof_labels(bindings));

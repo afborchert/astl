@@ -32,7 +32,7 @@ void gen_clone_tree_and_ptr(const NodePtr& root, const NodePtr& ptr,
       const Location& loc = root->get_location();
       Operator op = root->get_op();
       cloned_root = NodePtr(new Node(loc, op));
-      for (int i = 0; i < root->size(); ++i) {
+      for (unsigned int i = 0; i < root->size(); ++i) {
 	 /* insert dummy node */
 	 *cloned_root += NodePtr(new Node());
 	 /* fetch reference of dummy node ... */

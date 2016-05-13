@@ -17,21 +17,22 @@
 */
 
 #include <cassert>
+#include <cstdlib>
 #include <sstream>
 #include <astl/designator.hpp>
 #include <astl/flow-graph.hpp>
 
 namespace Astl {
 
-Designator::Designator(AttributePtr at_param) : at(at_param),
-      lvalue(false), type(selectingDesignator) {
-   assert(at_param);
+Designator::Designator(AttributePtr at) :
+      type(selectingDesignator), at(at), lvalue(false) {
+   assert(at);
 }
 
-Designator::Designator(BindingsPtr bindings_param,
-      const std::string& varname_param) :
-      lvalue(true), bindings(bindings_param), varname(varname_param),
-      type(simpleDesignator) {
+Designator::Designator(BindingsPtr bindings,
+	 const std::string& varname) :
+      type(simpleDesignator), bindings(bindings),
+      varname(varname), lvalue(true) {
    assert(bindings->defined(varname));
 }
 
@@ -117,8 +118,11 @@ bool Designator::exists() const {
 	       return index < at->size();
 
 	    default:
-	       assert(0);
+	       assert(false); std::abort();
 	 }
+
+      default:
+	 assert(false); std::abort();
    }
 }
 
@@ -192,8 +196,11 @@ AttributePtr Designator::get_value(const Location& loc) const
 	       return at->get_value(index);
 
 	    default:
-	       assert(0);
+	       assert(false); std::abort();
 	 }
+
+      default:
+	 assert(false); std::abort();
    }
 }
 

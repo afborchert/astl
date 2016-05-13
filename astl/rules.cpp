@@ -61,7 +61,7 @@ void Rules::scan(NodePtr root) throw(Exception) {
 
    // process clauses
    NodePtr clauses = root->get_operand(0);
-   for (int i = 0; i < clauses->size(); ++i) {
+   for (unsigned int i = 0; i < clauses->size(); ++i) {
       NodePtr clause = clauses->get_operand(i);
       assert(!clause->is_leaf());
       Operator op = clause->get_op();
@@ -91,7 +91,7 @@ void Rules::scan(NodePtr root) throw(Exception) {
    NodePtr rule_list = root->get_operand(1);
    assert(!rule_list->is_leaf());
    assert(rule_list->get_op() == Op::rules);
-   for (int i = 0; i < rule_list->size(); ++i) {
+   for (unsigned int i = 0; i < rule_list->size(); ++i) {
       NodePtr rules = rule_list->get_operand(i);
       assert(!rules->is_leaf());
       Operator op = rules->get_op();

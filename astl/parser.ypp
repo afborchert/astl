@@ -44,11 +44,11 @@ using namespace Astl;
 #define TERTIARY(top, op1,op2,op3) \
    (NodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3))))
 #define QUATERNARY(top, op1,op2,op3,op4) \
-   (SubnodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4))))
+   (NodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4))))
 #define QUINARY(top, op1,op2,op3,op4,op5) \
-   (SubnodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4), (op5))))
+   (NodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4), (op5))))
 #define SENARY(top, op1,op2,op3,op4,op5,op6) \
-   (SubnodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4), (op5), (op6))))
+   (NodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4), (op5), (op6))))
 
 #define LEAF(tk) \
    (NodePtr(new Node(make_loc(YYLLOC), \
@@ -65,7 +65,7 @@ NodePtr fix_print_expression(NodePtr node, location& yylloc);
 %}
 
 %skeleton "lalr1.cc"
-%define namespace "Astl"
+%define api.namespace { Astl }
 %defines
 %verbose
 %locations
@@ -904,20 +904,20 @@ NodePtr flatten(NodePtr node, NodePtr subnodes,
 NodePtr fix_print_expression(NodePtr node, location& yylloc) {
    assert(!node->is_leaf());
    NodePtr fixed = NodePtr(new Node(node->get_location(), node->get_op()));
-   int i = 0;
+   unsigned int i = 0;
    while (i < node->size()) {
       NodePtr subnode = node->get_operand(i);
       if (subnode->is_leaf() &&
 	    subnode->get_token().get_tokenval() == parser::token::VARIABLE &&
-	    (i+1 < node->size() &&
+	    ((i+1 < node->size() &&
 	       !node->get_operand(i+1)->is_leaf() &&
-	       node->get_operand(i+1)->get_op() == Op::DOTS ||
-	    i+2 < node->size() &&
+	       node->get_operand(i+1)->get_op() == Op::DOTS) ||
+	    (i+2 < node->size() &&
 	       !node->get_operand(i+2)->is_leaf() &&
 	       node->get_operand(i+2)->get_op() == Op::DOTS &&
 	       node->get_operand(i+1)->is_leaf() &&
 	       node->get_operand(i+1)->get_token().get_tokenval() ==
-		  parser::token::TEXT_LITERAL)) {
+		  parser::token::TEXT_LITERAL))) {
 	 NodePtr nsubnode = NodePtr(new Node(subnode->get_location(),
 	    Op::print_expression_listvar, subnode));
 	 if (node->get_operand(i+1)->is_leaf()) {

@@ -24,34 +24,30 @@
 
 namespace Astl {
 
-CandidateSet::CandidateSet(NodePtr root_param, const RuleTable& rules_param) :
-	 bindings(create_default_bindings(root)),
-      root(root_param), rules(rules_param),
-      consumer((Consumer*) 0), prg((PseudoRandomGenerator*) 0),
-      generated(false), suppress_conflicts(false) {
+CandidateSet::CandidateSet(NodePtr root, const RuleTable& rules) :
+      generated(false), root(root), suppress_conflicts(false),
+      rules(rules), bindings(create_default_bindings(root)),
+      consumer(nullptr), prg(nullptr) {
 }
 
-CandidateSet::CandidateSet(NodePtr root_param, const RuleTable& rules_param,
-	 ConsumerPtr consumer_param, PseudoRandomGeneratorPtr prg_param) :
-      root(root_param), rules(rules_param),
-      bindings(create_default_bindings(root)),
-      consumer(consumer_param), prg(prg_param),
-      generated(false), suppress_conflicts(false) {
+CandidateSet::CandidateSet(NodePtr root, const RuleTable& rules,
+	 ConsumerPtr consumer, PseudoRandomGeneratorPtr prg) :
+      generated(false), root(root), suppress_conflicts(false),
+      rules(rules), bindings(create_default_bindings(root)),
+      consumer(consumer), prg(prg) {
 }
 
-CandidateSet::CandidateSet(NodePtr root_param, const RuleTable& rules_param,
-	 BindingsPtr bindings_param) :
-      root(root_param), rules(rules_param),
-      bindings(bindings_param), generated(false), suppress_conflicts(false),
-      consumer((Consumer*) 0), prg((PseudoRandomGenerator*) 0) {
+CandidateSet::CandidateSet(NodePtr root, const RuleTable& rules,
+	 BindingsPtr bindings) :
+      generated(false), root(root), suppress_conflicts(false),
+      rules(rules), bindings(bindings), consumer(nullptr), prg(nullptr) {
 }
 
-CandidateSet::CandidateSet(NodePtr root_param, const RuleTable& rules_param,
-	 BindingsPtr bindings_param,
-	 ConsumerPtr consumer_param, PseudoRandomGeneratorPtr prg_param) :
-      root(root_param), rules(rules_param), suppress_conflicts(false),
-      bindings(bindings_param), generated(false),
-      consumer(consumer_param), prg(prg_param) {
+CandidateSet::CandidateSet(NodePtr root, const RuleTable& rules,
+	 BindingsPtr bindings,
+	 ConsumerPtr consumer, PseudoRandomGeneratorPtr prg) :
+      generated(false), root(root), suppress_conflicts(false),
+      rules(rules), bindings(bindings), consumer(consumer), prg(prg) {
 }
 
 void CandidateSet::generate() const {
@@ -64,14 +60,14 @@ void CandidateSet::generate() const {
 
 void CandidateSet::traverse(NodePtr& node, Context& context) const {
    if (node->is_leaf()) return;
-   unsigned int arity = node->size();
+   Arity arity(false, node->size());
    Operator op = node->get_op();
    RuleTable::iterator end;
    node->set_context(context);
    // prefix visitation
    bool found = false; // matching rule found
    if (!suppress_conflicts || node != root) {
-      for (RuleTable::iterator it = rules.find_prefix(op, -1, end);
+      for (RuleTable::iterator it = rules.find_prefix(op, variable_arity, end);
 	    it != end; ++it) {
 	 found = add_matching_candidates(node, it->second, context);
 	 if (found && suppress_conflicts) break;
@@ -86,7 +82,7 @@ void CandidateSet::traverse(NodePtr& node, Context& context) const {
    bool suppressed = suppress_conflicts && found;
    if (!suppressed) {
       context.descend(node);
-      for (int i = 0; i < node->size(); ++i) {
+      for (unsigned int i = 0; i < node->size(); ++i) {
 	 traverse(node->get_operand(i), context);
       }
       // suppress the postfix visitation in case of transformations if
@@ -108,7 +104,8 @@ void CandidateSet::traverse(NodePtr& node, Context& context) const {
 	 if (found && suppress_conflicts) break;
       }
       if (!found || !suppress_conflicts) {
-	 for (RuleTable::iterator it = rules.find_postfix(op, -1, end);
+	 for (RuleTable::iterator it = rules.find_postfix(op,
+		  variable_arity, end);
 	       it != end; ++it) {
 	    found = add_matching_candidates(node, it->second, context);
 	    if (found && suppress_conflicts) break;
@@ -152,7 +149,7 @@ void CandidateSet::gen_mutation() throw(Exception) {
 void CandidateSet::gen_mutations() throw(Exception) {
    generate();
    assert(consumer); assert(prg);
-   for (int i = 0; i < size(); ++i) {
+   for (unsigned int i = 0; i < size(); ++i) {
       CandidatePtr candidate = candidates[i];
       consumer->consume(candidate->transform(), candidate);
    }
@@ -166,7 +163,7 @@ void CandidateSet::gen_mutations(unsigned int count) throw(Exception) {
       see section 3.4.2 in Donald E. Knuth, TAOCP, Volume 2
    */
    unsigned int selected = 0; unsigned int seen = 0;
-   for (int i = 0; i < size(); ++i) {
+   for (unsigned int i = 0; i < size(); ++i) {
       double rval = prg->val();
       if ((candidates.size() - seen) * rval < count - selected) {
 	 CandidatePtr candidate = candidates[i];

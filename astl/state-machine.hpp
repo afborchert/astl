@@ -40,11 +40,12 @@ namespace Astl {
    class StateMachineRuleAlternative {
       public:
 	 typedef enum {null, cache, create, close, cut, retract} Action;
-	 StateMachineRuleAlternative(NodePtr block_param);
-	 StateMachineRuleAlternative(Action action_param);
-	 StateMachineRuleAlternative(int newstate_param);
-	 StateMachineRuleAlternative(Action action_param, NodePtr block_param);
-	 StateMachineRuleAlternative(int newstate_param, NodePtr block_param);
+	 // constructors
+	 StateMachineRuleAlternative(NodePtr block);
+	 StateMachineRuleAlternative(Action action);
+	 StateMachineRuleAlternative(int newstate);
+	 StateMachineRuleAlternative(Action action, NodePtr block);
+	 StateMachineRuleAlternative(int newstate, NodePtr block);
 	 // mutators
 	 void set_labels(const LabelSet& labels_param);
 	 void set_states(const StateSet& states_param);
@@ -115,10 +116,10 @@ namespace Astl {
       public:
 	 typedef std::list<StateMachineRulePtr>::const_iterator Iterator;
 	 // constructor
-	 StateMachine(BindingsPtr bindings_param,
-	    const std::string& name_param, unsigned int id_param);
-	 StateMachine(BindingsPtr bindings_param,
-	    const std::string& name_param); // abstract state machine
+	 StateMachine(BindingsPtr bindings,
+	    const std::string& name, unsigned int id);
+	 StateMachine(BindingsPtr bindings,
+	    const std::string& name); // abstract state machine
 	 // mutators
 	 void import_asm(StateMachinePtr sm);
 	 void add_state(const std::string& state, const Location& loc);

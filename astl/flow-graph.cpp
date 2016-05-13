@@ -105,36 +105,35 @@ static unsigned int new_id(BindingsPtr bindings) {
    return id;
 }
 
-FlowGraphNode::FlowGraphNode(BindingsPtr bindings_param) :
-      bindings(bindings_param), id(new_id(bindings_param)),
-      at(new Attribute()), type_number(0) {
+FlowGraphNode::FlowGraphNode(BindingsPtr bindings) :
+      bindings(bindings), id(new_id(bindings)),
+      type_number(0), at(new Attribute()) {
    at->update("branch", AttributePtr(new Attribute()));
 }
 
-FlowGraphNode::FlowGraphNode(BindingsPtr bindings_param,
-	 const std::string& type_param) :
-      bindings(bindings_param), id(new_id(bindings_param)), type(type_param),
-      type_number(node_type_by_name(bindings_param, type_param)),
+FlowGraphNode::FlowGraphNode(BindingsPtr bindings,
+	 const std::string& type) :
+      bindings(bindings), id(new_id(bindings)), type(type),
+      type_number(node_type_by_name(bindings, type)),
       at(new Attribute()) {
    at->update("branch", AttributePtr(new Attribute()));
 }
 
-FlowGraphNode::FlowGraphNode(BindingsPtr bindings_param, NodePtr node_param) :
-      bindings(bindings_param), id(new_id(bindings_param)),
-      node(node_param), type_number(0),
+FlowGraphNode::FlowGraphNode(BindingsPtr bindings, NodePtr node) :
+      bindings(bindings), id(new_id(bindings)),
+      type_number(0), node(node),
       at(new Attribute()) {
-   assert(node_param);
+   assert(node);
    at->update("astnode", AttributePtr(new Attribute(node)));
    at->update("branch", AttributePtr(new Attribute()));
 }
 
-FlowGraphNode::FlowGraphNode(BindingsPtr bindings_param,
-	 const std::string& type_param, NodePtr node_param) :
-      bindings(bindings_param), id(new_id(bindings_param)),
-      type(type_param),
-      type_number(node_type_by_name(bindings_param, type_param)),
-      node(node_param), at(new Attribute()) {
-   assert(node_param);
+FlowGraphNode::FlowGraphNode(BindingsPtr bindings,
+	 const std::string& type, NodePtr node) :
+      bindings(bindings), id(new_id(bindings)),
+      type(type), type_number(node_type_by_name(bindings, type)),
+      node(node), at(new Attribute()) {
+   assert(node);
    at->update("astnode", AttributePtr(new Attribute(node)));
    at->update("branch", AttributePtr(new Attribute()));
 }

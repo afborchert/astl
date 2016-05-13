@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <cstdlib>
 #include <astl/list-ops.hpp>
 #include <astl/operators.hpp>
 
@@ -39,14 +40,14 @@ AttributePtr list_binary_op(const Operator& op,
 	    if (leftAt->get_type() != Attribute::list) {
 	       resultAt->push_back(leftAt);
 	    } else {
-	       for (int i = 0; i < leftAt->size(); ++i) {
+	       for (unsigned int i = 0; i < leftAt->size(); ++i) {
 		  resultAt->push_back(leftAt->get_value(i));
 	       }
 	    }
 	    if (rightAt->get_type() != Attribute::list) {
 	       resultAt->push_back(rightAt);
 	    } else {
-	       for (int i = 0; i < rightAt->size(); ++i) {
+	       for (unsigned int i = 0; i < rightAt->size(); ++i) {
 		  resultAt->push_back(rightAt->get_value(i));
 	       }
 	    }
@@ -54,7 +55,7 @@ AttributePtr list_binary_op(const Operator& op,
 	 }
 
       default:
-	 assert(false);
+	 assert(false); std::abort();
    }
 }
 

@@ -200,7 +200,7 @@ AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
 	    AttributePtr args(AttributePtr(new Attribute(Attribute::list)));
 	    if (expr->size() == 2) {
 	       NodePtr expr_list = expr->get_operand(1);
-	       for (int i = 0; i < expr_list->size(); ++i) {
+	       for (unsigned int i = 0; i < expr_list->size(); ++i) {
 		  AttributePtr arg =
 		     recursive_evaluation(expr_list->get_operand(i));
 		  args->push_back(arg);
@@ -224,7 +224,7 @@ AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
       case ASTL_OPERATOR_LIST_AGGREGATE:
 	 {
 	    AttributePtr list(AttributePtr(new Attribute(Attribute::list)));
-	    for (int i = 0; i < expr->size(); ++i) {
+	    for (unsigned int i = 0; i < expr->size(); ++i) {
 	       AttributePtr elem = recursive_evaluation(expr->get_operand(i));
 	       list->push_back(elem);
 	    }
@@ -234,7 +234,7 @@ AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
 	 {
 	    AttributePtr
 	       dict(AttributePtr(new Attribute(Attribute::dictionary)));
-	    for (int i = 0; i < expr->size(); ++i) {
+	    for (unsigned int i = 0; i < expr->size(); ++i) {
 	       NodePtr pair = expr->get_operand(i);
 	       assert(pair->get_op() == Op::key_value_pair);
 	       std::string key = pair->get_operand(0)->get_token().get_text();
@@ -444,7 +444,7 @@ AttributePtr Expression::recursive_evaluation(NodePtr expr) throw(Exception) {
 	 bool matches = std::regex_search(s.c_str(), what, re);
 	 if (!matches) return AttributePtr(new Attribute(false));
 	 Attribute::SubtokenVector subtokens(what.size());
-	 for (int i = 0; i < what.size(); ++i) {
+	 for (unsigned int i = 0; i < what.size(); ++i) {
 	    subtokens[i] = what[i];
 	 }
 	 return AttributePtr(new Attribute(subtokens));
@@ -457,10 +457,10 @@ AttributePtr Expression::recursive_evaluation(NodePtr expr) throw(Exception) {
       /* binary operators */
       AttributePtr leftAt = recursive_evaluation(expr->get_operand(0));
       AttributePtr rightAt = recursive_evaluation(expr->get_operand(1));
-      if (expr->get_op() == Op::AMPERSAND &&
+      if (((expr->get_op() == Op::AMPERSAND &&
 	    (leftAt || rightAt) &&
-	    (leftAt && leftAt->get_type() == Attribute::list ||
-	       rightAt && rightAt->get_type() == Attribute::list)) {
+	    (leftAt && leftAt->get_type() == Attribute::list)) ||
+	       (rightAt && rightAt->get_type() == Attribute::list))) {
 	 return list_binary_op(expr->get_op(), leftAt, rightAt,
 	    expr->get_location());
       }

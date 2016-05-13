@@ -45,7 +45,7 @@ AttributePtr builtin_push(BindingsPtr bindings,
    if (!list || list->get_type() != Attribute::list) {
       throw Exception("list expected as first argument of push");
    }
-   for (int i = 1; i < args->size(); ++i) {
+   for (unsigned int i = 1; i < args->size(); ++i) {
       list->push_back(args->get_value(i));
    }
    return list;
@@ -128,6 +128,9 @@ AttributePtr builtin_type(BindingsPtr bindings,
 	    return AttributePtr(new Attribute("integer"));
 	 case Attribute::boolean:
 	    return AttributePtr(new Attribute("boolean"));
+	 default:
+	    /* not needed but it helps to suppress the warning */
+	    return AttributePtr(nullptr);
       }
    } else {
       return AttributePtr(new Attribute("null"));
@@ -205,12 +208,12 @@ AttributePtr builtin_location(BindingsPtr bindings,
 AttributePtr builtin_println(BindingsPtr bindings,
       AttributePtr args) throw(Exception) {
    if (args) {
-      for (int i = 0; i < args->size(); ++i) {
+      for (unsigned int i = 0; i < args->size(); ++i) {
 	 AttributePtr at = args->get_value(i);
 	 if (at) {
 	    if (at->get_type() == Attribute::list) {
-	       for (int i = 0; i < at->size(); ++i) {
-		  AttributePtr ait = at->get_value(i);
+	       for (unsigned int j = 0; j < at->size(); ++j) {
+		  AttributePtr ait = at->get_value(j);
 		  std::cout << ait->convert_to_string();
 	       }
 	    } else {
