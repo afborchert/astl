@@ -267,7 +267,7 @@ void check_creation(ExecutionContext& ec, StateMachinePtr sm,
 	 if (!ast) continue;
 	 if (ast->is_leaf()) continue;
 	 Arity arity = smr->get_arity();
-	 if (!arity.first && arity.second != ast->size()) continue;
+	 if (arity.fixed && arity.arity != ast->size()) continue;
 	 std::string opname(ast->get_op().get_name());
 	 if (!smr->get_opset()->includes(opname)) continue;
 	 NodePtr tree_expr = smr->get_tree_expression();
@@ -345,7 +345,7 @@ bool execute_rules(ExecutionContext& ec, InstanceThread& t,
 	 if (!ast) continue;
 	 if (ast->is_leaf()) continue;
 	 Arity arity = smr->get_arity();
-	 if (!arity.first && arity.second != ast->size()) continue;
+	 if (arity.fixed && arity.arity != ast->size()) continue;
 	 std::string opname(ast->get_op().get_name());
 	 if (!smr->get_opset()->includes(opname)) continue;
 	 NodePtr tree_expr = smr->get_tree_expression();

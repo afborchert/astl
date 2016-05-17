@@ -26,12 +26,12 @@ namespace Astl {
 // ==== BasicRule =============================================================
 
 BasicRule::BasicRule(const Rules& rules_param) :
-   rules(rules_param), arity(no_parameters), type(prefix) {
+   rules(rules_param), arity(0), type(prefix) {
 }
 
 BasicRule::BasicRule(NodePtr tree_expr_param, const Rules& rules_param) :
       rules(rules_param), tree_expr(tree_expr_param),
-      arity(no_parameters), type(prefix) {
+      arity(0), type(prefix) {
    assert(tree_expr && !tree_expr->is_leaf());
    NodePtr node = tree_expr;
    if (node->get_op() == Op::PRE) {
@@ -50,13 +50,13 @@ BasicRule::BasicRule(NodePtr tree_expr_param, const Rules& rules_param) :
       node = node->get_operand(0);
    }
    if (node->get_op() == Op::variable_length_tree_expression) {
-      arity = variable_arity;
+      arity = Arity();
       node = node->get_operand(0);
    }
    assert(node->get_op() == Op::tree_expression);
    assert(node->size() >= 1);
-   if (!arity.first) {
-      arity.second = node->size() - 1;
+   if (arity.fixed) {
+      arity.arity = node->size() - 1;
    }
    node = node->get_operand(0);
    opset = OperatorSetPtr(new OperatorSet(node, rules));

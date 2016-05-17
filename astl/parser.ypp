@@ -65,6 +65,7 @@ NodePtr fix_print_expression(NodePtr node, location& yylloc);
 %}
 
 %skeleton "lalr1.cc"
+%define api.prefix {astl}
 %define api.namespace { Astl }
 %defines
 %verbose

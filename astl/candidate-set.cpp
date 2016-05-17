@@ -60,14 +60,14 @@ void CandidateSet::generate() const {
 
 void CandidateSet::traverse(NodePtr& node, Context& context) const {
    if (node->is_leaf()) return;
-   Arity arity(false, node->size());
+   Arity arity(node->size());
    Operator op = node->get_op();
    RuleTable::iterator end;
    node->set_context(context);
    // prefix visitation
    bool found = false; // matching rule found
    if (!suppress_conflicts || node != root) {
-      for (RuleTable::iterator it = rules.find_prefix(op, variable_arity, end);
+      for (RuleTable::iterator it = rules.find_prefix(op, Arity(), end);
 	    it != end; ++it) {
 	 found = add_matching_candidates(node, it->second, context);
 	 if (found && suppress_conflicts) break;
@@ -104,8 +104,7 @@ void CandidateSet::traverse(NodePtr& node, Context& context) const {
 	 if (found && suppress_conflicts) break;
       }
       if (!found || !suppress_conflicts) {
-	 for (RuleTable::iterator it = rules.find_postfix(op,
-		  variable_arity, end);
+	 for (RuleTable::iterator it = rules.find_postfix(op, Arity(), end);
 	       it != end; ++it) {
 	    found = add_matching_candidates(node, it->second, context);
 	    if (found && suppress_conflicts) break;

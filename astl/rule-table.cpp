@@ -44,16 +44,17 @@ void RuleTable::traverse(NodePtr node,
       Arity arity = rule->get_arity();
       Rule::Type rtype = rule->get_type();
 
-      // insert rule for all operators in its operator set
+      /* insert rule for all operators in its operator set */
       OperatorSetPtr opset = rule->get_opset();
       for (OperatorSet::Iterator opit = opset->begin();
 	    opit != opset->end(); ++opit) {
 	 std::string opname = *opit;
-	 map_type::iterator it = table[rtype].find(key_pair(opname, arity));
+	 key_pair key(opname, arity);
+	 map_type::iterator it = table[rtype].find(key);
 	 if (it == table[rtype].end()) {
+	    /* create an empty map and insert it */
 	    std::pair<map_type::iterator, bool> result =
-	       table[rtype].insert(pair(key_pair(opname, arity),
-	       submap_type()));
+	       table[rtype].insert(pair(key, submap_type()));
 	    assert(result.second);
 	    it = result.first;
 	 }

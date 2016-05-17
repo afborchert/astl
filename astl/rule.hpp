@@ -26,11 +26,23 @@
 
 namespace Astl {
 
-   using Arity = std::pair<bool, unsigned int>;
-      /* first: true if the arity is variable,
-         second: the arity, if it is fixed, i.e. first is false */
-   constexpr auto variable_arity = Arity(false, 0);
-   constexpr auto no_parameters = Arity(true, 0);
+   struct Arity {
+      Arity() : fixed(false), arity(0) {
+      }
+      Arity(unsigned int arity) : fixed(true), arity(arity) {
+      }
+      Arity(const Arity& other) : fixed(other.fixed), arity(other.arity) {
+      }
+      bool operator<(const Arity& other) const {
+	 if (fixed != other.fixed) {
+	    return fixed > other.fixed;
+	 } else {
+	    return arity < other.arity;
+	 }
+      }
+      bool fixed;
+      unsigned int arity;
+   };
 
    class BasicRule {
       public:

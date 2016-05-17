@@ -21,6 +21,6 @@
 
 #include <astl/syntax-tree.hpp>
 
-#define YYSTYPE Astl::NodePtr
+#define ASTLSTYPE Astl::NodePtr
 
 #endif

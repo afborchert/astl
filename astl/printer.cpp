@@ -86,7 +86,7 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
    if (root->is_leaf()) {
       return !!(out << root->get_token().get_literal());
    } else {
-      Arity arity(false, root->size());
+      Arity arity(root->size());
       Operator op = root->get_op();
       BindingsPtr local_bindings;
       RuleTable::print_iterator it, end;
@@ -99,7 +99,7 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
       }
       if (it == end) {
 	 // try wildcard rules
-	 for (it = rules.reversed_find(op, variable_arity, end);
+	 for (it = rules.reversed_find(op, Arity(), end);
 	       it != end; ++it) {
 	    ++found;
 	    local_bindings = BindingsPtr(new Bindings(bindings));
