@@ -18,6 +18,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <memory>
 #include <astl/attribute.hpp>
 #include <astl/flow-graph.hpp>
 
@@ -134,7 +135,7 @@ AttributePtr Attribute::get_value(const std::string& key) const {
    assert(type == dictionary);
    std::map<std::string, AttributePtr>::const_iterator it = dict.find(key);
    if (it == dict.end()) {
-      return AttributePtr((Attribute*) 0);
+      return AttributePtr(nullptr);
    } else {
       return it->second;
    }
@@ -275,7 +276,7 @@ std::string Attribute::convert_to_string() const throw(Exception) {
 	 return fgnode->get_type();
       case function:
 	 {
-	    AttributePtr rval = func->eval(AttributePtr((Attribute*) 0));
+	    AttributePtr rval = func->eval(AttributePtr(nullptr));
 	    if (rval) {
 	       return rval->convert_to_string();
 	    } else {

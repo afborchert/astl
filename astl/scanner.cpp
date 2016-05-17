@@ -362,7 +362,7 @@ void Scanner::scan_text() {
 	       // support ${...} construct which permits an
 	       // arbitrary expression within the braces
 	       push_token(parser::token::LBRACE,
-		  NodePtr((Node*) 0), tokenloc);
+		  NodePtr(nullptr), tokenloc);
 	       location startloc = tokenloc;
 	       nextch();
 	       int token;
@@ -399,7 +399,7 @@ void Scanner::scan_text() {
 		  error("'$...' expected"); continue;
 	       }
 	       nextch();
-	       push_token(parser::token::DOTS, NodePtr((Node*) 0), tokenloc);
+	       push_token(parser::token::DOTS, NodePtr(nullptr), tokenloc);
 	    } else {
 	       tokenstr = new std::string();
 	       if (!is_letter(ch)) {

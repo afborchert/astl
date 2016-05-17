@@ -140,7 +140,7 @@ bool recursive_execute(NodePtr block, BindingsPtr bindings,
 	    {
 	       std::string varname =
 		  statement->get_operand(0)->get_token().get_text();
-	       AttributePtr initValue = AttributePtr((Attribute*) 0);
+	       AttributePtr initValue = AttributePtr(nullptr);
 	       if (statement->size() == 2) {
 		  Expression init_expr(statement->get_operand(1), local_bindings);
 		  initValue = init_expr.get_result();

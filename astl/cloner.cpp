@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <memory>
 #include <astl/cloner.hpp>
 #include <astl/token.hpp>
 #include <astl/syntax-tree.hpp>

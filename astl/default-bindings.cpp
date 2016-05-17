@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <memory>
 #include <astl/default-bindings.hpp>
 #include <astl/attribute.hpp>
 #include <astl/builtin-functions.hpp>
@@ -117,11 +118,11 @@ BindingsPtr create_default_bindings(NodePtr root,
 }
 
 BindingsPtr create_default_bindings(NodePtr root) throw(Exception) {
-   return create_default_bindings(root, 0);
+   return create_default_bindings(root, nullptr);
 }
 
 BindingsPtr create_default_bindings() throw(Exception) {
-   return create_default_bindings(NodePtr((Node*) 0), 0);
+   return create_default_bindings(NodePtr(nullptr), nullptr);
 }
 
 } // namespace Astl

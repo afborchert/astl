@@ -187,7 +187,7 @@ FlowGraphNode::Iterator FlowGraphNode::end_links() const {
 FlowGraphNodePtr FlowGraphNode::get_branch(const std::string& label) const {
    BranchIterator it = labeled_links.find(label);
    if (it == labeled_links.end()) {
-      return FlowGraphNodePtr((FlowGraphNode*) 0);
+      return FlowGraphNodePtr(nullptr);
    } else {
       return it->second;
    }

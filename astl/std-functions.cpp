@@ -224,7 +224,7 @@ AttributePtr builtin_println(BindingsPtr bindings,
       }
    }
    std::cout << std::endl;
-   return AttributePtr((Attribute*) 0);
+   return AttributePtr(nullptr);
 }
 
 AttributePtr builtin_integer(BindingsPtr bindings,

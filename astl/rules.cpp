@@ -155,7 +155,7 @@ void Rules::scan(NodePtr root) throw(Exception) {
 OperatorSetPtr Rules::get_opset(const std::string& name) const {
    OperatorSetTable::const_iterator it = opsets.find(name);
    if (it == opsets.end()) {
-      return OperatorSetPtr((OperatorSet*) 0);
+      return OperatorSetPtr(nullptr);
    } else {
       return it->second;
    }
@@ -220,7 +220,7 @@ const FunctionTable& Rules::get_function_table() const {
 
 NodePtr Rules::get_function(const std::string& fname) const {
    FunctionTable::const_iterator it = ftab.find(fname);
-   if (it == ftab.end()) return NodePtr((Node*) 0);
+   if (it == ftab.end()) return NodePtr(nullptr);
    return it->second;
 }
 

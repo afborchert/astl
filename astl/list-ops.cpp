@@ -17,6 +17,7 @@
 */
 
 #include <cstdlib>
+#include <memory>
 #include <astl/list-ops.hpp>
 #include <astl/operators.hpp>
 

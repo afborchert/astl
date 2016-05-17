@@ -17,8 +17,9 @@
 */
 
 #include <cassert>
-#include <sstream>
 #include <iostream>
+#include <memory>
+#include <sstream>
 #include <astl/candidate.hpp>
 #include <astl/cloner.hpp>
 #include <astl/operators.hpp>

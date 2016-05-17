@@ -53,7 +53,7 @@ AttributePtr AttributionRuleSetFunction::eval(AttributePtr args)
    BindingsPtr local_bindings(bindings);
    local_bindings->define("root", std::make_shared<Attribute>(root));
    execute(root, rtab, local_bindings);
-   return AttributePtr((Attribute*) 0);
+   return AttributePtr(nullptr);
 }
 
 } // namespace Astl

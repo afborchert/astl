@@ -79,7 +79,7 @@ void StateMachine::add_rule(StateMachineRulePtr rule) {
 
 void StateMachine::add_var(VarKind varkind, const std::string& varname,
       const Location& loc) {
-   add_var(varkind, varname, NodePtr((Node*) 0), loc);
+   add_var(varkind, varname, NodePtr(nullptr), loc);
 }
 
 void StateMachine::add_close_handler(const StateSet& states, NodePtr block) {
