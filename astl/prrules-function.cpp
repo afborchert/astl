@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <memory>
 #include <astl/prrules-function.hpp>
 #include <astl/attribute.hpp>
 #include <astl/printer.hpp>
@@ -50,7 +51,7 @@ AttributePtr PrintRuleSetFunction::eval(AttributePtr args)
    }
    RuleTable& rtab(*rt);
    BindingsPtr local_bindings(bindings);
-   local_bindings->define("root", AttributePtr(new Attribute(root)));
+   local_bindings->define("root", std::make_shared<Attribute>(root));
    return gen_text(rtab, root, local_bindings);
 }
 

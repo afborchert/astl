@@ -17,6 +17,7 @@
 */
 
 #include <cstdlib>
+#include <memory>
 #include <gmp.h>
 #include <astl/string-ops.hpp>
 #include <astl/operators.hpp>
@@ -35,7 +36,7 @@ AttributePtr string_binary_op(const Operator& op,
    switch (op.get_opcode()) {
       case ASTL_OPERATOR_AMPERSAND_TK:
 	 // string concatenation
-	 return AttributePtr(new Attribute(left + right));
+	 return std::make_shared<Attribute>(left + right);
 
       case ASTL_OPERATOR_X_TK:
 	 // repetition operator
@@ -48,26 +49,26 @@ AttributePtr string_binary_op(const Operator& op,
 	    while (times-- > 0) {
 	       res += left;
 	    }
-	    return AttributePtr(new Attribute(res));
+	    return std::make_shared<Attribute>(res);
 	 }
 
       case ASTL_OPERATOR_EQEQ_TK:
       case ASTL_OPERATOR_NE_TK:
-	 return AttributePtr(new Attribute(
-	    (left == right) == (op.get_opcode() == ASTL_OPERATOR_EQEQ_TK)));
+	 return std::make_shared<Attribute>(
+	    (left == right) == (op.get_opcode() == ASTL_OPERATOR_EQEQ_TK));
 
       case ASTL_OPERATOR_LT_TK:
-	 return AttributePtr(new Attribute(
-	    (left < right) == (op.get_opcode() == ASTL_OPERATOR_EQEQ_TK)));
+	 return std::make_shared<Attribute>(
+	    (left < right) == (op.get_opcode() == ASTL_OPERATOR_EQEQ_TK));
       case ASTL_OPERATOR_LE_TK:
-	 return AttributePtr(new Attribute(
-	    (left <= right) == (op.get_opcode() == ASTL_OPERATOR_EQEQ_TK)));
+	 return std::make_shared<Attribute>(
+	    (left <= right) == (op.get_opcode() == ASTL_OPERATOR_EQEQ_TK));
       case ASTL_OPERATOR_GE_TK:
-	 return AttributePtr(new Attribute(
-	    (left >= right) == (op.get_opcode() == ASTL_OPERATOR_EQEQ_TK)));
+	 return std::make_shared<Attribute>(
+	    (left >= right) == (op.get_opcode() == ASTL_OPERATOR_EQEQ_TK));
       case ASTL_OPERATOR_GT_TK:
-	 return AttributePtr(new Attribute(
-	    (left > right) == (op.get_opcode() == ASTL_OPERATOR_EQEQ_TK)));
+	 return std::make_shared<Attribute>(
+	    (left > right) == (op.get_opcode() == ASTL_OPERATOR_EQEQ_TK));
       default:
 	 assert(false); std::abort();
    }

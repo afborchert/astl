@@ -22,6 +22,7 @@ namespace Astl {
 }
 
 #include <cstring>
+#include <memory>
 #include <astl/location.hpp>
 #include <astl/syntax-tree.hpp>
 #include <astl/yystype.hpp>
@@ -36,25 +37,25 @@ using namespace Astl;
 #define YYLLOC (yyla.location)
 
 #define NODE(op) \
-   (NodePtr(new Node(make_loc(YYLLOC), Op::op)))
+   (std::make_shared<Node>(make_loc(YYLLOC), Op::op))
 #define UNARY(unop, op1) \
-   (NodePtr(new Node(make_loc(YYLLOC), Op::unop, (op1))))
+   (std::make_shared<Node>(make_loc(YYLLOC), Op::unop, (op1)))
 #define BINARY(binop, op1,op2) \
-   (NodePtr(new Node(make_loc(YYLLOC), Op::binop, (op1), (op2))))
+   (std::make_shared<Node>(make_loc(YYLLOC), Op::binop, (op1), (op2)))
 #define TERTIARY(top, op1,op2,op3) \
-   (NodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3))))
+   (std::make_shared<Node>(make_loc(YYLLOC), Op::top, (op1), (op2), (op3)))
 #define QUATERNARY(top, op1,op2,op3,op4) \
-   (NodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4))))
+   (std::make_shared<Node>(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4)))
 #define QUINARY(top, op1,op2,op3,op4,op5) \
-   (NodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4), (op5))))
+   (std::make_shared<Node>(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4), (op5)))
 #define SENARY(top, op1,op2,op3,op4,op5,op6) \
-   (NodePtr(new Node(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4), (op5), (op6))))
+   (std::make_shared<Node>(make_loc(YYLLOC), Op::top, (op1), (op2), (op3), (op4), (op5), (op6)))
 
 #define LEAF(tk) \
-   (NodePtr(new Node(make_loc(YYLLOC), \
-      Token(token::tk, yytname[token::tk - 255]))))
+   (std::make_shared<Node>(make_loc(YYLLOC), \
+      Token(token::tk, yytname[token::tk - 255])))
 #define NT_LEAF(op) \
-   (NodePtr(new Node(make_loc(YYLLOC), Op::op)))
+   (std::make_shared<Node>(make_loc(YYLLOC), Op::op))
 
 NodePtr flatten(NodePtr node, NodePtr subnodes, const Operator& op);
 NodePtr fix_print_expression(NodePtr node, location& yylloc);
@@ -904,7 +905,7 @@ NodePtr flatten(NodePtr node, NodePtr subnodes,
 
 NodePtr fix_print_expression(NodePtr node, location& yylloc) {
    assert(!node->is_leaf());
-   NodePtr fixed = NodePtr(new Node(node->get_location(), node->get_op()));
+   NodePtr fixed = std::make_shared<Node>(node->get_location(), node->get_op());
    unsigned int i = 0;
    while (i < node->size()) {
       NodePtr subnode = node->get_operand(i);
@@ -919,8 +920,8 @@ NodePtr fix_print_expression(NodePtr node, location& yylloc) {
 	       node->get_operand(i+1)->is_leaf() &&
 	       node->get_operand(i+1)->get_token().get_tokenval() ==
 		  parser::token::TEXT_LITERAL))) {
-	 NodePtr nsubnode = NodePtr(new Node(subnode->get_location(),
-	    Op::print_expression_listvar, subnode));
+	 NodePtr nsubnode = std::make_shared<Node>(subnode->get_location(),
+	    Op::print_expression_listvar, subnode);
 	 if (node->get_operand(i+1)->is_leaf()) {
 	    *nsubnode += node->get_operand(i+1);
 	    ++i;

@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <memory>
 #include <astl/treeloc.hpp>
 
 namespace Astl {
@@ -29,13 +30,13 @@ static StringPtr get_string(const std::string* sp) {
    static StringPtr last_ptr;
    if (sp) {
       if (!s_defined || *sp != last_s) {
-	 last_ptr = StringPtr(new std::string(*sp));
+	 last_ptr = std::make_shared<std::string>(*sp);
 	 last_s = *sp;
 	 s_defined = true;
       }
       return last_ptr;
    } else {
-      return StringPtr();
+      return StringPtr(nullptr);
    }
 }
 

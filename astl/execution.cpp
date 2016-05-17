@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <memory>
 #include <sstream>
 #include <astl/execution.hpp>
 #include <astl/expression.hpp>
@@ -35,7 +36,7 @@ namespace Astl {
 bool recursive_execute(NodePtr block, BindingsPtr bindings,
 	 AttributePtr& rval)
       throw(Exception) {
-   BindingsPtr local_bindings = BindingsPtr(new Bindings(bindings));
+   BindingsPtr local_bindings = std::make_shared<Bindings>(bindings);
    assert(block->get_op() == Op::block);
    for (unsigned int i = 0; i < block->size(); ++i) {
       NodePtr statement = block->get_operand(i);
@@ -99,7 +100,7 @@ bool recursive_execute(NodePtr block, BindingsPtr bindings,
 	       for (unsigned int i = 0; i < list->size(); ++i) {
 		  AttributePtr indexVal = list->get_value(i);
 		  BindingsPtr for_bindings =
-		     BindingsPtr(new Bindings(local_bindings));
+		     std::make_shared<Bindings>(local_bindings);
 		  bool ok = for_bindings->define(varname, indexVal); assert(ok);
 		  if (recursive_execute(inner_block, for_bindings, rval)) {
 		     return true;
@@ -122,9 +123,9 @@ bool recursive_execute(NodePtr block, BindingsPtr bindings,
 	       Attribute::DictionaryIterator it = dict->get_pairs_begin();
 	       while (it != dict->get_pairs_end()) {
 		  BindingsPtr for_bindings =
-		     BindingsPtr(new Bindings(local_bindings));
+		     std::make_shared<Bindings>(local_bindings);
 		  bool ok = for_bindings->define(key_varname,
-		     AttributePtr(new Attribute(it->first)));
+		     std::make_shared<Attribute>(it->first));
 		  ok = ok && for_bindings->define(value_varname, it->second);
 		  assert(ok);
 		  if (recursive_execute(inner_block, for_bindings, rval)) {
@@ -188,7 +189,7 @@ AttributePtr execute(NodePtr block, BindingsPtr bindings)
    if (recursive_execute(block, bindings, return_value)) {
       return return_value;
    } else {
-      return AttributePtr((Attribute*) 0);
+      return AttributePtr(nullptr);
    }
 }
 
@@ -211,7 +212,7 @@ void execute(const CandidateSet& candidates) throw(Exception) {
       std::string node_name(rule->get_name());
       if (node_name.size() > 0) {
 	 if (!bindings->define(node_name,
-	       AttributePtr(new Attribute(candidate->get_subtree())))) {
+	       std::make_shared<Attribute>(candidate->get_subtree()))) {
 	    std::ostringstream os;
 	    os << "multiply defined variable: " << node_name;
 	    throw Exception(candidate->get_subtree()->get_location(), os.str());

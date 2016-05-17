@@ -27,14 +27,14 @@ void gen_clone_tree_and_ptr(const NodePtr& root, const NodePtr& ptr,
       NodePtr& cloned_root, NodePtr*& cloned_ptr,
       bool with_attributes) {
    if (root->is_leaf()) {
-      cloned_root = NodePtr(new Node(*root));
+      cloned_root = std::make_shared<Node>(*root);
    } else {
       const Location& loc = root->get_location();
       Operator op = root->get_op();
-      cloned_root = NodePtr(new Node(loc, op));
+      cloned_root = std::make_shared<Node>(loc, op);
       for (unsigned int i = 0; i < root->size(); ++i) {
 	 /* insert dummy node */
-	 *cloned_root += NodePtr(new Node());
+	 *cloned_root += std::make_shared<Node>();
 	 /* fetch reference of dummy node ... */
 	 NodePtr& subtree = cloned_root->get_operand(i);
 	 /* ... and let it be replaced by the clone */

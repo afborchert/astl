@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <memory>
 #include <sstream>
 #include <astl/context.hpp>
 #include <astl/bindings.hpp>
@@ -53,7 +54,7 @@ bool Context::matches(NodePtr tree_expr, BindingsPtr bindings,
 bool Context::and_matches(NodePtr tree_expr, BindingsPtr bindings,
       NodePtr node) throw(Exception) {
    Context empty_context;
-   BindingsPtr local_bindings = BindingsPtr(new Bindings(bindings));
+   BindingsPtr local_bindings = std::make_shared<Bindings>(bindings);
    PathMemberPtr it;
    NodePtr last;
    if (matching_it_defined) {
@@ -93,8 +94,7 @@ bool Context::suppressed() const {
 }
 
 void Context::descend(NodePtr node) {
-   PathMemberPtr npath(new PathMember(node, path));
-   path = npath;
+   path = std::make_shared<PathMember>(node, path);
    matching_it_defined = false;
 }
 

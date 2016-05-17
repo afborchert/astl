@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <memory>
 #include <astl/set-ops.hpp>
 #include <astl/operators.hpp>
 #include <astl/integer.hpp>
@@ -34,7 +35,7 @@ AttributePtr set_binary_op(const Operator& op,
    Attribute::DictionaryIterator it1_last = leftAt->get_pairs_end();
    Attribute::DictionaryIterator it2 = rightAt->get_pairs_begin();
    Attribute::DictionaryIterator it2_last = rightAt->get_pairs_end();
-   AttributePtr result = AttributePtr(new Attribute(Attribute::dictionary));
+   AttributePtr result = std::make_shared<Attribute>(Attribute::dictionary);
    Attribute::DictionaryInserter ins = result->get_inserter();
    switch (op.get_opcode()) {
       case ASTL_OPERATOR_PLUS_TK:

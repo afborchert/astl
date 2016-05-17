@@ -44,19 +44,19 @@ Attribute::Attribute(IntegerPtr int_val) :
 }
 
 Attribute::Attribute(int intval) :
-      type(integer), ivalue(IntegerPtr(new Integer(intval))) {
+      type(integer), ivalue(std::make_shared<Integer>(intval)) {
 }
 
 Attribute::Attribute(unsigned int intval) :
-      type(integer), ivalue(IntegerPtr(new Integer(intval))) {
+      type(integer), ivalue(std::make_shared<Integer>(intval)) {
 }
 
 Attribute::Attribute(long intval) :
-      type(integer), ivalue(IntegerPtr(new Integer(intval))) {
+      type(integer), ivalue(std::make_shared<Integer>(intval)) {
 }
 
 Attribute::Attribute(unsigned long intval) :
-      type(integer), ivalue(IntegerPtr(new Integer(intval))) {
+      type(integer), ivalue(std::make_shared<Integer>(intval)) {
 }
 
 Attribute::Attribute(bool bool_val) :
@@ -148,10 +148,10 @@ bool Attribute::is_defined(const std::string& key) const {
 
 AttributePtr Attribute::get_keys() const {
    assert(type == dictionary);
-   AttributePtr keys = AttributePtr(new Attribute(list));
+   AttributePtr keys = std::make_shared<Attribute>(list);
    for (std::map<std::string, AttributePtr>::const_iterator kit = dict.begin();
 	 kit != dict.end(); ++kit) {
-      keys->push_back(AttributePtr(new Attribute(kit->first)));
+      keys->push_back(std::make_shared<Attribute>(kit->first));
    }
    return keys;
 }
@@ -179,7 +179,7 @@ AttributePtr Attribute::get_value(unsigned int index) const {
 
       case match_result:
 	 assert(index < size());
-	 return AttributePtr(new Attribute(subtokens[index + 1]));
+	 return std::make_shared<Attribute>(subtokens[index + 1]);
 
       default:
 	 assert(false); std::abort();
@@ -225,7 +225,7 @@ NodePtr Attribute::get_node() const throw(Exception) {
    } else if (type == flow_graph_node) {
       return fgnode->get_node();
    } else {
-      return NodePtr(new Node(Location(), Token(convert_to_string())));
+      return std::make_shared<Node>(Location(), Token(convert_to_string()));
    }
 }
 
@@ -301,13 +301,13 @@ IntegerPtr Attribute::convert_to_integer(const Location& loc) const
    if (type == integer) {
       return ivalue;
    } else if (type == boolean) {
-      return IntegerPtr(new Integer((unsigned long) bval));
+      return std::make_shared<Integer>((unsigned long) bval);
    }
    std::string s = convert_to_string();
    if (s == "") {
       s = "0";
    }
-   return IntegerPtr(new Integer(s, loc));
+   return std::make_shared<Integer>(s, loc);
 }
 
 bool Attribute::is_scalar() const {
@@ -342,9 +342,9 @@ AttributePtr Attribute::convert_to_list() throw(Exception) {
       NodePtr n = get_node();
       if (!n->is_leaf()) {
 	 // generate a list with all the subnodes of n
-	 AttributePtr l = AttributePtr(new Attribute(Attribute::list));
+	 AttributePtr l = std::make_shared<Attribute>(Attribute::list);
 	 for (unsigned int i = 0; i < n->size(); ++i) {
-	    l->push_back(AttributePtr(new Attribute(n->get_operand(i))));
+	    l->push_back(std::make_shared<Attribute>(n->get_operand(i)));
 	 }
 	 return l;
       }
@@ -352,24 +352,24 @@ AttributePtr Attribute::convert_to_list() throw(Exception) {
       return get_keys();
    } else if (type == Attribute::match_result) {
       // generate a list with all the matched subtokens
-      AttributePtr l = AttributePtr(new Attribute(Attribute::list));
+      AttributePtr l = std::make_shared<Attribute>(Attribute::list);
       for (unsigned int i = 0; i < size(); ++i) {
 	 l->push_back(get_value(i));
       }
       return l;
    } else if (type == Attribute::flow_graph_node) {
       // generate a list with all nodes which can be reached from this node
-      AttributePtr l = AttributePtr(new Attribute(Attribute::list));
+      AttributePtr l = std::make_shared<Attribute>(Attribute::list);
       FlowGraphNodePtr fgn = get_fgnode();
       for (FlowGraphNode::Iterator it = fgn->begin_links();
 	    it != fgn->end_links(); ++it) {
-	 l->push_back(AttributePtr(new Attribute(it->second)));
+	 l->push_back(std::make_shared<Attribute>(it->second));
       }
       return l;
    }
    std::string scalar = convert_to_string();
-   AttributePtr l = AttributePtr(new Attribute(Attribute::list));
-   l->push_back(AttributePtr(new Attribute(scalar)));
+   AttributePtr l = std::make_shared<Attribute>(Attribute::list);
+   l->push_back(std::make_shared<Attribute>(scalar));
    return l;
 }
 
@@ -379,14 +379,14 @@ AttributePtr Attribute::convert_to_dict() throw(Exception) {
    }
    // convert it into a list ...
    AttributePtr l = convert_to_list();
-   AttributePtr set = AttributePtr(new Attribute(Attribute::dictionary));
+   AttributePtr set = std::make_shared<Attribute>(Attribute::dictionary);
    // and use all the list members as keys
    for (unsigned int index = 0; index < l->size(); ++index) {
       AttributePtr member = l->get_value(index);
       if (member) {
 	 // convert member to string to use it as a key
 	 std::string key = member->convert_to_string();
-	 set->update(key, AttributePtr(new Attribute(true)));
+	 set->update(key, std::make_shared<Attribute>(true));
       }
    }
    return set;
@@ -416,7 +416,7 @@ bool Attribute::equal_to(AttributePtr other) const throw(Exception) {
 }
 
 AttributePtr Attribute::clone() const {
-   AttributePtr cat = AttributePtr(new Attribute(type));
+   AttributePtr cat = std::make_shared<Attribute>(type);
    switch (type) {
       case dictionary:
 	 cat->dict = dict;

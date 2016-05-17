@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <memory>
 #include <astl/rule.hpp>
 #include <astl/operator.hpp>
 #include <astl/operators.hpp>
@@ -59,7 +60,7 @@ BasicRule::BasicRule(NodePtr tree_expr_param, const Rules& rules_param) :
       arity.arity = node->size() - 1;
    }
    node = node->get_operand(0);
-   opset = OperatorSetPtr(new OperatorSet(node, rules));
+   opset = std::make_shared<OperatorSet>(node, rules);
 }
 
 OperatorSetPtr BasicRule::get_opset() const {

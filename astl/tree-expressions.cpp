@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <memory>
 #include <sstream>
 #include <regex>
 #include <astl/tree-expressions.hpp>
@@ -28,7 +29,7 @@ namespace Astl {
 
 static void bind_variable(BindingsPtr bindings, const Location& loc, const std::string& varname,
       NodePtr tree) throw(Exception) {
-   if (!bindings->define(varname, AttributePtr(new Attribute(tree)))) {
+   if (!bindings->define(varname, std::make_shared<Attribute>(tree))) {
       std::ostringstream os;
       os << "multiply defined variable: " << varname;
       throw Exception(loc, os.str());
@@ -99,7 +100,7 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 	    subtokens[i] = what[i];
 	 }
 	 bind_variable(bindings, name->get_location(), varname,
-	    AttributePtr(new Attribute(subtokens)));
+	    std::make_shared<Attribute>(subtokens));
       }
    } else if (expression->get_op() == Op::string_literal) {
       if (!root->is_leaf()) return false;
@@ -181,10 +182,10 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 	    }
 	 } else {
 	    /* place holder */
-	    AttributePtr list(new Attribute(Attribute::list));
+	    AttributePtr list = std::make_shared<Attribute>(Attribute::list);
 	    for (unsigned int i = 0; i < remaining; ++i) {
 	       NodePtr node = root->get_operand(arity + i);
-	       list->push_back(AttributePtr(new Attribute(node)));
+	       list->push_back(std::make_shared<Attribute>(node));
 	    }
 	    bind_variable(bindings, expression->get_location(), varname, list);
 	 }
@@ -195,9 +196,9 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 
 bool matches(NodePtr root, NodePtr expression,
       BindingsPtr bindings, Context& context) throw(Exception) {
-   BindingsPtr local_bindings = BindingsPtr(new Bindings(bindings));
+   BindingsPtr local_bindings = std::make_shared<Bindings>(bindings);
    assert(!expression->is_leaf());
-   NodePtr where_expression = NodePtr((Node*) 0);
+   NodePtr where_expression = NodePtr(nullptr);
    if (expression->get_op() == Op::conditional_tree_expression) {
       where_expression = expression->get_operand(1);
       expression = expression->get_operand(0);

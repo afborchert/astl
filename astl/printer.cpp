@@ -18,6 +18,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <astl/bindings.hpp>
 #include <astl/printer.hpp>
@@ -93,7 +94,7 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
       int found = 0;
       for (it = rules.reversed_find(op, arity, end); it != end; ++it) {
 	 ++found;
-	 local_bindings = BindingsPtr(new Bindings(bindings));
+	 local_bindings = std::make_shared<Bindings>(bindings);
 	 if (matches(root, it->second->get_tree_expression(),
 	       local_bindings, context)) break;
       }
@@ -102,7 +103,7 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
 	 for (it = rules.reversed_find(op, Arity(), end);
 	       it != end; ++it) {
 	    ++found;
-	    local_bindings = BindingsPtr(new Bindings(bindings));
+	    local_bindings = std::make_shared<Bindings>(bindings);
 	    if (matches(root, it->second->get_tree_expression(),
 		  local_bindings, context)) break;
 	 }
@@ -224,9 +225,9 @@ AttributePtr gen_text(const RuleTable& print_rules, NodePtr root,
       root = cloned_root;
    }
    if (print(os, root, print_rules, bindings)) {
-      return AttributePtr(new Attribute(os.str()));
+      return std::make_shared<Attribute>(os.str());
    } else {
-      return AttributePtr((Attribute*) 0);
+      return AttributePtr(nullptr);
    }
 }
 

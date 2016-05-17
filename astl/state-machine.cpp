@@ -18,6 +18,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <memory>
 #include <astl/rules.hpp>
 #include <astl/attribute.hpp>
 #include <astl/state-machine.hpp>
@@ -130,7 +131,7 @@ void StateMachine::add_var(VarKind varkind, const std::string& varname,
 }
 
 BindingsPtr StateMachine::get_shared_bindings() const {
-   BindingsPtr b = BindingsPtr(new Bindings(bindings));
+   BindingsPtr b = std::make_shared<Bindings>(bindings);
    for (std::list<Variable>::const_iterator it =
 	 shared_var_list.begin(); it != shared_var_list.end(); ++it) {
       AttributePtr at;
@@ -140,12 +141,12 @@ BindingsPtr StateMachine::get_shared_bindings() const {
       }
       bool ok = b->define(it->name, at); assert(ok);
    }
-   return BindingsPtr(new Bindings(b));
+   return std::make_shared<Bindings>(b);
 }
 
 BindingsPtr StateMachine::add_private_bindings(
       BindingsPtr shared_bindings) const {
-   BindingsPtr b = BindingsPtr(new Bindings(shared_bindings));
+   BindingsPtr b = std::make_shared<Bindings>(shared_bindings);
    for (std::list<Variable>::const_iterator it =
 	 private_var_list.begin(); it != private_var_list.end(); ++it) {
       AttributePtr at;
@@ -162,9 +163,9 @@ BindingsPtr StateMachine::add_private_bindings(
 void StateMachine::update_function_bindings(BindingsPtr local_bindings) const {
    for (FunctionTable::const_iterator it =
 	 local_functions.begin(); it != local_functions.end(); ++it) {
-      FunctionPtr f = FunctionPtr(new RegularFunction(it->second,
-	 local_bindings));
-      AttributePtr fat = AttributePtr(new Attribute(f));
+      FunctionPtr f = std::make_shared<RegularFunction>(it->second,
+	 local_bindings);
+      AttributePtr fat = std::make_shared<Attribute>(f);
       if (!local_bindings->define(it->first, fat)) {
 	 // update previous binding, if any
 	 local_bindings->update(it->first, fat);
@@ -236,7 +237,7 @@ void StateMachine::run_close_handlers(int state,
 	 BindingsPtr local_bindings) const throw(Exception) {
    assert(state >= 0);
    local_bindings->define("current_state",
-	 AttributePtr(new Attribute(get_state_by_number(state))));
+	 std::make_shared<Attribute>(get_state_by_number(state)));
    for (std::list<Handler>::const_iterator it = close_handlers.begin();
 	 it != close_handlers.end(); ++it) {
       if (state >= (int)it->states.size() || it->states.test(state)) {
@@ -465,22 +466,19 @@ static StateMachineRuleAlternativePtr create_alternative(StateMachinePtr sm,
    if (nextop < smblock->size()) {
       NodePtr block = smblock->get_operand(nextop);
       if (action != StateMachineRuleAlternative::null) {
-	 alternative = StateMachineRuleAlternativePtr(
-	    new StateMachineRuleAlternative(action, block));
+	 alternative = std::make_shared<StateMachineRuleAlternative>(action,
+	    block);
       } else if (newstate >= 0) {
-	 alternative = StateMachineRuleAlternativePtr(
-	    new StateMachineRuleAlternative(newstate, block));
+	 alternative = std::make_shared<StateMachineRuleAlternative>(newstate,
+	    block);
       } else {
-	 alternative = StateMachineRuleAlternativePtr(
-	    new StateMachineRuleAlternative(block));
+	 alternative = std::make_shared<StateMachineRuleAlternative>(block);
       }
    } else {
       if (action != StateMachineRuleAlternative::null) {
-	 alternative = StateMachineRuleAlternativePtr(
-	    new StateMachineRuleAlternative(action));
+	 alternative = std::make_shared<StateMachineRuleAlternative>(action);
       } else {
-	 alternative = StateMachineRuleAlternativePtr(
-	    new StateMachineRuleAlternative(newstate));
+	 alternative = std::make_shared<StateMachineRuleAlternative>(newstate);
       }
    }
    if (return_node) {
@@ -642,19 +640,19 @@ static void add_rules(StateMachinePtr sm, BindingsPtr bindings, NodePtr root) {
 	 NodeTypeSet nodetypes(nof_node_types(bindings));
 	 get_node_expression(bindings, smcond->get_operand(1),
 	    nodetypes, node_expr);
-	 rule = StateMachineRulePtr(new StateMachineRule(sm,
-		  tree_expr, nodetypes, bindings->get_rules()));
+	 rule = std::make_shared<StateMachineRule>(sm,
+		  tree_expr, nodetypes, bindings->get_rules());
       } else {
 	 if (smcond->get_operand(0)->get_op() == Op::cfg_node_expression) {
 	    NodeTypeSet nodetypes(nof_node_types(bindings));
 	    get_node_expression(bindings, smcond->get_operand(0),
 	       nodetypes, node_expr);
-	    rule = StateMachineRulePtr(new StateMachineRule(sm,
-	       nodetypes, bindings->get_rules()));
+	    rule = std::make_shared<StateMachineRule>(sm,
+	       nodetypes, bindings->get_rules());
 	 } else {
 	    NodePtr tree_expr = smcond->get_operand(0);
-	    rule = StateMachineRulePtr(new StateMachineRule(sm,
-	       tree_expr, bindings->get_rules()));
+	    rule = std::make_shared<StateMachineRule>(sm,
+	       tree_expr, bindings->get_rules());
 	 }
       }
       if (node_expr) {
@@ -684,7 +682,7 @@ StateMachinePtr construct_sm(BindingsPtr bindings, NodePtr root,
    NodePtr vars = root->get_operand(argi++);
    NodePtr funcs = root->get_operand(argi++);
    NodePtr rules = root->get_operand(argi++);
-   StateMachinePtr sm = StateMachinePtr(new StateMachine(bindings, name, id));
+   StateMachinePtr sm = std::make_shared<StateMachine>(bindings, name, id);
    if (base_sm != "") {
       AbstractStateMachineTable::const_iterator it = asmt.find(base_sm);
       if (it == asmt.end()) {
@@ -719,7 +717,7 @@ StateMachinePtr construct_asm(BindingsPtr bindings, NodePtr root,
    NodePtr vars = root->get_operand(argi++);
    NodePtr funcs = root->get_operand(argi++);
    NodePtr rules = root->get_operand(argi++);
-   StateMachinePtr sm = StateMachinePtr(new StateMachine(bindings, name));
+   StateMachinePtr sm = std::make_shared<StateMachine>(bindings, name);
    if (base_sm != "") {
       AbstractStateMachineTable::const_iterator it = asmt.find(base_sm);
       if (it == asmt.end()) {

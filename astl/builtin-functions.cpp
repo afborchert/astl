@@ -29,9 +29,9 @@ void BuiltinFunctions::insert(BindingsPtr bindings) const {
    for (Map::const_iterator it = functions.begin();
 	 it != functions.end(); ++it) {
       bool ok = bindings->define(it->first,
-	 AttributePtr(new Attribute(
-	    FunctionPtr(new BuiltinFunction(it->second, bindings))
-      )));
+	 std::make_shared<Attribute>(FunctionPtr(
+	    std::make_shared<BuiltinFunction>(it->second, bindings)))
+      );
       assert(ok);
    }
 }

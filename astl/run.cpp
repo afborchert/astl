@@ -20,6 +20,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <astl/run.hpp>
 #include <astl/loader.hpp>
@@ -79,9 +80,9 @@ class MyConsumer: public Consumer {
 	 // set "location" and "rulename" attribute
 	 AttributePtr rootAt = root->get_attribute();
 	 rootAt->update("location",
-	    AttributePtr(new Attribute(candidate->get_location())));
+	    std::make_shared<Attribute>(candidate->get_location()));
 	 rootAt->update("rulename",
-	    AttributePtr(new Attribute(candidate->get_rule()->get_name())));
+	    std::make_shared<Attribute>(candidate->get_rule()->get_name()));
 	 // and print it
 	 print(*optr, root, rules.get_print_rule_table(), bindings);
 	 *optr << std::endl;
@@ -121,9 +122,9 @@ void run(NodePtr root,
    NodePtr main = rules.get_function("main");
    if (main) {
       // invoke main with the remaining arguments
-      AttributePtr args(AttributePtr(new Attribute(Attribute::list)));
+      AttributePtr args(std::make_shared<Attribute>(Attribute::list));
       while (argc > 0) {
-	 AttributePtr arg(AttributePtr(new Attribute(*argv++))); --argc;
+	 AttributePtr arg(std::make_shared<Attribute>(*argv++)); --argc;
 	 args->push_back(arg);
       }
       BindingsPtr local_bindings(bindings);
@@ -133,7 +134,7 @@ void run(NodePtr root,
 
    if (rules.print_rules_defined() &&
 	    rules.transformation_rules_defined()) {
-      PseudoRandomGeneratorPtr prg(new SubtractiveRG(getpid()));
+      PseudoRandomGeneratorPtr prg = std::make_shared<SubtractiveRG>(getpid());
       const RuleTable& rt(rules.get_transformation_rule_table());
       CandidateSet candidates(root, rt, bindings);
       if (candidates.size() == 0) {
@@ -144,8 +145,8 @@ void run(NodePtr root,
       if (count < candidates.size()) {
 	 count = candidates.size();
       }
-      ConsumerPtr consumer(new MyConsumer(pattern, rules, count,
-	 parentheses, out, bindings));
+      ConsumerPtr consumer = std::make_shared<MyConsumer>(pattern, rules, count,
+	 parentheses, out, bindings);
       candidates.set_prg(prg);
       candidates.set_consumer(consumer);
       if (count == candidates.size()) {

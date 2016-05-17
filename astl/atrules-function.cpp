@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <memory>
 #include <astl/atrules-function.hpp>
 #include <astl/attribute.hpp>
 #include <astl/execution.hpp>
@@ -50,7 +51,7 @@ AttributePtr AttributionRuleSetFunction::eval(AttributePtr args)
    }
    RuleTable& rtab(*rt);
    BindingsPtr local_bindings(bindings);
-   local_bindings->define("root", AttributePtr(new Attribute(root)));
+   local_bindings->define("root", std::make_shared<Attribute>(root));
    execute(root, rtab, local_bindings);
    return AttributePtr((Attribute*) 0);
 }

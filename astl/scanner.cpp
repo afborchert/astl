@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <memory>
 #include <regex>
 #include <astl/scanner.hpp>
 #include <astl/error.hpp>
@@ -120,8 +121,8 @@ bool Scanner::get_next_token(semantic_type& yylval,
 	 } else {
 	    token = parser::token::IDENT;
 	    if (tokenstr) {
-	       yylval = NodePtr(new Node(make_loc(tokenloc),
-		  Token(token, tokenstr)));
+	       yylval = std::make_shared<Node>(make_loc(tokenloc),
+		  Token(token, tokenstr));
 	    }
 	 }
       }
@@ -132,7 +133,8 @@ bool Scanner::get_next_token(semantic_type& yylval,
 	 nextch();
       }
       token = parser::token::CARDINAL_LITERAL;
-      yylval = NodePtr(new Node(make_loc(tokenloc), Token(token, tokenstr)));
+      yylval = std::make_shared<Node>(make_loc(tokenloc),
+	 Token(token, tokenstr));
       tokenstr = 0;
    } else {
       switch (ch) {
@@ -350,8 +352,8 @@ void Scanner::scan_text() {
 	       }
 	       int token = parser::token::TEXT_LITERAL;
 	       push_token(token,
-		  NodePtr(new Node(make_loc(tokenloc),
-		     Token(token, current_text))), tokenloc); 
+		  std::make_shared<Node>(make_loc(tokenloc),
+		     Token(token, current_text)), tokenloc); 
 	       current_text = "";
 	    }
 	    tokenloc.begin = oldpos;
@@ -408,8 +410,8 @@ void Scanner::scan_text() {
 	       }
 	       int token = parser::token::VARIABLE;
 	       push_token(token,
-		  NodePtr(new Node(make_loc(tokenloc),
-		     Token(token, tokenstr))), tokenloc);
+		  std::make_shared<Node>(make_loc(tokenloc),
+		     Token(token, tokenstr)), tokenloc);
 	       tokenloc.begin = oldpos;
 	    }
 	    continue;
@@ -441,8 +443,8 @@ void Scanner::scan_text() {
    if (current_text.size() > 0) {
       int token = parser::token::TEXT_LITERAL;
       push_token(token,
-	 NodePtr(new Node(make_loc(tokenloc),
-	    Token(token, current_text))), tokenloc); 
+	 std::make_shared<Node>(make_loc(tokenloc),
+	    Token(token, current_text)), tokenloc); 
    }
    if (eof) {
       error("eof encountered in text literal");
@@ -470,8 +472,8 @@ void Scanner::scan_regexp(char opening_delimiter, char closing_delimiter) {
       nextch();
    }
    int token = parser::token::REGEXP_LITERAL;
-   NodePtr node = NodePtr(new Node(make_loc(tokenloc),
-      Token(token, tokenstr)));
+   NodePtr node = std::make_shared<Node>(make_loc(tokenloc),
+      Token(token, tokenstr));
    push_token(token, node, tokenloc);
    tokenstr = 0;
    if (ch == closing_delimiter) {
@@ -565,8 +567,8 @@ void Scanner::scan_string_literal(semantic_type& yylval, int& token) {
       error("unexpected eof in string literal");
    }
    token = parser::token::STRING_LITERAL;
-   yylval = NodePtr(new Node(make_loc(tokenloc),
-      Token(token, tokenval, *tokenstr)));
+   yylval = std::make_shared<Node>(make_loc(tokenloc),
+      Token(token, tokenval, *tokenstr));
    tokenstr = 0;
 }
 

@@ -18,6 +18,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <memory>
 #include <sstream>
 #include <astl/designator.hpp>
 #include <astl/flow-graph.hpp>
@@ -77,7 +78,7 @@ void Designator::add_index(AttributePtr indexAt,
 	    if (indexVal >= node->size()) {
 	       throw Exception(loc, "index out of range");
 	    }
-	    at = AttributePtr(new Attribute(node->get_operand(indexVal)));
+	    at = std::make_shared<Attribute>(node->get_operand(indexVal));
 	 }
 	 break;
 

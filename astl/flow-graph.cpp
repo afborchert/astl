@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <memory>
 #include <utility>
 #include <astl/flow-graph.hpp>
 #include <astl/attribute.hpp>
@@ -37,7 +38,7 @@ static unsigned int by_name(BindingsPtr bindings,
    if (!graph) return 0;
    if (graph->get_type() != Attribute::dictionary) return 0;
    if (!graph->is_defined(dict)) {
-      graph->update(dict, AttributePtr(new Attribute()));
+      graph->update(dict, std::make_shared<Attribute>());
    }
    AttributePtr dictAt = graph->get_value(dict);
    assert(dictAt);
@@ -52,7 +53,7 @@ static unsigned int by_name(BindingsPtr bindings,
    } else {
       // +1 as 0 is reserved for empty keys and various error conditions
       unsigned int next = dictAt->size() + 1;
-      dictAt->update(key, AttributePtr(new Attribute(next)));
+      dictAt->update(key, std::make_shared<Attribute>(next));
       return next;
    }
 }
@@ -64,7 +65,7 @@ static unsigned int nof(BindingsPtr bindings,
    if (!graph) return 1;
    if (graph->get_type() != Attribute::dictionary) return 1;
    if (!graph->is_defined(dict)) {
-      graph->update(dict, AttributePtr(new Attribute()));
+      graph->update(dict, std::make_shared<Attribute>());
    }
    AttributePtr dictAt = graph->get_value(dict);
    assert(dictAt);
@@ -95,47 +96,47 @@ static unsigned int new_id(BindingsPtr bindings) {
    if (!graph) return 0;
    if (graph->get_type() != Attribute::dictionary) return 0;
    if (!graph->is_defined(ID)) {
-      graph->update(ID, AttributePtr(new Attribute(1)));
+      graph->update(ID, std::make_shared<Attribute>(1));
    }
    AttributePtr idAt = graph->get_value(ID);
    assert(idAt);
    Location loc;
    unsigned int id = idAt->get_integer()->get_unsigned_int(loc);
-   graph->update(ID, AttributePtr(new Attribute(id + 1)));
+   graph->update(ID, std::make_shared<Attribute>(id + 1));
    return id;
 }
 
 FlowGraphNode::FlowGraphNode(BindingsPtr bindings) :
       bindings(bindings), id(new_id(bindings)),
-      type_number(0), at(new Attribute()) {
-   at->update("branch", AttributePtr(new Attribute()));
+      type_number(0), at(std::make_shared<Attribute>()) {
+   at->update("branch", std::make_shared<Attribute>());
 }
 
 FlowGraphNode::FlowGraphNode(BindingsPtr bindings,
 	 const std::string& type) :
       bindings(bindings), id(new_id(bindings)), type(type),
       type_number(node_type_by_name(bindings, type)),
-      at(new Attribute()) {
-   at->update("branch", AttributePtr(new Attribute()));
+      at(std::make_shared<Attribute>()) {
+   at->update("branch", std::make_shared<Attribute>());
 }
 
 FlowGraphNode::FlowGraphNode(BindingsPtr bindings, NodePtr node) :
       bindings(bindings), id(new_id(bindings)),
       type_number(0), node(node),
-      at(new Attribute()) {
+      at(std::make_shared<Attribute>()) {
    assert(node);
-   at->update("astnode", AttributePtr(new Attribute(node)));
-   at->update("branch", AttributePtr(new Attribute()));
+   at->update("astnode", std::make_shared<Attribute>(node));
+   at->update("branch", std::make_shared<Attribute>());
 }
 
 FlowGraphNode::FlowGraphNode(BindingsPtr bindings,
 	 const std::string& type, NodePtr node) :
       bindings(bindings), id(new_id(bindings)),
       type(type), type_number(node_type_by_name(bindings, type)),
-      node(node), at(new Attribute()) {
+      node(node), at(std::make_shared<Attribute>()) {
    assert(node);
-   at->update("astnode", AttributePtr(new Attribute(node)));
-   at->update("branch", AttributePtr(new Attribute()));
+   at->update("astnode", std::make_shared<Attribute>(node));
+   at->update("branch", std::make_shared<Attribute>());
 }
 
 void FlowGraphNode::link(FlowGraphNodePtr fgnode) {
@@ -148,7 +149,7 @@ void FlowGraphNode::link(FlowGraphNodePtr fgnode, const std::string& label) {
    links.push_back(std::make_pair(label, fgnode));
    labeled_links[label] = fgnode;
    AttributePtr branches = at->get_value("branch");
-   branches->update(label, AttributePtr(new Attribute(fgnode)));
+   branches->update(label, std::make_shared<Attribute>(fgnode));
 }
 
 unsigned int FlowGraphNode::get_id() const {

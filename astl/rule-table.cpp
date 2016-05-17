@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <memory>
 #include <astl/syntax-tree.hpp>
 #include <astl/rule-table.hpp>
 #include <astl/operators.hpp>
@@ -39,7 +40,7 @@ void RuleTable::traverse(NodePtr node,
       if (node->size() >= 3) {
 	 rulename = node->get_operand(2)->get_token().get_text();
       }
-      RulePtr rule(new Rule(tree_expr, rhs, rulename, rules));
+      auto rule = std::make_shared<Rule>(tree_expr, rhs, rulename, rules);
 
       Arity arity = rule->get_arity();
       Rule::Type rtype = rule->get_type();

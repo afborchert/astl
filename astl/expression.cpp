@@ -18,8 +18,9 @@
 
 #include <cassert>
 #include <cstdlib>
-#include <gmp.h>
+#include <memory>
 #include <regex>
+#include <gmp.h>
 #include <astl/expression.hpp>
 #include <astl/operators.hpp>
 #include <astl/arithmetic-ops.hpp>
@@ -110,11 +111,11 @@ NodePtr Expression::convert_to_node() const throw(Exception) {
       if (result->get_type() == Attribute::tree) {
 	 return result->get_node();
       } else {
-	 return NodePtr(new Node(root->get_location(),
-	    Token(result->convert_to_string())));
+	 return std::make_shared<Node>(root->get_location(),
+	    Token(result->convert_to_string()));
       }
    } else {
-      return NodePtr(new Node(root->get_location(), Token("")));
+      return std::make_shared<Node>(root->get_location(), Token(""));
    }
 }
 
@@ -130,14 +131,14 @@ IntegerPtr Expression::convert_to_integer() const throw(Exception) {
    if (result) {
       return result->convert_to_integer(root->get_location());
    } else {
-      return IntegerPtr(new Integer(0));
+      return std::make_shared<Integer>(0);
    }
 }
 
 AttributePtr Expression::convert_to_list() const throw(Exception) {
    if (!result) {
       // return an empty list for a null value
-      return AttributePtr(new Attribute(Attribute::list));
+      return std::make_shared<Attribute>(Attribute::list);
    }
    return result->convert_to_list();
 }
@@ -145,7 +146,7 @@ AttributePtr Expression::convert_to_list() const throw(Exception) {
 AttributePtr Expression::convert_to_dict() const throw(Exception) {
    if (!result) {
       // return an empty dictionary for a null value
-      return AttributePtr(new Attribute(Attribute::dictionary));
+      return std::make_shared<Attribute>(Attribute::dictionary);
    }
    return result->convert_to_dict();
 }
@@ -155,7 +156,7 @@ DesignatorPtr Expression::eval_designator(NodePtr expr) throw(Exception) {
       /* IDENT token */
       std::string varname = expr->get_token().get_text();
       if (bindings->defined(varname)) {
-	 return DesignatorPtr(new Designator(bindings, varname));
+	 return std::make_shared<Designator>(bindings, varname);
       } else {
 	 std::ostringstream os;
 	 os << "unknown variable: " << varname;
@@ -187,22 +188,21 @@ AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
    switch (expr->get_op().get_opcode()) {
       case ASTL_OPERATOR_DESIGNATOR:
 	 {
-	    DesignatorPtr desAt = eval_designator(expr->get_operand(0));
+	    auto desAt = eval_designator(expr->get_operand(0));
 	    return desAt->get_value(expr->get_location());
 	 }
       case ASTL_OPERATOR_FUNCTION_CALL:
 	 {
-	    AttributePtr func = recursive_evaluation(expr->get_operand(0));
+	    auto func = recursive_evaluation(expr->get_operand(0));
 	    if (func->get_type() != Attribute::function) {
 	       throw Exception(expr->get_operand(0)->get_location(),
 		  "function expected");
 	    }
-	    AttributePtr args(AttributePtr(new Attribute(Attribute::list)));
+	    auto args(std::make_shared<Attribute>(Attribute::list));
 	    if (expr->size() == 2) {
-	       NodePtr expr_list = expr->get_operand(1);
+	       auto expr_list = expr->get_operand(1);
 	       for (unsigned int i = 0; i < expr_list->size(); ++i) {
-		  AttributePtr arg =
-		     recursive_evaluation(expr_list->get_operand(i));
+		  auto arg = recursive_evaluation(expr_list->get_operand(i));
 		  args->push_back(arg);
 	       }
 	    }
@@ -215,30 +215,29 @@ AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
 	 }
       case ASTL_OPERATOR_FUNCTION_CONSTRUCTOR:
 	 {
-	    NodePtr block = expr->get_operand(0);
-	    BindingsPtr local_bindings = BindingsPtr(new Bindings(bindings));
-	    FunctionPtr f = FunctionPtr(new RegularFunction(block,
-	       local_bindings));
-	    return AttributePtr(new Attribute(f));
+	    auto block = expr->get_operand(0);
+	    auto local_bindings = std::make_shared<Bindings>(bindings);
+	    FunctionPtr f =
+	       std::make_shared<RegularFunction>(block, local_bindings);
+	    return std::make_shared<Attribute>(f);
 	 }
       case ASTL_OPERATOR_LIST_AGGREGATE:
 	 {
-	    AttributePtr list(AttributePtr(new Attribute(Attribute::list)));
+	    auto list = std::make_shared<Attribute>(Attribute::list);
 	    for (unsigned int i = 0; i < expr->size(); ++i) {
-	       AttributePtr elem = recursive_evaluation(expr->get_operand(i));
+	       auto elem = recursive_evaluation(expr->get_operand(i));
 	       list->push_back(elem);
 	    }
 	    return list;
 	 }
       case ASTL_OPERATOR_DICTIONARY_AGGREGATE:
 	 {
-	    AttributePtr
-	       dict(AttributePtr(new Attribute(Attribute::dictionary)));
+	    auto dict = std::make_shared<Attribute>(Attribute::dictionary);
 	    for (unsigned int i = 0; i < expr->size(); ++i) {
-	       NodePtr pair = expr->get_operand(i);
+	       auto pair = expr->get_operand(i);
 	       assert(pair->get_op() == Op::key_value_pair);
 	       std::string key = pair->get_operand(0)->get_token().get_text();
-	       AttributePtr value = recursive_evaluation(pair->get_operand(1));
+	       auto value = recursive_evaluation(pair->get_operand(1));
 	       dict->update(key, value);
 	    }
 	    return dict;
@@ -246,66 +245,66 @@ AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
       case ASTL_OPERATOR_CARDINAL_LITERAL_TK:
 	 {
 	    std::string s = expr->get_operand(0)->get_token().get_text();
-	    IntegerPtr cardval(new Integer(s, expr->get_location()));
-	    return AttributePtr(new Attribute(cardval));
+	    auto cardval = std::make_shared<Integer>(s, expr->get_location());
+	    return std::make_shared<Attribute>(cardval);
 	 }
       case ASTL_OPERATOR_STRING_LITERAL_TK:
 	 {
 	    std::string sval = expr->get_operand(0)->get_token().get_text();
-	    return AttributePtr(new Attribute(sval));
+	    return std::make_shared<Attribute>(sval);
 	 }
       case ASTL_OPERATOR_EXISTS_TK:
 	 {
-	    DesignatorPtr desAt = eval_designator(expr->get_operand(0));
-	    return AttributePtr(new Attribute(desAt->exists()));
+	    auto desAt = eval_designator(expr->get_operand(0));
+	    return std::make_shared<Attribute>(desAt->exists());
 	 }
       case ASTL_OPERATOR_PREFIX_INCREMENT:
 	 {
-	    DesignatorPtr desAt = eval_designator(expr->get_operand(0));
-	    AttributePtr valueAt = 
+	    auto desAt = eval_designator(expr->get_operand(0));
+	    auto valueAt = 
 		  desAt->get_value(expr->get_operand(0)->get_location());
-	    AttributePtr resultAt = arithmetic_binary_op(Op::PLUS,
-		  valueAt, AttributePtr(new Attribute(1)),
+	    auto resultAt = arithmetic_binary_op(Op::PLUS,
+		  valueAt, std::make_shared<Attribute>(1),
 		  expr->get_location());
 	    desAt->assign(resultAt, expr->get_location());
 	    return resultAt;
 	 }
       case ASTL_OPERATOR_PREFIX_DECREMENT:
 	 {
-	    DesignatorPtr desAt = eval_designator(expr->get_operand(0));
-	    AttributePtr valueAt = 
+	    auto desAt = eval_designator(expr->get_operand(0));
+	    auto valueAt = 
 		  desAt->get_value(expr->get_operand(0)->get_location());
-	    AttributePtr resultAt = arithmetic_binary_op(Op::MINUS,
-		  valueAt, AttributePtr(new Attribute(1)),
+	    auto resultAt = arithmetic_binary_op(Op::MINUS,
+		  valueAt, std::make_shared<Attribute>(1),
 		  expr->get_location());
 	    desAt->assign(resultAt, expr->get_location());
 	    return resultAt;
 	 }
       case ASTL_OPERATOR_POSTFIX_INCREMENT:
 	 {
-	    DesignatorPtr desAt = eval_designator(expr->get_operand(0));
-	    AttributePtr valueAt = 
+	    auto desAt = eval_designator(expr->get_operand(0));
+	    auto valueAt = 
 		  desAt->get_value(expr->get_operand(0)->get_location());
-	    AttributePtr resultAt = arithmetic_binary_op(Op::PLUS,
-		  valueAt, AttributePtr(new Attribute(1)),
+	    auto resultAt = arithmetic_binary_op(Op::PLUS,
+		  valueAt, std::make_shared<Attribute>(1),
 		  expr->get_location());
 	    desAt->assign(resultAt, expr->get_location());
 	    return valueAt;
 	 }
       case ASTL_OPERATOR_POSTFIX_DECREMENT:
 	 {
-	    DesignatorPtr desAt = eval_designator(expr->get_operand(0));
-	    AttributePtr valueAt = 
+	    auto desAt = eval_designator(expr->get_operand(0));
+	    auto valueAt = 
 		  desAt->get_value(expr->get_operand(0)->get_location());
 	    AttributePtr resultAt = arithmetic_binary_op(Op::MINUS,
-		  valueAt, AttributePtr(new Attribute(1)),
+		  valueAt, std::make_shared<Attribute>(1),
 		  expr->get_location());
 	    desAt->assign(resultAt, expr->get_location());
 	    return valueAt;
 	 }
       case ASTL_OPERATOR_NULL_T_TK:
 	 {
-	    return AttributePtr((Attribute*) 0);
+	    return AttributePtr(nullptr);
 	 }
       default:
 	 /* use of parentheses */
@@ -369,17 +368,18 @@ AttributePtr Expression::recursive_evaluation(NodePtr expr) throw(Exception) {
 			expr->get_location());
 		     break;
 		  default:
-		     assert(true);
+		     assert(false); std::abort();
 	       }
 	    }
 	 } else {
 	    if (!rightAt) {
-	       rightAt = AttributePtr(new Attribute(""));
+	       rightAt = std::make_shared<Attribute>("");
 	    }
 	    switch (expr->get_op().get_opcode()) {
 	       case ASTL_OPERATOR_AMP_EQ_TK:
-		  desAt->assign(AttributePtr(new Attribute(
-		     leftAt->convert_to_string() + rightAt->convert_to_string())),
+		  desAt->assign(std::make_shared<Attribute>(
+		     leftAt->convert_to_string() +
+			rightAt->convert_to_string()),
 		     expr->get_location());
 		  break;
 	       case ASTL_OPERATOR_PLUS_EQ_TK:
@@ -393,7 +393,7 @@ AttributePtr Expression::recursive_evaluation(NodePtr expr) throw(Exception) {
 		     expr->get_location());
 		  break;
 	       default:
-		  assert(0);
+		  assert(false); std::abort();
 	    }
 	 }
       }
@@ -408,9 +408,9 @@ AttributePtr Expression::recursive_evaluation(NodePtr expr) throw(Exception) {
       }
       // short circuit evaluation
       if (expr->get_op() == Op::OR && leftVal) {
-	 return AttributePtr(new Attribute(true));
+	 return std::make_shared<Attribute>(true);
       } else if (expr->get_op() == Op::AND && !leftVal) {
-	 return AttributePtr(new Attribute(false));
+	 return std::make_shared<Attribute>(false);
       }
       AttributePtr rightAt(recursive_evaluation(expr->get_operand(1)));
       bool rightVal;
@@ -420,14 +420,14 @@ AttributePtr Expression::recursive_evaluation(NodePtr expr) throw(Exception) {
 	 rightVal = false;
       }
       if (rightVal) {
-	 return AttributePtr(new Attribute(true));
+	 return std::make_shared<Attribute>(true);
       } else {
-	 return AttributePtr(new Attribute(false));
+	 return std::make_shared<Attribute>(false);
       }
    } else if (expr->get_op() == Op::MATCHES) {
       AttributePtr stringAt = recursive_evaluation(expr->get_operand(0));
       if (!stringAt) {
-	 stringAt = AttributePtr(new Attribute(""));
+	 stringAt = std::make_shared<Attribute>("");
       }
       NodePtr regexp = expr->get_operand(1);
       std::string res;
@@ -442,12 +442,12 @@ AttributePtr Expression::recursive_evaluation(NodePtr expr) throw(Exception) {
 	 std::cmatch what;
 	 std::string s = stringAt->convert_to_string();
 	 bool matches = std::regex_search(s.c_str(), what, re);
-	 if (!matches) return AttributePtr(new Attribute(false));
+	 if (!matches) return std::make_shared<Attribute>(false);
 	 Attribute::SubtokenVector subtokens(what.size());
 	 for (unsigned int i = 0; i < what.size(); ++i) {
 	    subtokens[i] = what[i];
 	 }
-	 return AttributePtr(new Attribute(subtokens));
+	 return std::make_shared<Attribute>(subtokens);
       } catch (std::regex_error& error) {
 	 std::ostringstream os;
 	 os << "invalid regular expression: m{" << res << "}";
@@ -467,23 +467,22 @@ AttributePtr Expression::recursive_evaluation(NodePtr expr) throw(Exception) {
       // handle comparisons with null before we convert this
       if ((!leftAt || !rightAt) &&
 	    (expr->get_op() == Op::EQEQ || expr->get_op() == Op::NE)) {
-	 return AttributePtr(new Attribute(
+	 return std::make_shared<Attribute>(
 	    (leftAt == rightAt) == (expr->get_op() == Op::EQEQ)
-	 ));
+	 );
       }
       // convert null values to the empty string
       if (!leftAt) {
-	 leftAt = AttributePtr(new Attribute(""));
+	 leftAt = std::make_shared<Attribute>("");
       }
       if (!rightAt) {
-	 rightAt = AttributePtr(new Attribute(""));
+	 rightAt = std::make_shared<Attribute>("");
       }
       if (!leftAt->is_scalar() && !rightAt->is_scalar() &&
 	    (expr->get_op() == Op::EQEQ || expr->get_op() == Op::NE)) {
 	 // we compare attribute pointers in case of non-scalar attributes
-	 return AttributePtr(
-	    new Attribute(leftAt->equal_to(rightAt) ==
-		  (expr->get_op() == Op::EQEQ))
+	 return std::make_shared<Attribute>(leftAt->equal_to(rightAt) ==
+		  (expr->get_op() == Op::EQEQ)
 	 );
       } else if (is_string_op(expr->get_op().get_opcode())) {
 	 return string_binary_op(expr->get_op(), leftAt, rightAt,
@@ -503,18 +502,18 @@ AttributePtr Expression::recursive_evaluation(NodePtr expr) throw(Exception) {
       }
    } else if (expr->get_op() == Op::NOT) {
       AttributePtr opat(recursive_evaluation(expr->get_operand(0)));
-      return AttributePtr(new Attribute(!opat || !opat->convert_to_bool()));
+      return std::make_shared<Attribute>(!opat || !opat->convert_to_bool());
    } else {
       /* unary operators */
       assert(expr->size() == 1);
       AttributePtr at = recursive_evaluation(expr->get_operand(0));
       if (!at) {
-	 at = AttributePtr(new Attribute(0));
+	 at = AttributePtr(nullptr);
       }
-      IntegerPtr operand = IntegerPtr(new Integer(
-	 *(at->convert_to_integer(expr->get_location()))));
+      IntegerPtr operand = std::make_shared<Integer>(
+	 *(at->convert_to_integer(expr->get_location())));
       operand->neg();
-      return AttributePtr(new Attribute(operand));
+      return std::make_shared<Attribute>(operand);
    }
 }
 

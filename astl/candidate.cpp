@@ -58,9 +58,9 @@ NodePtr Candidate::transform() const throw(Exception) {
    // set "location" and "rulename" attribute
    AttributePtr rootAt = cloned_root->get_attribute();
    rootAt->update("location",
-      AttributePtr(new Attribute(get_location())));
+      std::make_shared<Attribute>(get_location()));
    rootAt->update("rulename",
-      AttributePtr(new Attribute(rule->get_name())));
+      std::make_shared<Attribute>(rule->get_name()));
    return cloned_root;
 }
 
@@ -112,7 +112,7 @@ NodePtr Candidate::gen_tree(NodePtr troot) const throw(Exception) {
       assert(troot->get_op() == Op::tree_expression);
       std::string opname = troot->get_operand(0)->get_token().get_text();
       Operator op(opname);
-      newroot = NodePtr(new Node(troot->get_location(), op));
+      newroot = std::make_shared<Node>(troot->get_location(), op);
       for (unsigned int i = 1; i < troot->size(); ++i) {
 	 NodePtr subnode = troot->get_operand(i);
 	 if (!subnode->is_leaf() && subnode->get_op() == Op::subnode_list) {
@@ -147,7 +147,7 @@ NodePtr Candidate::gen_tree(NodePtr troot) const throw(Exception) {
       }
    }
    if (named) {
-      bindings->define(name, AttributePtr(new Attribute(newroot)));
+      bindings->define(name, std::make_shared<Attribute>(newroot));
    }
    return newroot;
 }

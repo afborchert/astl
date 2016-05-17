@@ -29,24 +29,24 @@ namespace Astl {
 
 BindingsPtr create_default_bindings(NodePtr root,
       const Rules* rulesp) throw(Exception){
-   BindingsPtr bindings = BindingsPtr(new Bindings(rulesp));
+   auto bindings = std::make_shared<Bindings>(rulesp);
    // add "root" and "graph"
    if (root) {
-      bindings->define("root", AttributePtr(new Attribute(root)));
+      bindings->define("root", std::make_shared<Attribute>(root));
       AttributePtr at = root->get_attribute();
       // create root.graph as dictionary, if it does not exist yet
       // and make graph an alias for root.graph
       if (!at->is_defined("graph")) {
-	 at->update("graph", AttributePtr(new Attribute()));
+	 at->update("graph", std::make_shared<Attribute>());
       }
       bindings->define("graph", at->get_value("graph"));
    } else {
-      bindings->define("root", AttributePtr((Attribute*) 0));
-      bindings->define("graph", AttributePtr((Attribute*) 0));
+      bindings->define("root", AttributePtr(nullptr));
+      bindings->define("graph", AttributePtr(nullptr));
    }
    // add "true" and "false"
-   bindings->define("true", AttributePtr(new Attribute(true)));
-   bindings->define("false", AttributePtr(new Attribute(false)));
+   bindings->define("true", std::make_shared<Attribute>(true));
+   bindings->define("false", std::make_shared<Attribute>(false));
 
    // add standard functions to bindings
    BuiltinFunctions bfs;
@@ -58,8 +58,9 @@ BindingsPtr create_default_bindings(NodePtr root,
       const FunctionTable& ftab = rulesp->get_function_table();
       for (FunctionTable::const_iterator it = ftab.begin();
 	    it != ftab.end(); ++it) {
-	 FunctionPtr f = FunctionPtr(new RegularFunction(it->second, bindings));
-	 if (!bindings->define(it->first, AttributePtr(new Attribute(f)))) {
+	 FunctionPtr f =
+	    std::make_shared<RegularFunction>(it->second, bindings);
+	 if (!bindings->define(it->first, std::make_shared<Attribute>(f))) {
 	    throw Exception(it->second->get_location(),
 	       "multiply defined: " + it->first);
 	 }
@@ -68,9 +69,10 @@ BindingsPtr create_default_bindings(NodePtr root,
 	 rulesp->get_named_transformation_rule_tables();
       for (NamedRulesTable::const_iterator it = ntrtab.begin();
 	    it != ntrtab.end(); ++it) {
-	 FunctionPtr f = FunctionPtr(new
-	    TransformationRuleSetFunction(it->second, bindings));
-	 if (!bindings->define(it->first, AttributePtr(new Attribute(f)))) {
+	 FunctionPtr f =
+	    std::make_shared<TransformationRuleSetFunction>(it->second,
+	       bindings);
+	 if (!bindings->define(it->first, std::make_shared<Attribute>(f))) {
 	    throw Exception("multiply defined: " + it->first);
 	 }
       }
@@ -78,9 +80,9 @@ BindingsPtr create_default_bindings(NodePtr root,
 	 rulesp->get_named_inplace_transformation_rule_tables();
       for (NamedRulesTable::const_iterator it = niptrtab.begin();
 	    it != niptrtab.end(); ++it) {
-	 FunctionPtr f = FunctionPtr(new
-	    InplaceTransformationRuleSetFunction(it->second, bindings));
-	 if (!bindings->define(it->first, AttributePtr(new Attribute(f)))) {
+	 FunctionPtr f = std::make_shared<InplaceTransformationRuleSetFunction>(
+	    it->second, bindings);
+	 if (!bindings->define(it->first, std::make_shared<Attribute>(f))) {
 	    throw Exception("multiply defined: " + it->first);
 	 }
       }
@@ -88,9 +90,9 @@ BindingsPtr create_default_bindings(NodePtr root,
 	 rulesp->get_named_attribution_rule_tables();
       for (NamedRulesTable::const_iterator it = nrtab.begin();
 	    it != nrtab.end(); ++it) {
-	 FunctionPtr f = FunctionPtr(new
-	    AttributionRuleSetFunction(it->second, bindings));
-	 if (!bindings->define(it->first, AttributePtr(new Attribute(f)))) {
+	 FunctionPtr f =
+	    std::make_shared<AttributionRuleSetFunction>(it->second, bindings);
+	 if (!bindings->define(it->first, std::make_shared<Attribute>(f))) {
 	    throw Exception("multiply defined: " + it->first);
 	 }
       }
@@ -98,9 +100,9 @@ BindingsPtr create_default_bindings(NodePtr root,
 	 rulesp->get_named_print_rule_tables();
       for (NamedRulesTable::const_iterator it = nrptab.begin();
 	    it != nrptab.end(); ++it) {
-	 FunctionPtr f = FunctionPtr(new
-	    PrintRuleSetFunction(it->second, bindings));
-	 if (!bindings->define(it->first, AttributePtr(new Attribute(f)))) {
+	 FunctionPtr f =
+	    std::make_shared<PrintRuleSetFunction>(it->second, bindings);
+	 if (!bindings->define(it->first, std::make_shared<Attribute>(f))) {
 	    throw Exception("multiply defined: " + it->first);
 	 }
       }
@@ -111,7 +113,7 @@ BindingsPtr create_default_bindings(NodePtr root,
 
    // and return a scope which is nested within the
    // scope with the default bindings to avoid conflicts
-   return BindingsPtr(new Bindings(bindings));
+   return std::make_shared<Bindings>(bindings);
 }
 
 BindingsPtr create_default_bindings(NodePtr root) throw(Exception) {

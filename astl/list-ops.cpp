@@ -26,17 +26,17 @@ AttributePtr list_binary_op(const Operator& op,
       AttributePtr leftAt, AttributePtr rightAt,
       const Location& loc) throw(Exception) {
    if (!leftAt) {
-      leftAt = AttributePtr(new Attribute(Attribute::list));
+      leftAt = std::make_shared<Attribute>(Attribute::list);
    }
    if (!rightAt) {
-      rightAt = AttributePtr(new Attribute(Attribute::list));
+      rightAt = std::make_shared<Attribute>(Attribute::list);
    }
    switch (op.get_opcode()) {
       case ASTL_OPERATOR_AMPERSAND_TK:
 	 // list concatenation
 	 {
 	    AttributePtr resultAt =
-	       AttributePtr(new Attribute(Attribute::list));
+	       std::make_shared<Attribute>(Attribute::list);
 	    if (leftAt->get_type() != Attribute::list) {
 	       resultAt->push_back(leftAt);
 	    } else {

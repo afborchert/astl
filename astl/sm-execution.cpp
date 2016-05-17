@@ -96,7 +96,7 @@ struct InstanceThread {
    }
    void fork_bindings() {
       // get shared bindings
-      BindingsPtr new_bindings = BindingsPtr(new Bindings(smi->bindings));
+      BindingsPtr new_bindings = std::make_shared<Bindings>(smi->bindings);
       // and duplicate private bindings
       new_bindings->merge(bindings);
       // and update local functions
@@ -235,7 +235,7 @@ static FlowGraphNodePtr get_root(BindingsPtr bindings) {
 
 static InstanceThread create_instance(ExecutionContext& ec, StateMachinePtr sm,
       FlowGraphNodePtr start) {
-   InstancePtr ip = InstancePtr(new Instance(sm, sm->get_shared_bindings()));
+   InstancePtr ip = std::make_shared<Instance>(sm, sm->get_shared_bindings());
    StateMachineSet smset(ec.nof_sms);
    smset.set(sm->get_id());
    std::pair<ExecutionContext::Map::iterator, bool> result =
@@ -262,7 +262,7 @@ void check_creation(ExecutionContext& ec, StateMachinePtr sm,
 	 continue;
       }
       // check tree expression, if any
-      BindingsPtr bindings = BindingsPtr(new Bindings(ec.bindings));
+      BindingsPtr bindings = std::make_shared<Bindings>(ec.bindings);
       if (smr->tree_expr_defined()) {
 	 if (!ast) continue;
 	 if (ast->is_leaf()) continue;
@@ -275,7 +275,7 @@ void check_creation(ExecutionContext& ec, StateMachinePtr sm,
       }
       // check node condition, if any
       NodePtr nodecond = smr->get_node_condition();
-      bindings->define("node", AttributePtr(new Attribute(fgnode)));
+      bindings->define("node", std::make_shared<Attribute>(fgnode));
       if (nodecond) {
 	 Expression cond(nodecond, bindings);
 	 if (!cond.convert_to_bool()) continue;
@@ -285,7 +285,7 @@ void check_creation(ExecutionContext& ec, StateMachinePtr sm,
       NodePtr block = smr->get_block();
       if (block) {
 	 BindingsPtr local_bindings =
-	    BindingsPtr(new Bindings(ithread.bindings));
+	    std::make_shared<Bindings>(ithread.bindings);
 	 local_bindings->merge(bindings);
 	 execute(block, local_bindings);
       }
@@ -340,7 +340,7 @@ bool execute_rules(ExecutionContext& ec, InstanceThread& t,
 	 continue;
       }
       // check tree expression, if any
-      BindingsPtr bindings = BindingsPtr(new Bindings(t.bindings));
+      BindingsPtr bindings = std::make_shared<Bindings>(t.bindings);
       if (smr->tree_expr_defined()) {
 	 if (!ast) continue;
 	 if (ast->is_leaf()) continue;
@@ -350,14 +350,14 @@ bool execute_rules(ExecutionContext& ec, InstanceThread& t,
 	 if (!smr->get_opset()->includes(opname)) continue;
 	 NodePtr tree_expr = smr->get_tree_expression();
 	 if (!matches(ast, tree_expr, bindings, ast->get_context())) continue;
-	 bindings = BindingsPtr(new Bindings(bindings));
+	 bindings = std::make_shared<Bindings>(bindings);
       }
       // check node condition, if any
       NodePtr nodecond = smr->get_node_condition();
-      bindings->define("node", AttributePtr(new Attribute(fgnode)));
+      bindings->define("node", std::make_shared<Attribute>(fgnode));
       bindings->define("current_state",
-	 AttributePtr(new Attribute(sm->get_state_by_number(t.state))));
-      bindings->define("label", AttributePtr(new Attribute(label_text)));
+	 std::make_shared<Attribute>(sm->get_state_by_number(t.state)));
+      bindings->define("label", std::make_shared<Attribute>(label_text));
       if (nodecond) {
 	 Expression cond(nodecond, bindings);
 	 if (!cond.convert_to_bool()) continue;
@@ -471,8 +471,8 @@ bool execute_rules(ExecutionContext& ec, InstanceThread& t,
 }
 
 StateMachinePtr create_dummy_sm(unsigned int id, BindingsPtr bindings) {
-   StateMachinePtr dummy = StateMachinePtr(new StateMachine(bindings,
-      "$dummy", id));
+   StateMachinePtr dummy = std::make_shared<StateMachine>(bindings,
+      "$dummy", id);
    Location loc; dummy->add_state("start", loc);
    return dummy;
 }

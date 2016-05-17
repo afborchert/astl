@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <memory>
 #include <astl/exception.hpp>
 #include <astl/rules.hpp>
 #include <astl/operator.hpp>
@@ -47,7 +48,7 @@ void Rules::add_to_named_rules(NamedRulesTable& nrtab,
    if (it != nrtab.end()) {
       it->second->scan(root, ruleop, *this);
    } else {
-      RuleTablePtr rt = RuleTablePtr(new RuleTable());
+      RuleTablePtr rt = std::make_shared<RuleTable>();
       rt->scan(root, ruleop, *this);
       std::pair<NamedRulesTable::iterator, bool> result =
 	 nrtab.insert(make_pair(name, rt));
@@ -75,7 +76,8 @@ void Rules::scan(NodePtr root) throw(Exception) {
 	 }
       } else if (op == Op::operator_set_clause) {
 	 std::string name = clause->get_operand(0)->get_token().get_text();
-	 OperatorSetPtr opset(new OperatorSet(clause->get_operand(1), *this));
+	 auto opset = std::make_shared<OperatorSet>(clause->get_operand(1),
+	    *this);
 	 std::pair<OperatorSetTable::iterator, bool> result =
 	    opsets.insert(make_pair(name, opset));
 	 if (!result.second) {

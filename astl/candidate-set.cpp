@@ -115,12 +115,12 @@ void CandidateSet::traverse(NodePtr& node, Context& context) const {
 
 bool CandidateSet::add_matching_candidates(NodePtr& node,
       RulePtr rule, Context& context) const {
-   BindingsPtr local_bindings = BindingsPtr(new Bindings(bindings));
-   NodePtr left_expr = rule->get_tree_expression();
-   NodePtr right_expr = rule->get_rhs();
+   auto local_bindings = std::make_shared<Bindings>(bindings);
+   auto left_expr = rule->get_tree_expression();
+   auto right_expr = rule->get_rhs();
    if (matches(node, left_expr, local_bindings, context)) {
-      candidates.push_back(CandidatePtr(new Candidate(root,
-	 node, rule, local_bindings)));
+      candidates.push_back(std::make_shared<Candidate>(root,
+	 node, rule, local_bindings));
       context.suppress_ancestors();
       return true;
    }

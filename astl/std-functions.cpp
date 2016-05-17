@@ -17,6 +17,7 @@
 */
 
 #include <iostream>
+#include <memory>
 #include <astl/types.hpp>
 #include <astl/std-functions.hpp>
 #include <astl/flow-graph.hpp>
@@ -73,9 +74,9 @@ AttributePtr builtin_len(BindingsPtr bindings,
    }
    AttributePtr at = args->get_value(0);
    if (at) {
-      return AttributePtr(new Attribute(at->size()));
+      return std::make_shared<Attribute>(at->size());
    } else {
-      return AttributePtr(new Attribute(0));
+      return std::make_shared<Attribute>(0);
    }
 }
 
@@ -86,9 +87,9 @@ AttributePtr builtin_defined(BindingsPtr bindings,
    }
    AttributePtr at = args->get_value(0);
    if (at) {
-      return AttributePtr(new Attribute("1"));
+      return std::make_shared<Attribute>("1");
    } else {
-      return AttributePtr(new Attribute("0"));
+      return std::make_shared<Attribute>("0");
    }
 }
 
@@ -99,7 +100,7 @@ AttributePtr builtin_isstring(BindingsPtr bindings,
    }
    AttributePtr at = args->get_value(0);
    return
-      AttributePtr(new Attribute(at && at->get_type() == Attribute::string));
+      std::make_shared<Attribute>(at && at->get_type() == Attribute::string);
 }
 
 AttributePtr builtin_type(BindingsPtr bindings,
@@ -111,29 +112,29 @@ AttributePtr builtin_type(BindingsPtr bindings,
    if (at) {
       switch (at->get_type()) {
 	 case Attribute::dictionary:
-	    return AttributePtr(new Attribute("dictionary"));
+	    return std::make_shared<Attribute>("dictionary");
 	 case Attribute::list:
-	    return AttributePtr(new Attribute("list"));
+	    return std::make_shared<Attribute>("list");
 	 case Attribute::match_result:
-	    return AttributePtr(new Attribute("match_result"));
+	    return std::make_shared<Attribute>("match_result");
 	 case Attribute::tree:
-	    return AttributePtr(new Attribute("tree"));
+	    return std::make_shared<Attribute>("tree");
 	 case Attribute::flow_graph_node:
-	    return AttributePtr(new Attribute("flow_graph_node"));
+	    return std::make_shared<Attribute>("flow_graph_node");
 	 case Attribute::function:
-	    return AttributePtr(new Attribute("function"));
+	    return std::make_shared<Attribute>("function");
 	 case Attribute::string:
-	    return AttributePtr(new Attribute("string"));
+	    return std::make_shared<Attribute>("string");
 	 case Attribute::integer:
-	    return AttributePtr(new Attribute("integer"));
+	    return std::make_shared<Attribute>("integer");
 	 case Attribute::boolean:
-	    return AttributePtr(new Attribute("boolean"));
+	    return std::make_shared<Attribute>("boolean");
 	 default:
 	    /* not needed but it helps to suppress the warning */
 	    return AttributePtr(nullptr);
       }
    } else {
-      return AttributePtr(new Attribute("null"));
+      return std::make_shared<Attribute>("null");
    }
 }
 
@@ -143,8 +144,8 @@ AttributePtr builtin_isoperator(BindingsPtr bindings,
       throw Exception("wrong number of arguments for isoperator function");
    }
    AttributePtr at = args->get_value(0);
-   return AttributePtr(new Attribute(
-      at && at->get_type() == Attribute::tree && !at->get_node()->is_leaf()));
+   return std::make_shared<Attribute>(
+      at && at->get_type() == Attribute::tree && !at->get_node()->is_leaf());
 }
 
 AttributePtr builtin_operator(BindingsPtr bindings,
@@ -154,9 +155,9 @@ AttributePtr builtin_operator(BindingsPtr bindings,
    }
    AttributePtr at = args->get_value(0);
    if (at && at->get_type() == Attribute::tree && !at->get_node()->is_leaf()) {
-      return AttributePtr(new Attribute(at->get_node()->get_op().get_name()));
+      return std::make_shared<Attribute>(at->get_node()->get_op().get_name());
    } else {
-      return AttributePtr(new Attribute(""));
+      return std::make_shared<Attribute>("");
    }
 }
 
@@ -167,10 +168,10 @@ AttributePtr builtin_tokenliteral(BindingsPtr bindings,
    }
    AttributePtr at = args->get_value(0);
    if (at && at->get_type() == Attribute::tree && at->get_node()->is_leaf()) {
-      return AttributePtr(
-	 new Attribute(at->get_node()->get_token().get_literal()));
+      return std::make_shared<Attribute>(
+	 at->get_node()->get_token().get_literal());
    } else {
-      return AttributePtr(new Attribute(""));
+      return std::make_shared<Attribute>("");
    }
 }
 
@@ -181,10 +182,10 @@ AttributePtr builtin_tokentext(BindingsPtr bindings,
    }
    AttributePtr at = args->get_value(0);
    if (at && at->get_type() == Attribute::tree && at->get_node()->is_leaf()) {
-      return AttributePtr(
-	 new Attribute(at->get_node()->get_token().get_text()));
+      return std::make_shared<Attribute>(
+	 at->get_node()->get_token().get_text());
    } else {
-      return AttributePtr(new Attribute(""));
+      return std::make_shared<Attribute>("");
    }
 }
 
@@ -199,9 +200,9 @@ AttributePtr builtin_location(BindingsPtr bindings,
       Location loc = node->get_location();
       std::ostringstream os;
       os << loc;
-      return AttributePtr(new Attribute(os.str()));
+      return std::make_shared< Attribute>(os.str());
    } else {
-      return AttributePtr(new Attribute(""));
+      return std::make_shared<Attribute>("");
    }
 }
 
@@ -237,10 +238,10 @@ AttributePtr builtin_integer(BindingsPtr bindings,
 	 return at;
       } else {
 	 Location loc;
-	 return AttributePtr(new Attribute(at->convert_to_integer(loc)));
+	 return std::make_shared<Attribute>(at->convert_to_integer(loc));
       }
    } else {
-      return AttributePtr(new Attribute(IntegerPtr(new Integer((long)0))));
+      return std::make_shared<Attribute>(std::make_shared<Integer>(0l));
    }
 }
 
@@ -251,11 +252,11 @@ AttributePtr builtin_string(BindingsPtr bindings,
    }
    AttributePtr at = args->get_value(0);
    if (at) {
-      return AttributePtr(new Attribute(at->convert_to_string()));
+      return std::make_shared<Attribute>(at->convert_to_string());
    } else if (at->get_type() == Attribute::string) {
       return at;
    } else {
-      return AttributePtr(new Attribute(""));
+      return std::make_shared<Attribute>("");
    }
 }
 
@@ -300,8 +301,8 @@ AttributePtr builtin_copy(BindingsPtr bindings,
 AttributePtr builtin_cfg_node(BindingsPtr bindings,
       AttributePtr args) throw(Exception) {
    if (!args || args->size() == 0) {
-      return AttributePtr(new Attribute(
-	       FlowGraphNodePtr(new FlowGraphNode(bindings))));
+      return std::make_shared<Attribute>(
+	       std::make_shared<FlowGraphNode>(bindings));
    }
    switch (args->size()) {
       case 1:
@@ -311,17 +312,17 @@ AttributePtr builtin_cfg_node(BindingsPtr bindings,
 	       throw Exception("string or abstract syntax tree expected as argument to cfg_node function");
 	    }
 	    if (arg->get_type() == Attribute::tree) {
-	       return AttributePtr(new Attribute(
-		  FlowGraphNodePtr(new FlowGraphNode(
+	       return std::make_shared<Attribute>(
+		  std::make_shared<FlowGraphNode>(
 		     bindings, arg->get_node()
-		  ))
-	       ));
+		  )
+	       );
 	    } else {
-	       return AttributePtr(new Attribute(
-		  FlowGraphNodePtr(new FlowGraphNode(
+	       return std::make_shared<Attribute>(
+		  std::make_shared<FlowGraphNode>(
 		     bindings, arg->convert_to_string()
-		  ))
-	       ));
+		  )
+	       );
 	    }
 	 }
       case 2:
@@ -334,12 +335,12 @@ AttributePtr builtin_cfg_node(BindingsPtr bindings,
 	    if (!type) {
 	       throw Exception("string expected as first argument to cfg_node function");
 	    }
-	    return AttributePtr(new Attribute(
-	       FlowGraphNodePtr(new FlowGraphNode(
+	    return std::make_shared<Attribute>(
+	       std::make_shared<FlowGraphNode>(
 		  bindings, type->convert_to_string(),
 		  node->get_node()
-	       ))
-	    ));
+	       )
+	    );
 	 }
       default:
 	 throw Exception("wrong number of arguments for cfg_node function");
@@ -370,7 +371,7 @@ AttributePtr builtin_cfg_connect(BindingsPtr bindings,
       }
       fgnode1->link(fgnode2, label->convert_to_string());
    }
-   return AttributePtr((Attribute*) 0);
+   return AttributePtr(nullptr);
 }
 
 AttributePtr builtin_cfg_type(BindingsPtr bindings,
@@ -383,7 +384,7 @@ AttributePtr builtin_cfg_type(BindingsPtr bindings,
       throw Exception("flow graph node expected as argument to cfg_type function");
    }
    FlowGraphNodePtr fgnode = node->get_fgnode();
-   return AttributePtr(new Attribute(fgnode->get_type()));
+   return std::make_shared<Attribute>(fgnode->get_type());
 }
 
 void insert_std_functions(BuiltinFunctions& bfs) {

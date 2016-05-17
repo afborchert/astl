@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <memory>
 #include <astl/trrules-function.hpp>
 #include <astl/attribute.hpp>
 #include <astl/execution.hpp>
@@ -51,12 +52,12 @@ AttributePtr TransformationRuleSetFunction::eval(AttributePtr args)
    }
    RuleTable& rtab(*rt);
    BindingsPtr local_bindings(bindings);
-   local_bindings->define("root", AttributePtr(new Attribute(root)));
+   local_bindings->define("root", std::make_shared<Attribute>(root));
    CandidateSet candidates(root, rtab, local_bindings);
-   AttributePtr list = AttributePtr(new Attribute(Attribute::list));
+   AttributePtr list = std::make_shared<Attribute>(Attribute::list);
    for (unsigned int i = 0; i < candidates.size(); ++i) {
       NodePtr newroot = candidates[i]->transform();
-      list->push_back(AttributePtr(new Attribute(newroot)));
+      list->push_back(std::make_shared<Attribute>(newroot));
    }
    return list;
 }
@@ -90,13 +91,13 @@ AttributePtr InplaceTransformationRuleSetFunction::eval(AttributePtr args)
    }
    RuleTable& rtab(*rt);
    BindingsPtr local_bindings(bindings);
-   local_bindings->define("root", AttributePtr(new Attribute(root)));
+   local_bindings->define("root", std::make_shared<Attribute>(root));
    CandidateSet candidates(root, rtab, local_bindings);
    candidates.suppress_transformation_conflicts();
    for (unsigned int i = 0; i < candidates.size(); ++i) {
       candidates[i]->transform_inplace();
    }
-   return AttributePtr(new Attribute(candidates.size()));
+   return std::make_shared<Attribute>(candidates.size());
 }
 
 } // namespace Astl

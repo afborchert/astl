@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <memory>
 #include <astl/function.hpp>
 #include <astl/execution.hpp>
 #include <astl/attribute.hpp>
@@ -36,7 +37,7 @@ RegularFunction::RegularFunction(NodePtr block_param,
 }
 
 AttributePtr RegularFunction::eval(AttributePtr args) const throw(Exception) {
-   BindingsPtr local_scope = BindingsPtr(new Bindings(bindings));
+   BindingsPtr local_scope = std::make_shared<Bindings>(bindings);
    bool ok = local_scope->define("args", args); assert(ok);
    return execute(block, local_scope);
 }

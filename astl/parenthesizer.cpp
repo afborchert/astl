@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <memory>
 #include <astl/parenthesizer.hpp>
 
 namespace Astl {
@@ -43,10 +44,9 @@ void parenthesize(NodePtr root, const OperatorTable& optab,
 			(assoc == OperatorTable::left && i > 0) ||
 			(assoc == OperatorTable::right && i == 0)))) {
 		  /* parentheses are required */
-		  NodePtr node(new Node(subnode->get_location(),
-		     parentheses, subnode));
-		  subnode = node;
-		  dnode = node;
+		  dnode = subnode =
+		     std::make_shared<Node>(subnode->get_location(),
+			parentheses, subnode);
 	       }
 	    }
 	    parenthesize(dnode, optab, parentheses);

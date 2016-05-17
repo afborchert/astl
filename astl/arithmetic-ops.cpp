@@ -17,6 +17,7 @@
 */
 
 #include <cstdlib>
+#include <memory>
 #include <gmp.h>
 #include <astl/arithmetic-ops.hpp>
 #include <astl/operators.hpp>
@@ -28,9 +29,9 @@ AttributePtr arithmetic_binary_op(const Operator& op,
       AttributePtr leftAt, AttributePtr rightAt,
       const Location& loc) throw(Exception) {
    IntegerPtr left = leftAt? leftAt->convert_to_integer(loc): 
-      IntegerPtr(new Integer((long) 0));
+      std::make_shared<Integer>(0l);
    IntegerPtr right = rightAt? rightAt->convert_to_integer(loc): 
-      IntegerPtr(new Integer((long) 0));
+      std::make_shared<Integer>(0l);
    switch (op.get_opcode()) {
       case ASTL_OPERATOR_EQEQ_TK:
       case ASTL_OPERATOR_NE_TK:
@@ -52,7 +53,7 @@ AttributePtr arithmetic_binary_op(const Operator& op,
 	       default:
 		  assert(false); std::abort();
 	    }
-	    return AttributePtr(new Attribute(cmp_result));
+	    return std::make_shared<Attribute>(cmp_result);
 	 }
       case ASTL_OPERATOR_PLUS_TK:
       case ASTL_OPERATOR_MINUS_TK:
@@ -99,8 +100,8 @@ AttributePtr arithmetic_binary_op(const Operator& op,
 	       default:
 		  assert(false); std::abort();
 	    }
-	    return AttributePtr(new Attribute(IntegerPtr(
-	       new Integer(result_value))));
+	    return std::make_shared<Attribute>(
+	       std::make_shared<Integer>(result_value));
 	 }
       default:
 	 assert(false); std::abort();

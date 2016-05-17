@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <memory>
 #include <astl/syntax-tree.hpp>
 
 namespace Astl {
@@ -24,12 +25,12 @@ namespace Astl {
 // constructors ==============================================================
 
 Node::Node() :
-      at(new Attribute()), leaf(true), context(0) {
+      at(std::make_shared<Attribute>()), leaf(true), context(0) {
 }
 
 Node::Node(const Node& other) :
       loc(other.loc),
-      at(new Attribute()),
+      at(std::make_shared<Attribute>()),
       leaf(other.leaf),
       context(nullptr),
       token(other.token),
@@ -37,17 +38,17 @@ Node::Node(const Node& other) :
 }
 
 Node::Node(const Location& loc, const Token& token) :
-      loc(loc), at(new Attribute()), leaf(true),
+      loc(loc), at(std::make_shared<Attribute>()), leaf(true),
       context(nullptr), token(token) {
 }
 
 Node::Node(const Location& loc, const Operator& op) :
-      loc(loc), at(new Attribute()), leaf(false),
+      loc(loc), at(std::make_shared<Attribute>()), leaf(false),
       context(nullptr), op(op) {
 }
 
 Node::Node(const Location& loc, const Operator& op, NodePtr subnode) :
-      loc(loc), at(new Attribute()), leaf(false),
+      loc(loc), at(std::make_shared<Attribute>()), leaf(false),
       context(nullptr), op(op) {
    assert(subnode);
    subnodes.push_back(subnode);
@@ -55,7 +56,7 @@ Node::Node(const Location& loc, const Operator& op, NodePtr subnode) :
 
 Node::Node(const Location& loc, const Operator& op,
 	 NodePtr subnode1, NodePtr subnode2) :
-      loc(loc), at(new Attribute()), leaf(false),
+      loc(loc), at(std::make_shared<Attribute>()), leaf(false),
       context(nullptr), op(op) {
    assert(subnode1); assert(subnode2);
    subnodes.push_back(subnode1);
@@ -64,7 +65,7 @@ Node::Node(const Location& loc, const Operator& op,
 
 Node::Node(const Location& loc, const Operator& op,
 	 NodePtr subnode1, NodePtr subnode2, NodePtr subnode3) :
-      loc(loc), at(new Attribute()), leaf(false),
+      loc(loc), at(std::make_shared<Attribute>()), leaf(false),
       context(nullptr), op(op) {
    assert(subnode1); assert(subnode2); assert(subnode3);
    subnodes.push_back(subnode1);
@@ -75,7 +76,7 @@ Node::Node(const Location& loc, const Operator& op,
 Node::Node(const Location& loc, const Operator& op,
 	 NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
 	 NodePtr subnode4) :
-      loc(loc), at(new Attribute()), leaf(false),
+      loc(loc), at(std::make_shared<Attribute>()), leaf(false),
       context(nullptr), op(op) {
    assert(subnode1); assert(subnode2); assert(subnode3); assert(subnode4);
    subnodes.push_back(subnode1);
@@ -87,7 +88,7 @@ Node::Node(const Location& loc, const Operator& op,
 Node::Node(const Location& loc, const Operator& op,
 	 NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
 	 NodePtr subnode4, NodePtr subnode5) :
-      loc(loc), at(new Attribute()), leaf(false),
+      loc(loc), at(std::make_shared<Attribute>()), leaf(false),
       context(nullptr), op(op) {
    assert(subnode1); assert(subnode2); assert(subnode3);
    assert(subnode4); assert(subnode5);
@@ -101,7 +102,7 @@ Node::Node(const Location& loc, const Operator& op,
 Node::Node(const Location& loc, const Operator& op,
 	 NodePtr subnode1, NodePtr subnode2, NodePtr subnode3,
 	 NodePtr subnode4, NodePtr subnode5, NodePtr subnode6) :
-      loc(loc), at(new Attribute()), leaf(false),
+      loc(loc), at(std::make_shared<Attribute>()), leaf(false),
       context(nullptr), op(op) {
    assert(subnode1); assert(subnode2); assert(subnode3);
    assert(subnode4); assert(subnode5); assert(subnode6);
