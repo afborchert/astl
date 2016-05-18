@@ -18,6 +18,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <astl/exception.hpp>
 #include <astl/operator-table.hpp>
 #include <astl/operators.hpp>
 #include <astl/opset.hpp>
@@ -35,7 +36,7 @@ OperatorTable::OperatorTable(NodePtr root, const Rules& rules) :
 
 // mutators =================================================================
 
-void OperatorTable::scan(NodePtr root, const Rules& rules) {
+void OperatorTable::scan(NodePtr root, const Rules& rules) throw(Exception) {
    assert(!root->is_leaf());
    for (Rank rank = 0; rank < root->size(); ++rank) {
       NodePtr operators = root->get_operand(rank);
@@ -56,11 +57,11 @@ void OperatorTable::scan(NodePtr root, const Rules& rules) {
 	 for (OperatorSet::Iterator opit = opset.begin();
 	       opit != opset.end(); ++opit) {
 	    Entry entry = {*opit, rank, assoc};
-	    tab.insert(value_type(entry.op, entry));
-	    /* FIXME throw exception if this fails;
-	       this can happen if an operator was mentioned multiple
-	       times
-	    */
+	    auto result = tab.insert(value_type(entry.op, entry));
+	    if (!result.second) {
+	       throw Exception(opnode->get_location(),
+		  "operator listed multiply times");
+	    }
 	 }
       }
    }

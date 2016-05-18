@@ -21,6 +21,7 @@
 
 #include <map>
 #include <string>
+#include <astl/exception.hpp>
 #include <astl/operator.hpp>
 #include <astl/types.hpp>
 
@@ -35,7 +36,7 @@ namespace Astl {
 	 OperatorTable(NodePtr root, const Rules& rules);
 
 	 // mutators
-	 void scan(NodePtr root, const Rules& rules);
+	 void scan(NodePtr root, const Rules& rules) throw(Exception);
 
 	 // accessors
 	 bool included(const Operator& op) const;
