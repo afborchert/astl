@@ -18,6 +18,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <sstream>
 #include <astl/exception.hpp>
 #include <astl/operator-table.hpp>
 #include <astl/operators.hpp>
@@ -59,8 +60,9 @@ void OperatorTable::scan(NodePtr root, const Rules& rules) throw(Exception) {
 	    Entry entry = {*opit, rank, assoc};
 	    auto result = tab.insert(value_type(entry.op, entry));
 	    if (!result.second) {
-	       throw Exception(opnode->get_location(),
-		  "operator listed multiply times");
+	       std::ostringstream os;
+	       os << "multiply listed operator: \"" << entry.op << "\"";
+	       throw Exception(opnode->get_location(), os.str());
 	    }
 	 }
       }
