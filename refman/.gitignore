@@ -1,0 +1,15 @@
+# temporaries
+*.aux
+main.bbl
+main.blg
+main.idx
+main.ilg
+main.ind
+main.log
+main.out
+main.toc
+main.tpt
+# generated files
+main.pdf
+# other files
+fixbookmarks.debug
