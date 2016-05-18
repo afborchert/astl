@@ -18,9 +18,9 @@
 
 #include <cassert>
 #include <astl/exception.hpp>
+#include <astl/operators.hpp>
 #include <astl/rules.hpp>
 #include <astl/syntax-tree.hpp>
-#include <astl/operators.hpp>
 
 namespace Astl {
 

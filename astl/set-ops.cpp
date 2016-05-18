@@ -19,9 +19,9 @@
 #include <algorithm>
 #include <cstdlib>
 #include <memory>
-#include <astl/set-ops.hpp>
-#include <astl/operators.hpp>
 #include <astl/integer.hpp>
+#include <astl/operators.hpp>
+#include <astl/set-ops.hpp>
 
 namespace Astl {
 

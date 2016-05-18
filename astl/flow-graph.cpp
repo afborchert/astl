@@ -19,10 +19,10 @@
 #include <cassert>
 #include <memory>
 #include <utility>
-#include <astl/flow-graph.hpp>
 #include <astl/attribute.hpp>
-#include <astl/treeloc.hpp>
 #include <astl/exception.hpp>
+#include <astl/flow-graph.hpp>
+#include <astl/treeloc.hpp>
 
 namespace Astl {
 

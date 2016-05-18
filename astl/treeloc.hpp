@@ -20,8 +20,8 @@
 #define ASTL_TREELOC_H
 
 #include <iostream>
-#include <string>
 #include <memory>
+#include <string>
 
 namespace Astl {
 

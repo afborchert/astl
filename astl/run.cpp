@@ -22,17 +22,17 @@
 #include <iostream>
 #include <memory>
 #include <sstream>
-#include <astl/run.hpp>
-#include <astl/loader.hpp>
-#include <astl/printer.hpp>
 #include <astl/attribute.hpp>
 #include <astl/candidate-set.hpp>
-#include <astl/execution.hpp>
-#include <astl/sm-execution.hpp>
-#include <astl/parenthesizer.hpp>
-#include <astl/rules.hpp>
-#include <astl/subtractive-rg.hpp>
 #include <astl/default-bindings.hpp>
+#include <astl/execution.hpp>
+#include <astl/loader.hpp>
+#include <astl/parenthesizer.hpp>
+#include <astl/printer.hpp>
+#include <astl/rules.hpp>
+#include <astl/run.hpp>
+#include <astl/sm-execution.hpp>
+#include <astl/subtractive-rg.hpp>
 #include <astl/syntax-tree.hpp>
 
 namespace Astl {

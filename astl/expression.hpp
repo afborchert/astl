@@ -19,12 +19,12 @@
 #ifndef ASTL_EXPRESSION_H
 #define ASTL_EXPRESSION_H
 
-#include <astl/syntax-tree.hpp>
 #include <astl/attribute.hpp>
-#include <astl/tree-expressions.hpp>
-#include <astl/exception.hpp>
 #include <astl/bindings.hpp>
 #include <astl/designator.hpp>
+#include <astl/exception.hpp>
+#include <astl/syntax-tree.hpp>
+#include <astl/tree-expressions.hpp>
 
 namespace Astl {
 

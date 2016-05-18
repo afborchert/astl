@@ -16,7 +16,13 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <iostream>
+#include <string>
+#include <astl/exception.hpp>
+#include <astl/operator.hpp>
+#include <astl/rule-table.hpp>
 #include <astl/selective-printer.hpp>
+#include <astl/syntax-tree.hpp>
 
 namespace Astl {
 

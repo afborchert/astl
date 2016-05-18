@@ -21,11 +21,11 @@
 
 #include <iostream>
 #include <string>
-#include <astl/syntax-tree.hpp>
-#include <astl/rule-table.hpp>
 #include <astl/exception.hpp>
-#include <astl/printer.hpp>
 #include <astl/operator.hpp>
+#include <astl/printer.hpp>
+#include <astl/rule-table.hpp>
+#include <astl/syntax-tree.hpp>
 
 namespace Astl {
 

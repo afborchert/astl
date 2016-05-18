@@ -22,7 +22,7 @@
 
 namespace Astl {
 
-Bindings::Bindings() : it_defined(false), rules(0) {
+Bindings::Bindings() : it_defined(false), rules(nullptr) {
 }
 
 Bindings::Bindings(const Rules* rulesp) : it_defined(false), rules(rulesp) {
@@ -115,7 +115,7 @@ AttributePtr Bindings::get(const std::string& name) const {
 }
 
 bool Bindings::rules_defined() const {
-   return rules != 0;
+   return rules != nullptr;
 }
 
 const Rules& Bindings::get_rules() const {

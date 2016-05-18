@@ -17,7 +17,9 @@
 */
 
 #include <memory>
+#include <astl/operator-table.hpp>
 #include <astl/parenthesizer.hpp>
+#include <astl/syntax-tree.hpp>
 
 namespace Astl {
 

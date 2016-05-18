@@ -19,12 +19,12 @@
 #ifndef ASTL_RUN_H
 #define ASTL_RUN_H
 
-#include <astl/operator.hpp>
-#include <astl/exception.hpp>
-#include <astl/types.hpp>
-#include <astl/loader.hpp>
-#include <astl/generator.hpp>
 #include <iostream>
+#include <astl/exception.hpp>
+#include <astl/generator.hpp>
+#include <astl/loader.hpp>
+#include <astl/operator.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

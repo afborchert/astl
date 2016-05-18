@@ -19,9 +19,9 @@
 #ifndef ASTL_PARENTHESIZER_H
 #define ASTL_PARENTHESIZER_H
 
-#include <astl/syntax-tree.hpp>
-#include <astl/operator.hpp>
 #include <astl/operator-table.hpp>
+#include <astl/operator.hpp>
+#include <astl/syntax-tree.hpp>
 
 namespace Astl {
 

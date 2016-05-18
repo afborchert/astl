@@ -19,17 +19,17 @@
 #ifndef ASTL_ATTRIBUTE_H
 #define ASTL_ATTRIBUTE_H
 
-#include <string>
-#include <map>
-#include <list>
 #include <iostream>
+#include <list>
+#include <map>
 #include <sstream>
+#include <string>
 #include <vector>
-#include <astl/types.hpp>
-#include <astl/syntax-tree.hpp>
 #include <astl/exception.hpp>
 #include <astl/function.hpp>
 #include <astl/integer.hpp>
+#include <astl/syntax-tree.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

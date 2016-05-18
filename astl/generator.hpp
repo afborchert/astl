@@ -19,8 +19,8 @@
 #ifndef ASTL_GENERATOR_H
 #define ASTL_GENERATOR_H
 
-#include <astl/types.hpp>
 #include <astl/exception.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 
@@ -29,6 +29,6 @@ namespace Astl {
 	 virtual NodePtr gen(int& argc, char**& argv) throw(Exception) = 0;
    };
 
-}
+} // namespace Astl
 
 #endif

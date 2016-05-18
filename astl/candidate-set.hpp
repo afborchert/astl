@@ -19,15 +19,15 @@
 #ifndef ASTL_CANDIDATE_SET_H
 #define ASTL_CANDIDATE_SET_H
 
+#include <memory>
 #include <vector>
 #include <astl/bindings.hpp>
-#include <astl/exception.hpp>
 #include <astl/candidate.hpp>
-#include <astl/syntax-tree.hpp>
-#include <astl/rule-table.hpp>
-#include <astl/prg.hpp>
 #include <astl/context.hpp>
-#include <memory>
+#include <astl/exception.hpp>
+#include <astl/prg.hpp>
+#include <astl/rule-table.hpp>
+#include <astl/syntax-tree.hpp>
 
 namespace Astl {
 

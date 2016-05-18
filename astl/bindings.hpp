@@ -19,12 +19,12 @@
 #ifndef ASTL_BINDINGS_H
 #define ASTL_BINDINGS_H
 
-#include <astl/types.hpp>
-#include <astl/attribute.hpp>
-#include <map>
-#include <string>
 #include <iostream>
+#include <map>
 #include <memory>
+#include <string>
+#include <astl/attribute.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

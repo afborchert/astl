@@ -17,8 +17,8 @@
 */
 
 #include <cassert>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <astl/loader.hpp>
 #include <astl/parser.hpp>
 #include <astl/scanner.hpp>

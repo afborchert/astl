@@ -17,9 +17,9 @@
 */
 
 #include <memory>
-#include <astl/rule.hpp>
 #include <astl/operator.hpp>
 #include <astl/operators.hpp>
+#include <astl/rule.hpp>
 #include <astl/syntax-tree.hpp>
 
 namespace Astl {

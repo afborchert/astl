@@ -21,13 +21,13 @@
 #include <memory>
 #include <regex>
 #include <gmp.h>
-#include <astl/expression.hpp>
-#include <astl/operators.hpp>
 #include <astl/arithmetic-ops.hpp>
+#include <astl/expression.hpp>
+#include <astl/flow-graph.hpp>
+#include <astl/list-ops.hpp>
+#include <astl/operators.hpp>
 #include <astl/set-ops.hpp>
 #include <astl/string-ops.hpp>
-#include <astl/list-ops.hpp>
-#include <astl/flow-graph.hpp>
 
 namespace Astl {
 

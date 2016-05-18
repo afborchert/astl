@@ -23,13 +23,13 @@ namespace Astl {
 
 #include <cstring>
 #include <memory>
+#include <astl/error.hpp>
 #include <astl/location.hpp>
+#include <astl/operators.hpp>
+#include <astl/scanner.hpp>
 #include <astl/syntax-tree.hpp>
 #include <astl/yystype.hpp>
-#include <astl/scanner.hpp>
-#include <astl/operators.hpp>
 #include <astl/yytname.hpp>
-#include <astl/error.hpp>
 
 using namespace Astl;
 

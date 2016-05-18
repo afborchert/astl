@@ -19,8 +19,8 @@
 #ifndef ASTL_DEFAULT_BINDINGS_H
 #define ASTL_DEFAULT_BINDINGS_H
 
-#include <astl/types.hpp>
 #include <astl/exception.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

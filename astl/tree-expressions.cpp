@@ -18,17 +18,20 @@
 
 #include <cassert>
 #include <memory>
-#include <sstream>
 #include <regex>
-#include <astl/tree-expressions.hpp>
+#include <sstream>
+#include <astl/bindings.hpp>
+#include <astl/exception.hpp>
+#include <astl/expression.hpp>
+#include <astl/location.hpp>
 #include <astl/operators.hpp>
 #include <astl/opset.hpp>
-#include <astl/expression.hpp>
+#include <astl/tree-expressions.hpp>
 
 namespace Astl {
 
-static void bind_variable(BindingsPtr bindings, const Location& loc, const std::string& varname,
-      NodePtr tree) throw(Exception) {
+static void bind_variable(BindingsPtr bindings, const Location& loc,
+      const std::string& varname, NodePtr tree) throw(Exception) {
    if (!bindings->define(varname, std::make_shared<Attribute>(tree))) {
       std::ostringstream os;
       os << "multiply defined variable: " << varname;

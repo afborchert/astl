@@ -18,9 +18,9 @@
 
 #include <cassert>
 #include <memory>
-#include <astl/function.hpp>
-#include <astl/execution.hpp>
 #include <astl/attribute.hpp>
+#include <astl/execution.hpp>
+#include <astl/function.hpp>
 
 namespace Astl {
 
@@ -46,4 +46,4 @@ AttributePtr BuiltinFunction::eval(AttributePtr args) const throw(Exception) {
    return (*bf)(bindings, args);
 }
 
-} // ast
+} // namespace Astl

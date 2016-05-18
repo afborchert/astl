@@ -1,15 +1,33 @@
+/*
+   Copyright (C) 2009, 2016 Andreas Franz Borchert
+   ----------------------------------------------------------------------------
+   The Astl Library is free software; you can redistribute it
+   and/or modify it under the terms of the GNU Library General Public
+   License as published by the Free Software Foundation; either version
+   2 of the License, or (at your option) any later version.
+
+   The Astl Library is distributed in the hope that it will be
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
 #include <cassert>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
+#include <cctype>
 #include <cstdlib>
-#include <unistd.h>
-#include <astl/scanner.hpp>
-#include <astl/parser.hpp>
-#include <astl/yytname.hpp>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <astl/location.hpp>
-#include <astl/run.hpp>
 #include <astl/operators.hpp>
+#include <astl/parser.hpp>
+#include <astl/run.hpp>
+#include <astl/scanner.hpp>
+#include <astl/yytname.hpp>
 
 using namespace std;
 using namespace Astl;
@@ -37,6 +55,7 @@ int main(int argc, char** argv) {
    /* fetch count argument, if given */
    if (argc > 0) {
       char* count_string = *argv++; --argc;
+      if (!isdigit(*count_string)) usage();
       count = atoi(count_string);
       if (count < 1) usage();
    }

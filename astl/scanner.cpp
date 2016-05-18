@@ -17,11 +17,12 @@
 */
 
 #include <cassert>
+#include <cstdlib>
 #include <memory>
 #include <regex>
-#include <astl/scanner.hpp>
 #include <astl/error.hpp>
 #include <astl/keywords.hpp>
+#include <astl/scanner.hpp>
 #include <astl/syntax-tree.hpp>
 #include <astl/token.hpp>
 
@@ -82,7 +83,7 @@ int Scanner::get_token(semantic_type& yylval, location& yylloc) {
 bool Scanner::get_next_token(semantic_type& yylval,
       location& yylloc, int& token) {
    token = 0;
-   yylval = NodePtr((Node*)0);
+   yylval = NodePtr(nullptr);
    for(;;) {
       if (eof) {
 	 break;
@@ -99,14 +100,14 @@ bool Scanner::get_next_token(semantic_type& yylval,
       nextch();
       if (ch == '{' && (initial_letter == 'm' || initial_letter == 'q')) {
 	 /* Perl-style literals m{regexp} and q{string} */
-	 delete tokenstr; tokenstr = 0;
+	 delete tokenstr; tokenstr = nullptr;
 	 switch (initial_letter) {
 	    case 'm':
 	       scan_regexp('{', '}'); break;
 	    case 'q':
 	       scan_text(); break;
 	    default:
-	       assert(0);
+	       assert(false); std::abort();
 	 }
 	 return false; // fetch tokens from the token buffer
       } else {
@@ -117,7 +118,7 @@ bool Scanner::get_next_token(semantic_type& yylval,
 	 if (keyword_table.lookup(*tokenstr, keyword_token)) {
 	    token = keyword_token;
 	    /* a semantic value is no longer required for keywords */
-	    delete tokenstr; tokenstr = 0;
+	    delete tokenstr; tokenstr = nullptr;
 	 } else {
 	    token = parser::token::IDENT;
 	    if (tokenstr) {
@@ -135,7 +136,7 @@ bool Scanner::get_next_token(semantic_type& yylval,
       token = parser::token::CARDINAL_LITERAL;
       yylval = std::make_shared<Node>(make_loc(tokenloc),
 	 Token(token, tokenstr));
-      tokenstr = 0;
+      tokenstr = nullptr;
    } else {
       switch (ch) {
 	 case 0:
@@ -304,7 +305,7 @@ void Scanner::push_token(int token, semantic_type yylval, location yylloc) {
 }
 
 void Scanner::scan_text() {
-   assert(tokenstr == 0);
+   assert(tokenstr == nullptr);
    nextch(); // eat opening '{'
    bool whitespace = true; // so far we have seen whitespace only
    bool current_whitespace = true; // just whitespace seen in current line
@@ -475,7 +476,7 @@ void Scanner::scan_regexp(char opening_delimiter, char closing_delimiter) {
    NodePtr node = std::make_shared<Node>(make_loc(tokenloc),
       Token(token, tokenstr));
    push_token(token, node, tokenloc);
-   tokenstr = 0;
+   tokenstr = nullptr;
    if (ch == closing_delimiter) {
       nextch();
       /* check if the regex is accepted by our regex library */
@@ -569,7 +570,7 @@ void Scanner::scan_string_literal(semantic_type& yylval, int& token) {
    token = parser::token::STRING_LITERAL;
    yylval = std::make_shared<Node>(make_loc(tokenloc),
       Token(token, tokenval, *tokenstr));
-   tokenstr = 0;
+   tokenstr = nullptr;
 }
 
 void Scanner::nextch() {

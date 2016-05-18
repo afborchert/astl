@@ -20,8 +20,8 @@
 #include <memory>
 #include <gmp.h>
 #include <astl/arithmetic-ops.hpp>
-#include <astl/operators.hpp>
 #include <astl/integer.hpp>
+#include <astl/operators.hpp>
 
 namespace Astl {
 

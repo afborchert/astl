@@ -20,12 +20,12 @@
 #define ASTL_EXECUTION_H
 
 #include <astl/attribute.hpp>
-#include <astl/syntax-tree.hpp>
-#include <astl/exception.hpp>
-#include <astl/tree-expressions.hpp>
-#include <astl/rule-table.hpp>
 #include <astl/bindings.hpp>
 #include <astl/candidate-set.hpp>
+#include <astl/exception.hpp>
+#include <astl/rule-table.hpp>
+#include <astl/syntax-tree.hpp>
+#include <astl/tree-expressions.hpp>
 
 namespace Astl {
 

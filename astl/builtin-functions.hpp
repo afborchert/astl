@@ -19,11 +19,11 @@
 #ifndef ASTL_BUILTIN_FUNCTIONS_H
 #define ASTL_BUILTIN_FUNCTIONS_H
 
-#include <astl/types.hpp>
-#include <astl/attribute.hpp>
-#include <astl/bindings.hpp>
 #include <map>
 #include <string>
+#include <astl/attribute.hpp>
+#include <astl/bindings.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

@@ -19,16 +19,16 @@
 #ifndef ASTL_STATE_MACHINE_H
 #define ASTL_STATE_MACHINE_H
 
-#include <memory>
-#include <bitset>
-#include <string>
-#include <map>
 #include <list>
-#include <astl/types.hpp>
+#include <map>
+#include <memory>
+#include <string>
+#include <boost/dynamic_bitset.hpp>
 #include <astl/exception.hpp>
 #include <astl/flow-graph.hpp>
-#include <astl/treeloc.hpp>
 #include <astl/rule.hpp>
+#include <astl/treeloc.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

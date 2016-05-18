@@ -19,7 +19,8 @@
 #ifndef ASTL_PRRULES_FUNCTION_H
 #define ASTL_PRRULES_FUNCTION_H
 
-#include <astl/types.hpp>
+#include <astl/attribute.hpp>
+#include <astl/exception.hpp>
 #include <astl/function.hpp>
 #include <astl/rule-table.hpp>
 

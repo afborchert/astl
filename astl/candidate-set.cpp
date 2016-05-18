@@ -18,10 +18,10 @@
 
 #include <cassert>
 #include <memory>
-#include <astl/tree-expressions.hpp>
-#include <astl/default-bindings.hpp>
 #include <astl/candidate-set.hpp>
+#include <astl/default-bindings.hpp>
 #include <astl/operator.hpp>
+#include <astl/tree-expressions.hpp>
 
 namespace Astl {
 

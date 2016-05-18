@@ -19,12 +19,12 @@
 #ifndef ASTL_DESIGNATOR_H
 #define ASTL_DESIGNATOR_H
 
+#include <memory>
+#include <string>
 #include <astl/attribute.hpp>
+#include <astl/bindings.hpp>
 #include <astl/exception.hpp>
 #include <astl/treeloc.hpp>
-#include <astl/bindings.hpp>
-#include <string>
-#include <memory>
 
 namespace Astl {
 

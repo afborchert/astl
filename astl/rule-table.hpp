@@ -22,9 +22,9 @@
 #include <map>
 #include <string>
 #include <memory>
-#include <astl/types.hpp>
 #include <astl/operator.hpp>
 #include <astl/rule.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

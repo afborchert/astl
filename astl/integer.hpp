@@ -19,11 +19,11 @@
 #ifndef ASTL_INTEGER_H
 #define ASTL_INTEGER_H
 
-#include <gmp.h>
-#include <string>
 #include <memory>
-#include <astl/treeloc.hpp>
+#include <string>
+#include <gmp.h>
 #include <astl/exception.hpp>
+#include <astl/treeloc.hpp>
 
 namespace Astl {
 

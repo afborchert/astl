@@ -19,10 +19,10 @@
 #ifndef ASTL_STRING_OPS_H
 #define ASTL_STRING_OPS_H
 
-#include <astl/operators.hpp>
-#include <astl/operator.hpp>
 #include <astl/attribute.hpp>
 #include <astl/exception.hpp>
+#include <astl/operator.hpp>
+#include <astl/operators.hpp>
 #include <astl/treeloc.hpp>
 
 namespace Astl {

@@ -19,9 +19,9 @@
 #ifndef ASTL_ATRULES_FUNCTION_H
 #define ASTL_ATRULES_FUNCTION_H
 
-#include <astl/types.hpp>
 #include <astl/function.hpp>
 #include <astl/rule-table.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

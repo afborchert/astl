@@ -16,9 +16,9 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include <astl/scanner.hpp>
-#include <astl/parser.hpp>
 #include <astl/keywords.hpp>
+#include <astl/parser.hpp>
+#include <astl/scanner.hpp>
 
 namespace Astl {
 

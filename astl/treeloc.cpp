@@ -17,7 +17,9 @@
 */
 
 #include <cassert>
+#include <iostream>
 #include <memory>
+#include <string>
 #include <astl/treeloc.hpp>
 
 namespace Astl {

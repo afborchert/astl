@@ -20,14 +20,15 @@
 #define ASTL_RULES_H
 
 #include <iostream>
-#include <map>
 #include <list>
-#include <astl/syntax-tree.hpp>
-#include <astl/rule-table.hpp>
-#include <astl/operator-table.hpp>
+#include <map>
 #include <astl/exception.hpp>
 #include <astl/loader.hpp>
+#include <astl/operator-table.hpp>
+#include <astl/rule-table.hpp>
 #include <astl/state-machine.hpp>
+#include <astl/syntax-tree.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

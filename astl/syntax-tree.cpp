@@ -18,6 +18,7 @@
 
 #include <cassert>
 #include <memory>
+#include <astl/attribute.hpp>
 #include <astl/syntax-tree.hpp>
 
 namespace Astl {
@@ -25,7 +26,7 @@ namespace Astl {
 // constructors ==============================================================
 
 Node::Node() :
-      at(std::make_shared<Attribute>()), leaf(true), context(0) {
+      at(std::make_shared<Attribute>()), leaf(true), context(nullptr) {
 }
 
 Node::Node(const Node& other) :
@@ -250,4 +251,4 @@ std::ostream& operator<<(std::ostream& out, NodePtr snode) {
    return out;
 }
 
-} // namespace
+} // namespace Astl

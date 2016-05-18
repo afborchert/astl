@@ -21,8 +21,8 @@
 
 #include <map>
 #include <string>
-#include <astl/types.hpp>
 #include <astl/operator.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

@@ -16,17 +16,17 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include <iostream>
-#include <fstream>
 #include <cstdlib>
-#include <astl/scanner.hpp>
-#include <astl/parser.hpp>
-#include <astl/yytname.hpp>
-#include <astl/location.hpp>
-#include <astl/token.hpp>
-#include <astl/exception.hpp>
+#include <fstream>
+#include <iostream>
 #include <astl/bindings.hpp>
 #include <astl/candidate.hpp>
+#include <astl/exception.hpp>
+#include <astl/location.hpp>
+#include <astl/parser.hpp>
+#include <astl/scanner.hpp>
+#include <astl/token.hpp>
+#include <astl/yytname.hpp>
 
 using namespace std;
 using namespace Astl;
@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
 	 cout << yytname[token - 255];
 	 if (yylval) {
 	    cout << " \"" << yylval->get_token().get_text() << '"';
-	    yylval = NodePtr((Node*)0);
+	    yylval = NodePtr(nullptr);
 	 }
 	 cout << endl;
       }

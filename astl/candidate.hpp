@@ -19,13 +19,13 @@
 #ifndef ASTL_CANDIDATE_H
 #define ASTL_CANDIDATE_H
 
-#include <astl/rule.hpp>
-#include <astl/tree-expressions.hpp>
-#include <astl/exception.hpp>
-#include <astl/treeloc.hpp>
-#include <astl/bindings.hpp>
 #include <iostream>
 #include <memory>
+#include <astl/bindings.hpp>
+#include <astl/exception.hpp>
+#include <astl/rule.hpp>
+#include <astl/tree-expressions.hpp>
+#include <astl/treeloc.hpp>
 
 namespace Astl {
 

@@ -19,11 +19,11 @@
 #ifndef ASTL_LOADER_H
 #define ASTL_LOADER_H
 
-#include <string>
 #include <list>
 #include <set>
-#include <astl/syntax-tree.hpp>
+#include <string>
 #include <astl/exception.hpp>
+#include <astl/syntax-tree.hpp>
 
 namespace Astl {
 

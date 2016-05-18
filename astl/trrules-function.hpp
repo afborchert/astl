@@ -19,9 +19,12 @@
 #ifndef ASTL_TRRULES_FUNCTION_H
 #define ASTL_TRRULES_FUNCTION_H
 
-#include <astl/types.hpp>
+#include <astl/attribute.hpp>
+#include <astl/bindings.hpp>
+#include <astl/exception.hpp>
 #include <astl/function.hpp>
 #include <astl/rule-table.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

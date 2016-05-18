@@ -16,11 +16,15 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <cassert>
 #include <cstdlib>
 #include <memory>
-#include <gmp.h>
-#include <astl/string-ops.hpp>
+#include <string>
+#include <astl/attribute.hpp>
+#include <astl/exception.hpp>
+#include <astl/operator.hpp>
 #include <astl/operators.hpp>
+#include <astl/string-ops.hpp>
 
 namespace Astl {
 

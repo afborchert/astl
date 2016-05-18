@@ -17,13 +17,14 @@
 */
 
 #include <cassert>
+#include <cstdlib>
 #include <memory>
 #include <sstream>
+#include <astl/designator.hpp>
 #include <astl/execution.hpp>
 #include <astl/expression.hpp>
 #include <astl/operators.hpp>
 #include <astl/parser.hpp>
-#include <astl/designator.hpp>
 
 namespace Astl {
 
@@ -177,7 +178,7 @@ bool recursive_execute(NodePtr block, BindingsPtr bindings,
 	    break;
 
 	 default:
-	    assert(0);
+	    assert(false); std::abort();
       }
    }
    return false;

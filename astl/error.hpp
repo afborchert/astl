@@ -19,9 +19,9 @@
 #ifndef ASTL_ERROR_H
 #define ASTL_ERROR_H
 
-#include <astl/parser.hpp>
 #include <astl/exception.hpp>
 #include <astl/location.hpp>
+#include <astl/parser.hpp>
 
 namespace Astl {
 

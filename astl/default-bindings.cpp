@@ -17,14 +17,14 @@
 */
 
 #include <memory>
-#include <astl/default-bindings.hpp>
+#include <astl/atrules-function.hpp>
 #include <astl/attribute.hpp>
 #include <astl/builtin-functions.hpp>
-#include <astl/std-functions.hpp>
-#include <astl/rules.hpp>
-#include <astl/atrules-function.hpp>
-#include <astl/trrules-function.hpp>
+#include <astl/default-bindings.hpp>
 #include <astl/prrules-function.hpp>
+#include <astl/rules.hpp>
+#include <astl/std-functions.hpp>
+#include <astl/trrules-function.hpp>
 
 namespace Astl {
 

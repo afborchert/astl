@@ -18,10 +18,10 @@
 
 #include <cassert>
 #include <memory>
-#include <astl/syntax-tree.hpp>
-#include <astl/rule-table.hpp>
 #include <astl/operators.hpp>
 #include <astl/opset.hpp>
+#include <astl/rule-table.hpp>
+#include <astl/syntax-tree.hpp>
 
 namespace Astl {
 

@@ -17,11 +17,12 @@
 */
 
 #include <cassert>
+#include <cstdlib>
 #include <memory>
 #include <astl/exception.hpp>
-#include <astl/rules.hpp>
 #include <astl/operator.hpp>
 #include <astl/operators.hpp>
+#include <astl/rules.hpp>
 
 namespace Astl {
 
@@ -85,7 +86,7 @@ void Rules::scan(NodePtr root) throw(Exception) {
 	       "operator set multiply defined");
 	 }
       } else {
-	 assert(0);
+	 assert(false); std::abort();
       }
    }
 
@@ -145,7 +146,7 @@ void Rules::scan(NodePtr root) throw(Exception) {
 	 // postpone parsing as we have no bindings yet
 	 asmnodes.push_back(rules);
       } else {
-	 assert(0);
+	 assert(false); std::abort();
       }
    }
 }

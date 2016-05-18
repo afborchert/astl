@@ -19,12 +19,10 @@
 #ifndef ASTL_EXPRESSIONS_H
 #define ASTL_EXPRESSIONS_H
 
-#include <map>
-#include <vector>
-#include <iostream>
-#include <astl/types.hpp>
+#include <astl/bindings.hpp>
 #include <astl/context.hpp>
 #include <astl/exception.hpp>
+#include <astl/syntax-tree.hpp>
 
 namespace Astl {
 

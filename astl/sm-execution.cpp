@@ -17,13 +17,16 @@
 */
 
 #include <cstdlib>
-#include <stack>
+#include <list>
 #include <memory>
-#include <astl/sm-execution.hpp>
+#include <stack>
+#include <astl/attribute.hpp>
+#include <astl/bindings.hpp>
 #include <astl/execution.hpp>
-#include <astl/flow-graph.hpp>
-#include <astl/tree-expressions.hpp>
 #include <astl/expression.hpp>
+#include <astl/flow-graph.hpp>
+#include <astl/sm-execution.hpp>
+#include <astl/tree-expressions.hpp>
 
 namespace Astl {
 

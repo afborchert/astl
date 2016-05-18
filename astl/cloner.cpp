@@ -17,10 +17,10 @@
 */
 
 #include <memory>
-#include <astl/cloner.hpp>
-#include <astl/token.hpp>
-#include <astl/syntax-tree.hpp>
 #include <astl/attribute.hpp>
+#include <astl/cloner.hpp>
+#include <astl/syntax-tree.hpp>
+#include <astl/token.hpp>
 
 namespace Astl {
 

@@ -19,11 +19,11 @@
 #ifndef ASTL_CONTEXT_H
 #define ASTL_CONTEXT_H
 
-#include <list>
 #include <iostream>
+#include <list>
 #include <memory>
-#include <astl/types.hpp>
 #include <astl/operator.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 
@@ -54,8 +54,8 @@ namespace Astl {
 	    NodePtr node;
 	    bool is_suppressed;
 	    PathMemberPtr parent;
-	    PathMember(NodePtr _node, PathMemberPtr _parent) :
-	       node(_node), is_suppressed(false), parent(_parent) {
+	    PathMember(NodePtr node, PathMemberPtr parent) :
+	       node(node), is_suppressed(false), parent(parent) {
 	    }
 	 };
 	 PathMemberPtr path;

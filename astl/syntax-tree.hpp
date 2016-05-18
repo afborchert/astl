@@ -20,14 +20,13 @@
 #define ASTL_SYNTAX_TREE_H
 
 #include <iostream>
-#include <string>
 #include <vector>
-#include <astl/types.hpp>
+#include <astl/attribute.hpp>
+#include <astl/context.hpp>
 #include <astl/operator.hpp>
 #include <astl/token.hpp>
 #include <astl/treeloc.hpp>
-#include <astl/attribute.hpp>
-#include <astl/context.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 
@@ -193,6 +192,6 @@ namespace Astl {
     */
    std::ostream& operator<<(std::ostream& out, NodePtr node);
 
-} // namespace
+} // namespace Astl
 
 #endif

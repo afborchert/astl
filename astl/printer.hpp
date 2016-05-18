@@ -20,9 +20,10 @@
 #define ASTL_PRINTER_H
 
 #include <iostream>
-#include <astl/types.hpp>
-#include <astl/rule-table.hpp>
+#include <astl/bindings.hpp>
 #include <astl/exception.hpp>
+#include <astl/rule-table.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

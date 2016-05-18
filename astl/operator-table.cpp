@@ -27,9 +27,9 @@ namespace Astl {
 
 // constructors =============================================================
 
-OperatorTable::OperatorTable() : last_opname(0) {};
+OperatorTable::OperatorTable() : last_opname(nullptr) {};
 OperatorTable::OperatorTable(NodePtr root, const Rules& rules) :
-      last_opname(0) {
+      last_opname(nullptr) {
    scan(root, rules);
 }
 
@@ -49,8 +49,6 @@ void OperatorTable::scan(NodePtr root, const Rules& rules) {
 	 assoc = nonassoc;
       } else {
 	 assert(false); std::abort();
-	 /* unnecessary but helps to suppress the warning */
-	 return;
       }
       for (unsigned int opindex = 0; opindex < operators->size(); ++opindex) {
 	 NodePtr opnode = operators->get_operand(opindex);

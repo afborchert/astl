@@ -19,8 +19,9 @@
 #ifndef ASTL_EXCEPTION_H
 #define ASTL_EXCEPTION_H
 
-#include <string>
+#include <exception>
 #include <sstream>
+#include <string>
 #include <astl/treeloc.hpp>
 
 namespace Astl {
@@ -35,22 +36,18 @@ namespace Astl {
       public:
 	 // constructors
 	 Exception() : loc_defined(false) {}
-	 Exception(const location& loc_param) :
-	    loc(loc_param), loc_defined(true) {}
-	 Exception(const Location& loc_param) :
-	    loc(loc_param), loc_defined(true) {}
-	 Exception(const std::string msg_param) :
-	    loc_defined(false), msg(msg_param) {}
-	 Exception(const char* msg_param) :
-	    loc_defined(false), msg(msg_param) {}
-	 Exception(const location& loc_param, const std::string& msg_param) :
-	       loc(loc_param), loc_defined(true), msg(msg_param) {}
-	 Exception(const Location& loc_param, const std::string& msg_param) :
-	       loc(loc_param), loc_defined(true), msg(msg_param) {}
-	 Exception(const location& loc_param, const char* msg_param) :
-	       loc(loc_param), loc_defined(true), msg(msg_param) {}
-	 Exception(const Location& loc_param, const char* msg_param) :
-	       loc(loc_param), loc_defined(true), msg(msg_param) {}
+	 Exception(const location& loc) : loc(loc), loc_defined(true) {}
+	 Exception(const Location& loc) : loc(loc), loc_defined(true) {}
+	 Exception(const std::string msg) : loc_defined(false), msg(msg) {}
+	 Exception(const char* msg) : loc_defined(false), msg(msg) {}
+	 Exception(const location& loc, const std::string& msg) :
+	       loc(loc), loc_defined(true), msg(msg) {}
+	 Exception(const Location& loc, const std::string& msg) :
+	       loc(loc), loc_defined(true), msg(msg) {}
+	 Exception(const location& loc, const char* msg) :
+	       loc(loc), loc_defined(true), msg(msg) {}
+	 Exception(const Location& loc, const char* msg) :
+	       loc(loc), loc_defined(true), msg(msg) {}
 	 Exception(const Exception& other) :
 	       loc(other.loc), loc_defined(other.loc_defined), msg(other.msg) {
 	 }

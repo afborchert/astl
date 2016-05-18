@@ -21,18 +21,18 @@
 #include <memory>
 #include <sstream>
 #include <astl/bindings.hpp>
-#include <astl/printer.hpp>
-#include <astl/tree-expressions.hpp>
-#include <astl/scanner.hpp>
-#include <astl/syntax-tree.hpp>
-#include <astl/operator.hpp>
+#include <astl/cloner.hpp>
 #include <astl/context.hpp>
 #include <astl/default-bindings.hpp>
-#include <astl/operators.hpp>
 #include <astl/expression.hpp>
-#include <astl/rules.hpp>
-#include <astl/cloner.hpp>
+#include <astl/operator.hpp>
+#include <astl/operators.hpp>
 #include <astl/parenthesizer.hpp>
+#include <astl/printer.hpp>
+#include <astl/rules.hpp>
+#include <astl/scanner.hpp>
+#include <astl/syntax-tree.hpp>
+#include <astl/tree-expressions.hpp>
 
 namespace Astl {
 

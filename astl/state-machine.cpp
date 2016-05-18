@@ -19,13 +19,13 @@
 #include <cassert>
 #include <cstdlib>
 #include <memory>
-#include <astl/rules.hpp>
 #include <astl/attribute.hpp>
-#include <astl/state-machine.hpp>
 #include <astl/exception.hpp>
-#include <astl/expression.hpp>
 #include <astl/execution.hpp>
+#include <astl/expression.hpp>
 #include <astl/operators.hpp>
+#include <astl/rules.hpp>
+#include <astl/state-machine.hpp>
 
 namespace Astl {
 
@@ -738,4 +738,4 @@ StateMachinePtr construct_asm(BindingsPtr bindings, NodePtr root,
    return sm;
 }
 
-} // namespace
+} // namespace Astl

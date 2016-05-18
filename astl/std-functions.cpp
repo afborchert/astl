@@ -18,10 +18,11 @@
 
 #include <iostream>
 #include <memory>
-#include <astl/types.hpp>
-#include <astl/std-functions.hpp>
+#include <astl/exception.hpp>
 #include <astl/flow-graph.hpp>
 #include <astl/printer.hpp>
+#include <astl/std-functions.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

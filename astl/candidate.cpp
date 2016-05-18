@@ -22,9 +22,9 @@
 #include <sstream>
 #include <astl/candidate.hpp>
 #include <astl/cloner.hpp>
-#include <astl/operators.hpp>
-#include <astl/expression.hpp>
 #include <astl/execution.hpp>
+#include <astl/expression.hpp>
+#include <astl/operators.hpp>
 
 namespace Astl {
 

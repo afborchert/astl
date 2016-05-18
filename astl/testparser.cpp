@@ -16,20 +16,20 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include <iostream>
-#include <fstream>
 #include <cstdlib>
-#include <astl/scanner.hpp>
-#include <astl/parser.hpp>
-#include <astl/yytname.hpp>
-#include <astl/operators.hpp>
-#include <astl/rule-table.hpp>
-#include <astl/printer.hpp>
-#include <astl/rules.hpp>
-#include <astl/location.hpp>
-#include <astl/token.hpp>
+#include <fstream>
+#include <iostream>
 #include <astl/exception.hpp>
 #include <astl/loader.hpp>
+#include <astl/location.hpp>
+#include <astl/operators.hpp>
+#include <astl/parser.hpp>
+#include <astl/printer.hpp>
+#include <astl/rule-table.hpp>
+#include <astl/rules.hpp>
+#include <astl/scanner.hpp>
+#include <astl/token.hpp>
+#include <astl/yytname.hpp>
 
 using namespace std;
 using namespace Astl;

@@ -20,8 +20,8 @@
 #define ASTL_OPERATOR_H
 
 #include <cassert>
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #include <string>
 #include <astl/token.hpp>
 
@@ -104,6 +104,6 @@ namespace Astl {
       return out << op.get_name();
    }
 
-} // namespace
+} // namespace Astl
 
 #endif

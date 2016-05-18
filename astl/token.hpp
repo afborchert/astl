@@ -16,8 +16,8 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef SYNTAX_TREE_TOKEN_H
-#define SYNTAX_TREE_TOKEN_H
+#ifndef ASTL_TOKEN_H
+#define ASTL_TOKEN_H
 
 #include <cassert>
 #include <iostream>
@@ -73,8 +73,7 @@ namespace Astl {
 	  * Construct a simple token with the given symbol value
 	  * but with an empty string representation.
 	  */
-	 Token(unsigned int token_param) :
-	       token(token_param), tokenval(""), tokenlit("") {
+	 Token(unsigned int token) : token(token), tokenval(""), tokenlit("") {
 	    assert(token != 0);
 	 }
 
@@ -82,9 +81,8 @@ namespace Astl {
 	  * Construct a token without a symbol value but the given
 	  * contents which is also taken as its literal representation.
 	  */
-	 Token(const std::string& tokenval_param) :
-	       token(0), tokenval(tokenval_param),
-	       tokenlit(tokenval_param) {
+	 Token(const std::string& tokenval) :
+	       token(0), tokenval(tokenval), tokenlit(tokenval) {
 	 }
 
 	 /**
@@ -92,10 +90,8 @@ namespace Astl {
 	  * the given contents which is also taken as its literal
 	  * representation.
 	  */
-	 Token(unsigned int token_param,
-	       const std::string& tokenval_param) :
-	       token(token_param), tokenval(tokenval_param),
-	       tokenlit(tokenval_param) {
+	 Token(unsigned int token, const std::string& tokenval) :
+	       token(token), tokenval(tokenval), tokenlit(tokenval) {
 	    assert(token != 0);
 	 }
 
@@ -106,23 +102,19 @@ namespace Astl {
 	  * behind the string pointer is deleted after it has been
 	  * copied.
 	  */
-	 Token(unsigned int token_param,
-	       std::string*& tokenval_param) :
-	       token(token_param), tokenval(*tokenval_param),
-	       tokenlit(*tokenval_param) {
-	    assert(token != 0 && tokenval_param != 0);
-	    delete tokenval_param; tokenval_param = 0;
+	 Token(unsigned int token, std::string*& tokenval) :
+	       token(token), tokenval(*tokenval), tokenlit(*tokenval) {
+	    assert(token != 0 && tokenval != nullptr);
+	    delete tokenval; tokenval = nullptr;
 	 }
 
 	 /**
 	  * Construct a token with the given symbol value,
 	  * the given contents, and the given literal representation.
 	  */
-	 Token(unsigned int token_param,
-		  const std::string& tokenval_param,
-		  const std::string& tokenlit_param) :
-	       token(token_param), tokenval(tokenval_param),
-	       tokenlit(tokenlit_param) {
+	 Token(unsigned int token,
+		  const std::string& tokenval, const std::string& tokenlit) :
+	       token(token), tokenval(tokenval), tokenlit(tokenlit) {
 	    assert(token != 0);
 	 }
 
@@ -132,14 +124,12 @@ namespace Astl {
 	  * Please note that both pointers are passed to delete
 	  * once the string contents has been copied.
 	  */
-	 Token(unsigned int token_param,
-	       std::string*& tokenval_param,
-	       std::string*& tokenlit_param) :
-	       token(token_param), tokenval(*tokenval_param),
-	       tokenlit(*tokenlit_param) {
-	    assert(token != 0 && tokenval_param != 0 && tokenlit_param != 0);
-	    delete tokenval_param; tokenval_param = 0;
-	    delete tokenlit_param; tokenlit_param = 0;
+	 Token(unsigned int token,
+	       std::string*& tokenval, std::string*& tokenlit) :
+	       token(token), tokenval(*tokenval), tokenlit(*tokenlit) {
+	    assert(token != 0 && tokenval != nullptr && tokenlit != nullptr);
+	    delete tokenval; tokenval = nullptr;
+	    delete tokenlit; tokenlit = nullptr;
 	 }
 
 	 /**
@@ -232,6 +222,6 @@ namespace Astl {
       return out << token.get_literal();
    }
 
-} // namespace
+} // namespace Astl
 
 #endif

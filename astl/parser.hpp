@@ -27,6 +27,8 @@ namespace Astl {
 
 #include <astl/location.hpp>
 #include <astl/yystype.hpp>
+
+/* parser.tab.hpp is to be included last */
 #include <astl/parser.tab.hpp>
 
 #endif

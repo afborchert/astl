@@ -19,11 +19,11 @@
 #ifndef ASTL_FLOW_GRAPH_H
 #define ASTL_FLOW_GRAPH_H
 
-#include <string>
 #include <list>
 #include <map>
-#include <astl/types.hpp>
+#include <string>
 #include <boost/dynamic_bitset.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

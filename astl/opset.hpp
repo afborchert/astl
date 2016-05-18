@@ -19,12 +19,12 @@
 #ifndef ASTL_OPSET_H
 #define ASTL_OPSET_H
 
+#include <memory>
 #include <set>
 #include <string>
-#include <memory>
-#include <astl/types.hpp>
 #include <astl/exception.hpp>
 #include <astl/operator.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

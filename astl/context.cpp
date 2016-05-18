@@ -19,8 +19,8 @@
 #include <cassert>
 #include <memory>
 #include <sstream>
-#include <astl/context.hpp>
 #include <astl/bindings.hpp>
+#include <astl/context.hpp>
 #include <astl/tree-expressions.hpp>
 
 namespace Astl {
@@ -36,7 +36,7 @@ std::string get_here_name(BindingsPtr bindings, BindingsPtr local_bindings) {
    if (!bindings->defined("here") && local_bindings->defined("here")) {
       return "here";
    }
-   for (int counter = 1; ; ++counter) {
+   for (unsigned int counter = 1; ; ++counter) {
       std::ostringstream os;
       os << "here" << counter;
       if (!bindings->defined(os.str())) {

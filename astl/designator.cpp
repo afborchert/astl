@@ -149,7 +149,7 @@ void Designator::assign(AttributePtr value,
 	       break;
 
 	    default:
-	       assert(0);
+	       assert(false); std::abort();
 	 }
 	 break;
    }

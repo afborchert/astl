@@ -19,9 +19,11 @@
 #ifndef ASTL_FUNCTION_H
 #define ASTL_FUNCTION_H
 
-#include <astl/types.hpp>
+#include <astl/attribute.hpp>
+#include <astl/bindings.hpp>
 #include <astl/builtin-functions.hpp>
 #include <astl/exception.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 
@@ -50,6 +52,6 @@ namespace Astl {
 	 Builtin bf;
    };
 
-} // ast
+} // namespace Astl
 
 #endif

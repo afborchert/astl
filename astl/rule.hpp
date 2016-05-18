@@ -20,9 +20,9 @@
 #define ASTL_RULE
 
 #include <memory>
-#include <astl/types.hpp>
 #include <astl/operator.hpp>
 #include <astl/opset.hpp>
+#include <astl/types.hpp>
 
 namespace Astl {
 

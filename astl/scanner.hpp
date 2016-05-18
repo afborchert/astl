@@ -21,8 +21,8 @@
 
 #include <iostream>
 #include <list>
-#include <astl/parser.hpp>
 #include <astl/location.hpp>
+#include <astl/parser.hpp>
 
 namespace Astl {
 

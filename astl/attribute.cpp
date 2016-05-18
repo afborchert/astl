@@ -215,8 +215,7 @@ unsigned int Attribute::size() const {
 	 return subtokens.size() - 1;
 
       default:
-	 /* not needed but helps to suppress the warning */
-	 return 0;
+	 assert(false); std::abort();
    }
 }
 
