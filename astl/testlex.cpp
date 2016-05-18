@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <astl/bindings.hpp>
 #include <astl/candidate.hpp>
 #include <astl/exception.hpp>
@@ -41,20 +42,19 @@ int main(int argc, char** argv) {
    cout << "sizeof Bindings = " << sizeof(Bindings) << endl;
    cout << "sizeof Candidate = " << sizeof(Candidate) << endl;
    try {
-      Scanner* scanner;
-      ifstream* fin = 0;
+      std::unique_ptr<Scanner> scanner;
       if (argc > 0) {
 	 char* fname = *argv++; --argc;
-	 fin = new ifstream(fname);
 	 string filename(fname);
-	 if (!*fin) {
-	    cerr << cmdname << ": unable to open " << fname <<
+	 ifstream fin(filename);
+	 if (!fin) {
+	    cerr << cmdname << ": unable to open " << filename <<
 	       " for reading" << endl;
 	    exit(1);
 	 }
-	 scanner = new Scanner(*fin, filename);
+	 scanner = std::make_unique<Scanner>(fin, filename);
       } else {
-	 scanner = new Scanner(cin, "stdin");
+	 scanner = std::make_unique<Scanner>(cin, "stdin");
       }
       location loc;
       semantic_type yylval;
@@ -67,8 +67,6 @@ int main(int argc, char** argv) {
 	 }
 	 cout << endl;
       }
-      delete scanner;
-      if (fin) delete fin;
    } catch (Exception e) {
       cerr << e.what() << endl;
    }

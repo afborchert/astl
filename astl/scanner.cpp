@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <memory>
 #include <regex>
+#include <utility>
 #include <astl/error.hpp>
 #include <astl/keywords.hpp>
 #include <astl/scanner.hpp>
@@ -96,11 +97,11 @@ bool Scanner::get_next_token(semantic_type& yylval,
    tokenloc.begin = oldpos;
    if (is_letter(ch)) {
       char initial_letter = ch;
-      tokenstr = new std::string();
+      tokenstr = std::make_unique<std::string>();
       nextch();
       if (ch == '{' && (initial_letter == 'm' || initial_letter == 'q')) {
 	 /* Perl-style literals m{regexp} and q{string} */
-	 delete tokenstr; tokenstr = nullptr;
+	 tokenstr = nullptr;
 	 switch (initial_letter) {
 	    case 'm':
 	       scan_regexp('{', '}'); break;
@@ -118,25 +119,24 @@ bool Scanner::get_next_token(semantic_type& yylval,
 	 if (keyword_table.lookup(*tokenstr, keyword_token)) {
 	    token = keyword_token;
 	    /* a semantic value is no longer required for keywords */
-	    delete tokenstr; tokenstr = nullptr;
+	    tokenstr = nullptr;
 	 } else {
 	    token = parser::token::IDENT;
-	    if (tokenstr) {
+	    if (tokenstr != nullptr) {
 	       yylval = std::make_shared<Node>(make_loc(tokenloc),
-		  Token(token, tokenstr));
+		  Token(token, std::move(tokenstr)));
 	    }
 	 }
       }
    } else if (is_digit(ch)) {
-      tokenstr = new std::string();
+      tokenstr = std::make_unique<std::string>();
       nextch();
       while (is_digit(ch)) {
 	 nextch();
       }
       token = parser::token::CARDINAL_LITERAL;
       yylval = std::make_shared<Node>(make_loc(tokenloc),
-	 Token(token, tokenstr));
-      tokenstr = nullptr;
+	 Token(token, std::move(tokenstr)));
    } else {
       switch (ch) {
 	 case 0:
@@ -402,7 +402,7 @@ void Scanner::scan_text() {
 	       nextch();
 	       push_token(parser::token::DOTS, NodePtr(nullptr), tokenloc);
 	    } else {
-	       tokenstr = new std::string();
+	       tokenstr = std::make_unique<std::string>();
 	       if (!is_letter(ch)) {
 		  error("invalid variable reference in text literal"); continue;
 	       }
@@ -412,7 +412,7 @@ void Scanner::scan_text() {
 	       int token = parser::token::VARIABLE;
 	       push_token(token,
 		  std::make_shared<Node>(make_loc(tokenloc),
-		     Token(token, tokenstr)), tokenloc);
+		     Token(token, std::move(tokenstr))), tokenloc);
 	       tokenloc.begin = oldpos;
 	    }
 	    continue;
@@ -460,7 +460,7 @@ void Scanner::scan_text() {
 void Scanner::scan_regexp(char opening_delimiter, char closing_delimiter) {
    assert(opening_delimiter != closing_delimiter);
    nextch();
-   tokenstr = new std::string();
+   tokenstr = std::make_unique<std::string>();
    int nestlevel = 0;
    while (!eof && (ch != closing_delimiter || nestlevel > 0)) {
       if (ch == '\\') {
@@ -474,9 +474,8 @@ void Scanner::scan_regexp(char opening_delimiter, char closing_delimiter) {
    }
    int token = parser::token::REGEXP_LITERAL;
    NodePtr node = std::make_shared<Node>(make_loc(tokenloc),
-      Token(token, tokenstr));
+      Token(token, std::move(tokenstr)));
    push_token(token, node, tokenloc);
-   tokenstr = nullptr;
    if (ch == closing_delimiter) {
       nextch();
       /* check if the regex is accepted by our regex library */
@@ -499,7 +498,7 @@ void Scanner::scan_regexp(char opening_delimiter, char closing_delimiter) {
 
 void Scanner::scan_string_literal(semantic_type& yylval, int& token) {
    std::string tokenval = "";
-   tokenstr = new std::string();
+   tokenstr = std::make_unique<std::string>();
    nextch();
    while (!eof && ch != '"') {
       if (ch == '\\') {
@@ -569,8 +568,7 @@ void Scanner::scan_string_literal(semantic_type& yylval, int& token) {
    }
    token = parser::token::STRING_LITERAL;
    yylval = std::make_shared<Node>(make_loc(tokenloc),
-      Token(token, tokenval, *tokenstr));
-   tokenstr = nullptr;
+      Token(token, tokenval, std::move(tokenstr)));
 }
 
 void Scanner::nextch() {
@@ -579,7 +577,7 @@ void Scanner::nextch() {
    if (eof) {
       ch = 0; return;
    }
-   if (tokenstr) {
+   if (tokenstr != nullptr) {
       *tokenstr += ch;
    }
    char c;

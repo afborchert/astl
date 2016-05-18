@@ -21,7 +21,9 @@
 
 #include <cassert>
 #include <iostream>
+#include <memory>
 #include <string>
+#include <utility>
 
 namespace Astl {
 
@@ -102,10 +104,9 @@ namespace Astl {
 	  * behind the string pointer is deleted after it has been
 	  * copied.
 	  */
-	 Token(unsigned int token, std::string*& tokenval) :
+	 Token(unsigned int token, std::unique_ptr<std::string> tokenval) :
 	       token(token), tokenval(*tokenval), tokenlit(*tokenval) {
 	    assert(token != 0 && tokenval != nullptr);
-	    delete tokenval; tokenval = nullptr;
 	 }
 
 	 /**
@@ -125,11 +126,9 @@ namespace Astl {
 	  * once the string contents has been copied.
 	  */
 	 Token(unsigned int token,
-	       std::string*& tokenval, std::string*& tokenlit) :
-	       token(token), tokenval(*tokenval), tokenlit(*tokenlit) {
-	    assert(token != 0 && tokenval != nullptr && tokenlit != nullptr);
-	    delete tokenval; tokenval = nullptr;
-	    delete tokenlit; tokenlit = nullptr;
+	       std::string tokenval, std::unique_ptr<std::string> tokenlit) :
+	       token(token), tokenval(tokenval), tokenlit(*tokenlit) {
+	    assert(token != 0);
 	 }
 
 	 /**

@@ -55,7 +55,17 @@ class MyConsumer: public Consumer {
       };
 
       virtual bool consume(NodePtr root, CandidatePtr candidate) {
-	 std::ostream* optr;
+	 // set "location" and "rulename" attribute
+	 AttributePtr rootAt = root->get_attribute();
+	 rootAt->update("location",
+	    std::make_shared<Attribute>(candidate->get_location()));
+	 rootAt->update("rulename",
+	    std::make_shared<Attribute>(candidate->get_rule()->get_name()));
+	 // parenthesize it when possible
+	 if (rules.operator_rules_defined()) {
+	    parenthesize(root, rules.get_operator_table(), lparen);
+	 }
+	 // print it
 	 if (pattern) {
 	    std::ostringstream os;
 	    for (const char* cp = pattern; *cp; ++cp) {
@@ -65,29 +75,20 @@ class MyConsumer: public Consumer {
 		  os << *cp;
 	       }
 	    }
-	    optr = new std::ofstream(os.str().c_str(), std::ios_base::trunc);
-	    if (!*optr) {
+	    std::ofstream out(os.str(), std::ios_base::trunc);
+	    if (out) {
+	       print(out, root, rules.get_print_rule_table(), bindings);
+	       out << std::endl;
+	    } else {
 	       std::ostringstream osmsg;
 	       osmsg << "unable to open " << os.str() << " for writing";
 	       throw Exception(osmsg.str());
 	    }
 	 } else {
-	    optr = &out;
+	    print(out, root, rules.get_print_rule_table(), bindings);
+	    out << std::endl;
 	 }
-	 if (rules.operator_rules_defined()) {
-	    parenthesize(root, rules.get_operator_table(), lparen);
-	 }
-	 // set "location" and "rulename" attribute
-	 AttributePtr rootAt = root->get_attribute();
-	 rootAt->update("location",
-	    std::make_shared<Attribute>(candidate->get_location()));
-	 rootAt->update("rulename",
-	    std::make_shared<Attribute>(candidate->get_rule()->get_name()));
-	 // and print it
-	 print(*optr, root, rules.get_print_rule_table(), bindings);
-	 *optr << std::endl;
 	 ++counter;
-	 if (pattern) delete optr;
 	 return true;
       }
    private:
@@ -187,7 +188,7 @@ void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
    if (!root) {
       throw Exception("no abstract syntax tree has been generated");
    }
-   run(root, loader, script_name, /* pattern= */ 0, /* count = */ 0,
+   run(root, loader, script_name, /* pattern= */ nullptr, /* count = */ 0,
       parentheses, std::cout, argc, argv);
 }
 

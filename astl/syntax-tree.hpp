@@ -20,6 +20,7 @@
 #define ASTL_SYNTAX_TREE_H
 
 #include <iostream>
+#include <memory>
 #include <vector>
 #include <astl/attribute.hpp>
 #include <astl/context.hpp>
@@ -171,7 +172,7 @@ namespace Astl {
 
 	 /* declared as pointer to save space when it is not required:
 	    on a 64 bit architecture we just need 8 instead of 48 bytes */
-	 Context* context;
+	 std::unique_ptr<Context> context;
 
 	 // leaf node
 	 Token token;

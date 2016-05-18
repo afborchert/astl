@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <list>
+#include <memory>
 #include <astl/location.hpp>
 #include <astl/parser.hpp>
 
@@ -42,7 +43,7 @@ namespace Astl {
 	 bool eof;
 	 position oldpos, pos;
 	 location tokenloc;
-	 std::string* tokenstr;
+	 std::unique_ptr<std::string> tokenstr;
 
 	 struct TokenItem {
 	    int token;

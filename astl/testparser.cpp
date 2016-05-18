@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <astl/exception.hpp>
 #include <astl/loader.hpp>
 #include <astl/location.hpp>
@@ -42,20 +43,19 @@ int main(int argc, char** argv) {
    }
 
    try {
-      Scanner* scanner;
-      ifstream* fin = 0;
+      std::unique_ptr<Scanner> scanner;
       if (argc > 0) {
 	 char* fname = *argv++; --argc;
-	 fin = new ifstream(fname);
 	 string filename(fname);
-	 if (!*fin) {
-	    cerr << cmdname << ": unable to open " << fname <<
+	 ifstream fin(filename);
+	 if (!fin) {
+	    cerr << cmdname << ": unable to open " << filename <<
 	       " for reading" << endl;
 	    exit(1);
 	 }
-	 scanner = new Scanner(*fin, filename);
+	 scanner = std::make_unique<Scanner>(fin, filename);
       } else {
-	 scanner = new Scanner(cin, "stdin");
+	 scanner = std::make_unique<Scanner>(cin, "stdin");
       }
 
       NodePtr root;
@@ -63,7 +63,6 @@ int main(int argc, char** argv) {
       if (p.parse() == 0) {
 	 cout << root << endl;
       }
-      delete scanner;
 
       Loader loader;
       Rules rules(loader);

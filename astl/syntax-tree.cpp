@@ -117,9 +117,6 @@ Node::Node(const Location& loc, const Operator& op,
 
 // destructor ================================================================
 Node::~Node() {
-   if (context) {
-      delete context;
-   }
 }
 
 // accessors =================================================================
@@ -166,10 +163,7 @@ const NodePtr& Node::get_operand(unsigned int index) const {
 Node& Node::operator=(const Node& other) {
    leaf = other.leaf; token = other.token;
    op = other.op; subnodes = other.subnodes;
-   if (context) {
-      delete context;
-      context = nullptr;
-   }
+   context = nullptr;
    return *this;
 }
 
@@ -187,15 +181,11 @@ NodePtr& Node::get_operand(unsigned int index) {
 // context ===================================================================
 
 void Node::set_context(const Context& context_param) {
-   if (context) {
-      delete context;
-      context = nullptr;
-   }
-   context = new Context(context_param);
+   context = std::make_unique<Context>(context_param);
 }
 
 Context& Node::get_context() {
-   assert(context);
+   assert(context != nullptr);
    return *context;
 }
 
