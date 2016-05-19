@@ -104,11 +104,11 @@ or postfix operators:
    \nonterminal{prefix-increment}
       \produces \lextoken{++} \nonterminal{designator} \\
    \nonterminal{prefix-decrement}
-      \produces \lextoken{-{}-} \nonterminal{designator} \\
+      \produces \lextoken{$-${}$-$} \nonterminal{designator} \\
    \nonterminal{postfix-increment}
       \produces \nonterminal{designator} \lextoken{++} \\
    \nonterminal{postfix-decrement}
-      \produces \nonterminal{designator} \lextoken{-{}-}
+      \produces \nonterminal{designator} \lextoken{$-${}$-$}
 \end{grammar}
 
 \noindent
@@ -138,7 +138,7 @@ List aggregates construct list values:
 Nested list aggregates construct nested data structures. Example:
 
 \begin{lstlisting}
-   var matrix = [[1 2 3] [4 5 6] [7 8 9]];
+   var matrix = [[1 2 3], [4 5 6], [7 8 9]];
 \end{lstlisting}
 
 \section{Dictionary aggregates}
@@ -164,7 +164,7 @@ Dictionary aggregates construct dictionary values:
 \noindent
 Identifiers on the left-hand-side of a \token{->} operator do not
 refer to equally-named variables in the current lexical scope but are
-interpreted literally. In the following example \ident{member} is a
+interpreted literally. In the following example, \ident{member} is a
 dictionary with one entry where the key is ``name'' and its associated
 value ``Andreas'':
 
@@ -175,13 +175,16 @@ value ``Andreas'':
 
 \noindent
 Key values which are not of string type are converted implicitly
-to strings (see \ref{stringconv}). Null values are not permitted.
+to strings (see \ref{stringconv}). Null values are not permitted
+as keys.
 
 \section{Function constructors}\index{function!constructor}
 
-Function constructors define local functions. Their lexical closure,
+Function constructors define local functions.\index{function!local}
+Their lexical closure,\index{lexical closure}
 i.e. the lexical scope at the location of the function construction
-including the instances of the local variables, remains visible within
+including the instances of the local variables visible at the time
+when the function was constructed, remains visible within
 the body of the function and continues to exist as long as the function
 can be refered to.
 
@@ -254,12 +257,12 @@ var b5 = exists dict.c.d; // not permitted as dict.c does not exist
 \begin{grammar}
    \nonterminal{factor}
       \produces \nonterminal{primary} \\
-      \produces \lextoken{-} \nonterminal{primary} \\
+      \produces \lextoken{$-$} \nonterminal{primary} \\
       \produces \lextoken{!} \nonterminal{primary}
 \end{grammar}
 
 \noindent
-The unary minus operator \token{-} converts its operand into an integer
+The unary minus operator \token{$-$} converts its operand into an integer
 and toggles its sign. The logical negation operator \token{!} converts
 its operand into a boolean value and negates it.
 
@@ -279,7 +282,7 @@ is interpreted as set operator implementing the symmetric difference
 
 Otherwise, the binary operator \token{\caretSY} converts its operands
 $a$ and $b$ to integer values and returns $a^b$. Note that
-the value of $b$ must be non-negative and not be larger than $2^{31}-1$.
+the value of $b$ must be non-negative and not larger than $2^{31}-1$.
 
 \section{Multiplicative expressions}
 
@@ -287,7 +290,7 @@ the value of $b$ must be non-negative and not be larger than $2^{31}-1$.
    \nonterminal{multiplicative-expression}
       \produces \nonterminal{power-expression} \\
       \produces \nonterminal{multiplicative-expression}
-         \lextoken{*} \nonterminal{power-expression} \\
+         \lextoken{$*$} \nonterminal{power-expression} \\
       \produces \nonterminal{multiplicative-expression}
          \lexkeyword{div} \nonterminal{power-expression} \\
       \produces \nonterminal{multiplicative-expression}
@@ -295,7 +298,7 @@ the value of $b$ must be non-negative and not be larger than $2^{31}-1$.
 \end{grammar}
 
 \noindent
-If both operands are dictionaries, the binary operator \token{*}
+If both operands are dictionaries, the binary operator \token{$*$}
 is interpreted as intersection\index{set operators!intersection}
 operator for sets (see \ref{sets}).
 
@@ -321,16 +324,16 @@ A runtime error is raised if the second operand is zero.
    \nonterminal{additive-expression}
       \produces \nonterminal{multiplicative-expression} \\
       \produces \nonterminal{additive-expression}
-         \lextoken{+} \nonterminal{multiplicative-expression} \\
+         \lextoken{$+$} \nonterminal{multiplicative-expression} \\
       \produces \nonterminal{additive-expression}
-         \lextoken{-} \nonterminal{multiplicative-expression}
+         \lextoken{$-$} \nonterminal{multiplicative-expression}
 \end{grammar}
 
 \noindent
 If both operands are dictionaries, the additive operators
 are interpreted as set operators (see \ref{sets}),
 \token{+} delivering the union\index{set operators!union},
-and \token{-} the difference\index{set operators!difference}.
+and \token{$-$} the difference\index{set operators!difference}.
 
 Otherwise, all additive operators convert their operands into integer
 values (see \ref{intconv}) and return an integer value.
@@ -381,12 +384,17 @@ their numerical values in the local encoding.
 \end{grammar}
 
 \noindent
-The repetition operator converts its left operand into a string
+The repetition operator \token{x} converts its left operand into a string
 (see \ref{stringconv}) and its right operand into an integer
 (see \ref{intconv}). If the right operand is zero or negative,
 the empty string is returned. Otherwise, a string is generated
 which consists of $n$ repetitions of the left operand where
-$n$ is the value of the right operand.
+$n$ is the value of the right operand. Example:
+
+\begin{lstlisting}
+var fred2 = "fred" x 2; /* result is "fredfred" */
+var spaces = " " x 80; /* 80 space characters */
+\end{lstlisting}
 
 \section{String and list concatenation}
 
@@ -398,10 +406,10 @@ $n$ is the value of the right operand.
 \end{grammar}
 
 \noindent
-If any of the operands is of list type, the other operand is, if
+If any of the two operands is of list type, the other operand is, if
 necessary, converted into a list (see \ref{listconv}) and a
-concatenated list consisting of all elements of the first operand
-and the second operand is returned.
+concatenated list is returned consisting of all elements of the
+first operand, followed by those of the second operand.
 
 Otherwise, both operands are converted to strings (see \ref{stringconv})
 and the concatenated string of the first and second operand is returned.
@@ -506,7 +514,7 @@ otherwise the third.
          \nonterminal{assignment} \\
       \produces \nonterminal{designator} \lextoken{+=}
          \nonterminal{assignment} \\
-      \produces \nonterminal{designator} \lextoken{-=}
+      \produces \nonterminal{designator} \lextoken{$-$=}
          \nonterminal{assignment} \\
    \nonterminal{expression}
       \produces \nonterminal{assignment}
