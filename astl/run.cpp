@@ -21,6 +21,7 @@
 #include <iomanip>
 #include <iostream>
 #include <memory>
+#include <random>
 #include <sstream>
 #include <astl/attribute.hpp>
 #include <astl/candidate-set.hpp>
@@ -32,7 +33,7 @@
 #include <astl/rules.hpp>
 #include <astl/run.hpp>
 #include <astl/sm-execution.hpp>
-#include <astl/subtractive-rg.hpp>
+#include <astl/mt19937.hpp>
 #include <astl/syntax-tree.hpp>
 
 namespace Astl {
@@ -135,7 +136,8 @@ void run(NodePtr root,
 
    if (rules.print_rules_defined() &&
 	    rules.transformation_rules_defined()) {
-      PseudoRandomGeneratorPtr prg = std::make_shared<SubtractiveRG>(getpid());
+      std::random_device random;
+      PseudoRandomGeneratorPtr prg = std::make_shared<mt19937>(random());
       const RuleTable& rt(rules.get_transformation_rule_table());
       CandidateSet candidates(root, rt, bindings);
       if (candidates.size() == 0) {

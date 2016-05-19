@@ -9,8 +9,7 @@ CPPSources := $(GeneratedCPPSources) \
    error.cpp scanner.cpp syntax-tree.cpp keywords.cpp \
    rule-table.cpp tree-expressions.cpp printer.cpp \
    loader.cpp rule.cpp rules.cpp operator-table.cpp \
-   parenthesizer.cpp subtractive-rg.cpp \
-   treeloc.cpp selective-printer.cpp cloner.cpp \
+   parenthesizer.cpp treeloc.cpp selective-printer.cpp cloner.cpp \
    candidate.cpp execution.cpp \
    candidate-set.cpp context.cpp attribute.cpp expression.cpp \
    bindings.cpp designator.cpp builtin-functions.cpp \
@@ -183,8 +182,6 @@ parenthesizer.o: parenthesizer.cpp ../astl/operator-table.hpp \
  ../astl/parenthesizer.hpp ../astl/syntax-tree.hpp ../astl/attribute.hpp \
  ../astl/function.hpp ../astl/bindings.hpp ../astl/builtin-functions.hpp \
  ../astl/integer.hpp ../astl/context.hpp
-subtractive-rg.o: subtractive-rg.cpp ../astl/subtractive-rg.hpp \
- ../astl/prg.hpp
 treeloc.o: treeloc.cpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh
 selective-printer.o: selective-printer.cpp ../astl/exception.hpp \
@@ -314,7 +311,7 @@ run.o: run.cpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/parenthesizer.hpp ../astl/operator-table.hpp ../astl/printer.hpp \
  ../astl/rules.hpp ../astl/state-machine.hpp ../astl/flow-graph.hpp \
  ../astl/run.hpp ../astl/generator.hpp ../astl/sm-execution.hpp \
- ../astl/subtractive-rg.hpp
+ ../astl/mt19937.hpp
 arithmetic-ops.o: arithmetic-ops.cpp ../astl/arithmetic-ops.hpp \
  ../astl/attribute.hpp ../astl/exception.hpp ../astl/treeloc.hpp \
  ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
