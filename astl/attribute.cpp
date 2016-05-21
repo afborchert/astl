@@ -523,7 +523,7 @@ std::ostream& operator<<(std::ostream& out, AttributePtr at) {
 		  } else {
 		     out << ", ";
 		  }
-		  out << it->first << " => " << it->second;
+		  out << it->first << " -> " << it->second;
 	       }
 	       out << "}";
 	       break;
@@ -539,12 +539,16 @@ std::ostream& operator<<(std::ostream& out, AttributePtr at) {
 	    break;
 	 
 	 case Attribute::match_result:
-	    out << "[";
-	    for (unsigned int i = 0; i < at->size(); ++i) {
-	       if (i > 0) out << ", ";
-	       out << '"' << at->subtokens[i] << '"';
+	    out << "{matched -> \"" << at->subtokens[0] << '"';
+	    if (at->size() > 0) {
+	       out << ", captures -> [";
+	       for (unsigned int i = 0; i < at->size(); ++i) {
+		  if (i > 0) out << ", ";
+		  out << '"' << at->subtokens[i+1] << '"';
+	       }
+	       out << "]";
 	    }
-	    out << "]";
+	    out << "}";
 	    break;
 
 	 case Attribute::tree:

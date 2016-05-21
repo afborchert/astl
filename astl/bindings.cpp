@@ -127,7 +127,7 @@ std::ostream& operator<<(std::ostream& out, BindingsPtr bindings) {
    out << "bindings {" << std::endl;
    for (Bindings::Map::const_iterator it = bindings->vars.begin();
 	 it != bindings->vars.end(); ++it) {
-      out << "   " << it->first << " => " << it->second << std::endl;
+      out << "   " << it->first << " -> " << it->second << std::endl;
    }
    if (bindings->uplink) {
       out << "   uplink: " << bindings->uplink;
