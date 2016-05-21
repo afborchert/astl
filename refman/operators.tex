@@ -82,12 +82,13 @@ operators {
    left "*" "/" "%";
 
    right "cast_expression";
-   right "pointer_dereference" "&"
+   right "pointer_dereference" "address_of"
 	 "unary+" "unary-" "!" "~" "sizeof"
 	 "prefix++" "prefix--";
    left "{}";
    left "postfix++" "postfix--" "function_call"
 	 "->" "." "[]";
+   nonassoc "label_as_value";
 };
 \end{lstlisting}
 
