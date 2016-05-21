@@ -79,8 +79,10 @@ the compound statement:
 
 \begin{lstlisting}
    ("compound_statement" stmt...) -> q{
-      $stmt
-      $...
+      {
+	 $stmt
+	 $...
+      }
    };
 \end{lstlisting}
 
