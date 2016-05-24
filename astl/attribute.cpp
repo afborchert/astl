@@ -291,8 +291,7 @@ std::string Attribute::convert_to_string() const throw(Exception) {
 	    std::ostringstream os; os << size(); return os.str();
 	 }
       default:
-	 /* not needed but helps to suppress the warning */
-	 return "";
+	 assert(false); std::abort();
    }
 }
 

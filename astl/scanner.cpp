@@ -19,10 +19,10 @@
 #include <cassert>
 #include <cstdlib>
 #include <memory>
-#include <regex>
 #include <utility>
 #include <astl/error.hpp>
 #include <astl/keywords.hpp>
+#include <astl/regex.hpp>
 #include <astl/scanner.hpp>
 #include <astl/syntax-tree.hpp>
 #include <astl/token.hpp>
@@ -479,18 +479,8 @@ void Scanner::scan_regexp(char opening_delimiter, char closing_delimiter) {
    if (ch == closing_delimiter) {
       nextch();
       /* check if the regex is accepted by our regex library */
-      try {
-	 std::regex re(node->get_token().get_text());
-      } catch (const std::regex_error& e) {
-	 std::string msg("invalid regular expression: ");
-	 msg += e.what();
-	 error(msg.c_str());
-      } catch (const std::exception& e) {
-	 std::string
-	    msg("unexpected problem with regular expression: ");
-	 msg += e.what();
-	 error(msg.c_str());
-      }
+      std::string pattern = node->get_token().get_text();
+      Regex re(node->get_location(), pattern);
    } else {
       error("unexpected eof in regular expression");
    }

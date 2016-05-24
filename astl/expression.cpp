@@ -19,13 +19,13 @@
 #include <cassert>
 #include <cstdlib>
 #include <memory>
-#include <regex>
 #include <astl/arithmetic-ops.hpp>
 #include <astl/expression.hpp>
 #include <astl/flow-graph.hpp>
 #include <astl/integer.hpp>
 #include <astl/list-ops.hpp>
 #include <astl/operators.hpp>
+#include <astl/regex.hpp>
 #include <astl/set-ops.hpp>
 #include <astl/string-ops.hpp>
 
@@ -429,29 +429,21 @@ AttributePtr Expression::recursive_evaluation(NodePtr expr) throw(Exception) {
       if (!stringAt) {
 	 stringAt = std::make_shared<Attribute>("");
       }
-      NodePtr regexp = expr->get_operand(1);
+      NodePtr regexpr = expr->get_operand(1);
       std::string res;
-      if (regexp->is_leaf()) {
-	 res = regexp->get_token().get_text();
+      if (regexpr->is_leaf()) {
+	 res = regexpr->get_token().get_text();
       } else {
-	 AttributePtr regexAt = recursive_evaluation(regexp);
+	 AttributePtr regexAt = recursive_evaluation(regexpr);
 	 res = regexAt->convert_to_string();
       }
-      try {
-	 std::regex re(res);
-	 std::cmatch what;
-	 std::string s = stringAt->convert_to_string();
-	 bool matches = std::regex_search(s.c_str(), what, re);
-	 if (!matches) return std::make_shared<Attribute>(false);
-	 Attribute::SubtokenVector subtokens(what.size());
-	 for (unsigned int i = 0; i < what.size(); ++i) {
-	    subtokens[i] = what[i];
-	 }
-	 return std::make_shared<Attribute>(subtokens);
-      } catch (std::regex_error& error) {
-	 std::ostringstream os;
-	 os << "invalid regular expression: m{" << res << "}";
-	 throw Exception(expr->get_location(), os.str());
+      Regex re(regexpr->get_location(), res);
+      std::string s = stringAt->convert_to_string();
+      AttributePtr match_result = re.match(s);
+      if (match_result != nullptr) {
+	 return match_result;
+      } else {
+	 return std::make_shared<Attribute>(false);
       }
    } else if (expr->size() == 2) {
       /* binary operators */

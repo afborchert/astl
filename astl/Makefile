@@ -21,8 +21,9 @@ CPPSources := $(GeneratedCPPSources) \
 Objects := $(patsubst %.cpp,%.o,$(CPPSources))
 testlex_objs := testlex.o
 testparser_objs := testparser.o
+testregex_objs := testregex.o
 run_objs := astl-run.o
-MainSources := testlex.cpp testparser.cpp astl-run.cpp
+MainSources := testlex.cpp testparser.cpp testregex.cpp astl-run.cpp
 MainObjects := $(patsubst %.cpp,%.o,$(MainSources))
 Lib := libastl.a
 Utils := ../bison-scripts
@@ -31,16 +32,16 @@ CXX :=		g++
 CXXFLAGS :=	-Wall -g -O2
 LDFLAGS :=
 CPPFLAGS +=	-I.. -std=gnu++14
-LDLIBS := -lgmp
+LDLIBS := -lgmp -lpcre2-8
 BISON := bison
 
 .PHONY:		all clean realclean depend
-all:		$(Lib) testlex testparser astl-astl
+all:		$(Lib) testlex testparser testregex astl-astl
 clean:		; rm -f $(Objects) testlex.o testparser.o \
 			$(GeneratedCPPSources) $(MainObjects)
 realclean:	clean
 		rm -f $(Lib) $(GeneratedCPPSources) $(GeneratedHPPSources) \
-		   $(wildcard *.output) testlex testparser astl-astl
+		   $(wildcard *.output) testlex testparser testregex astl-astl
 
 $(Lib):		$(Objects)
 		ar r $@ $(Objects)
@@ -64,6 +65,8 @@ testlex:	$(testlex_objs) $(Lib)
 		$(CXX) $(LDFLAGS) -o $@ $(testlex_objs) $(Lib) $(LDLIBS)
 testparser:	$(testparser_objs) $(Lib)
 		$(CXX) $(LDFLAGS) -o $@ $(testparser_objs) $(Lib) $(LDLIBS)
+testregex:	$(testregex_objs) $(Lib)
+		$(CXX) $(LDFLAGS) -o $@ $(testregex_objs) $(Lib) $(LDLIBS)
 astl-astl:	$(run_objs) $(Lib)
 		$(CXX) $(LDFLAGS) -o $@ $(run_objs) $(Lib) $(LDLIBS)
 depend:		$(CPPSources)
@@ -80,6 +83,7 @@ parser.tab.o: parser.tab.cpp ../astl/error.hpp ../astl/exception.hpp \
  ../astl/operator.hpp ../astl/token.hpp ../astl/parser.tab.hpp \
  ../astl/stack.hh ../astl/location.hh ../astl/operators.hpp \
  ../astl/scanner.hpp ../astl/yytname.hpp parser.tab.hpp
+parser.tab.o: parser.tab.hpp stack.hh location.hh position.hh
 yytname.o: yytname.cpp
 operators.o: operators.cpp ../astl/operator.hpp ../astl/token.hpp
 error.o: error.cpp ../astl/error.hpp ../astl/exception.hpp \
@@ -98,7 +102,7 @@ scanner.o: scanner.cpp ../astl/error.hpp ../astl/exception.hpp \
  ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
  ../astl/operator.hpp ../astl/token.hpp ../astl/parser.tab.hpp \
  ../astl/stack.hh ../astl/location.hh ../astl/keywords.hpp \
- ../astl/scanner.hpp
+ ../astl/regex.hpp ../astl/scanner.hpp
 syntax-tree.o: syntax-tree.cpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
@@ -128,7 +132,8 @@ tree-expressions.o: tree-expressions.cpp ../astl/bindings.hpp \
  ../astl/types.hpp ../astl/integer.hpp ../astl/syntax-tree.hpp \
  ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
  ../astl/expression.hpp ../astl/designator.hpp \
- ../astl/tree-expressions.hpp ../astl/operators.hpp ../astl/opset.hpp
+ ../astl/tree-expressions.hpp ../astl/operators.hpp ../astl/opset.hpp \
+ ../astl/regex.hpp
 printer.o: printer.cpp ../astl/bindings.hpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
@@ -250,8 +255,8 @@ expression.o: expression.cpp ../astl/arithmetic-ops.hpp \
  ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
  ../astl/token.hpp ../astl/operators.hpp ../astl/expression.hpp \
  ../astl/designator.hpp ../astl/tree-expressions.hpp \
- ../astl/flow-graph.hpp ../astl/list-ops.hpp ../astl/set-ops.hpp \
- ../astl/string-ops.hpp
+ ../astl/flow-graph.hpp ../astl/list-ops.hpp ../astl/regex.hpp \
+ ../astl/set-ops.hpp ../astl/string-ops.hpp
 bindings.o: bindings.cpp ../astl/bindings.hpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
@@ -429,6 +434,12 @@ testparser.o: testparser.cpp ../astl/exception.hpp ../astl/treeloc.hpp \
  ../astl/opset.hpp ../astl/rules.hpp ../astl/operator-table.hpp \
  ../astl/state-machine.hpp ../astl/flow-graph.hpp ../astl/scanner.hpp \
  ../astl/yytname.hpp
+testregex.o: testregex.cpp ../astl/attribute.hpp ../astl/exception.hpp \
+ ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
+ ../astl/location.hh ../astl/position.hh ../astl/function.hpp \
+ ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
+ ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
+ ../astl/operator.hpp ../astl/token.hpp ../astl/regex.hpp
 astl-run.o: astl-run.cpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/treeloc.hpp \
  ../astl/operators.hpp ../astl/operator.hpp ../astl/token.hpp \

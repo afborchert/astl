@@ -18,7 +18,6 @@
 
 #include <cassert>
 #include <memory>
-#include <regex>
 #include <sstream>
 #include <astl/bindings.hpp>
 #include <astl/exception.hpp>
@@ -26,6 +25,7 @@
 #include <astl/location.hpp>
 #include <astl/operators.hpp>
 #include <astl/opset.hpp>
+#include <astl/regex.hpp>
 #include <astl/tree-expressions.hpp>
 
 namespace Astl {
@@ -91,19 +91,15 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 	 regexp = expression->get_operand(1);
       }
       assert(regexp->is_leaf());
-      std::regex re(regexp->get_token().get_text());
-      std::cmatch what;
+
+      std::string pattern = regexp->get_token().get_text();
+      Regex re(regexp->get_location(), pattern);
       std::string literal = root->get_token().get_literal();
-      bool matches = std::regex_match(literal.c_str(), what, re);
-      if (!matches) return false;
+      AttributePtr match_result = re.match(literal);
+      if (match_result == nullptr) return false;
       if (name) {
 	 std::string varname(name->get_token().get_text());
-	 Attribute::SubtokenVector subtokens(what.size());
-	 for (unsigned int i = 0; i < what.size(); ++i) {
-	    subtokens[i] = what[i];
-	 }
-	 bind_variable(bindings, name->get_location(), varname,
-	    std::make_shared<Attribute>(subtokens));
+	 bind_variable(bindings, name->get_location(), varname, match_result);
       }
    } else if (expression->get_op() == Op::string_literal) {
       if (!root->is_leaf()) return false;

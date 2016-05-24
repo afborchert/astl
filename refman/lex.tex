@@ -164,9 +164,13 @@ a line terminator, and ``lines''.
 
 A regular expression is a literal that is enclosed by the
 delimiters ``\lstinline!m{!'' and ``\lstinline!}!''. Regular
-expressions are interpreted by the C++ standard library and
-follow the ECMAScript regular expression syntax.\footnote{See
-\url{http://ecma-international.org/ecma-262/5.1/\#sec-15.10}}
+expressions are interpreted by the \textit{Perl Compatible
+Regular Expression} library (PCRE).\footnote{See
+\url{http://www.pcre.org} and
+\url{http://www.pcre.org/current/doc/html/pcre2syntax.html}. The
+options \textit{PCRE2\_ALT\_BSUX}, \textit{PCRE2\_UCP},
+and \textit{PCRE2\_UTF} are set.} Regular expressions
+must be encoded in UTF-8.
 
 Example: \lstinline!m{[a-zA-Z_][a-zA-Z_0-9]*}!
 

@@ -13,4 +13,5 @@ yytname.cpp
 astl-astl
 testlex
 testparser
+testregex
 libastl.a
