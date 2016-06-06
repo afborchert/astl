@@ -102,7 +102,7 @@ scanner.o: scanner.cpp ../astl/error.hpp ../astl/exception.hpp \
  ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
  ../astl/operator.hpp ../astl/token.hpp ../astl/parser.tab.hpp \
  ../astl/stack.hh ../astl/location.hh ../astl/keywords.hpp \
- ../astl/regex.hpp ../astl/scanner.hpp
+ ../astl/regex.hpp ../astl/scanner.hpp ../astl/utf8.hpp
 syntax-tree.o: syntax-tree.cpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
@@ -147,7 +147,7 @@ printer.o: printer.cpp ../astl/bindings.hpp ../astl/attribute.hpp \
  ../astl/rule.hpp ../astl/opset.hpp ../astl/rules.hpp ../astl/loader.hpp \
  ../astl/state-machine.hpp ../astl/flow-graph.hpp ../astl/scanner.hpp \
  ../astl/parser.hpp ../astl/yystype.hpp ../astl/parser.tab.hpp \
- ../astl/stack.hh ../astl/location.hh
+ ../astl/stack.hh ../astl/location.hh ../astl/utf8.hpp
 loader.o: loader.cpp ../astl/loader.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/syntax-tree.hpp \

@@ -26,43 +26,27 @@
 #include <astl/scanner.hpp>
 #include <astl/syntax-tree.hpp>
 #include <astl/token.hpp>
+#include <astl/utf8.hpp>
 
 namespace Astl {
 
 const unsigned int TAB_STOP = 8;
 
-bool is_letter(char ch) {
-   return ((ch >= 'a') && (ch <= 'z')) ||
-      ((ch >= 'A') && (ch <= 'Z')) || ch == '_';
-}
-
-bool is_digit(char ch) {
-   return (ch >= '0') && (ch <= '9');
-}
-
-bool is_octal_digit(char ch) {
-   return (ch >= '0') && (ch <= '7');
-}
-
-bool is_whitespace(char ch) {
-   return ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '\f';
-}
-
 // constructor ===============================================================
 
 Scanner::Scanner(std::istream& in, const std::string& input_name) :
-      in(in), input_name(input_name), ch(0),
-      eof(false), tokenstr(nullptr) {
+      in(in), input_name(input_name), ch(0), codepoint(0),
+      eof_seen(false), eof(false), tokenstr(nullptr) {
    pos.initialize(&this->input_name);
-   nextch();
-   if (!eof && ch == '#') {
+   next_ch(); next_codepoint();
+   if (!eof && codepoint == '#') {
       // skip #! line
-      nextch();
-      if (eof || ch != '!') {
+      next_codepoint();
+      if (eof || codepoint != '!') {
 	 error("#! line expected");
       }
-      while (!eof && ch != '\n') {
-	 nextch();
+      while (!eof && codepoint != '\n') {
+	 next_codepoint();
       }
    }
 }
@@ -88,18 +72,18 @@ bool Scanner::get_next_token(semantic_type& yylval,
    for(;;) {
       if (eof) {
 	 break;
-      } else if (is_whitespace(ch)) {
-	 nextch();
+      } else if (is_whitespace(codepoint)) {
+	 next_codepoint();
       } else {
 	 break;
       }
    }
    tokenloc.begin = oldpos;
-   if (is_letter(ch)) {
-      char initial_letter = ch;
+   if (is_letter(codepoint)) {
+      char32_t initial_letter = codepoint;
       tokenstr = std::make_unique<std::string>();
-      nextch();
-      if (ch == '{' && (initial_letter == 'm' || initial_letter == 'q')) {
+      next_codepoint();
+      if (codepoint == '{' && (initial_letter == 'm' || initial_letter == 'q')) {
 	 /* Perl-style literals m{regexp} and q{string} */
 	 tokenstr = nullptr;
 	 switch (initial_letter) {
@@ -112,8 +96,8 @@ bool Scanner::get_next_token(semantic_type& yylval,
 	 }
 	 return false; // fetch tokens from the token buffer
       } else {
-	 while (is_letter(ch) || is_digit(ch)) {
-	    nextch();
+	 while (is_letter(codepoint) || is_digit(codepoint)) {
+	    next_codepoint();
 	 }
 	 int keyword_token;
 	 if (keyword_table.lookup(*tokenstr, keyword_token)) {
@@ -128,42 +112,42 @@ bool Scanner::get_next_token(semantic_type& yylval,
 	    }
 	 }
       }
-   } else if (is_digit(ch)) {
+   } else if (is_digit(codepoint)) {
       tokenstr = std::make_unique<std::string>();
-      nextch();
-      while (is_digit(ch)) {
-	 nextch();
+      next_codepoint();
+      while (is_digit(codepoint)) {
+	 next_codepoint();
       }
       token = parser::token::CARDINAL_LITERAL;
       yylval = std::make_shared<Node>(make_loc(tokenloc),
 	 Token(token, std::move(tokenstr)));
    } else {
-      switch (ch) {
+      switch (codepoint) {
 	 case 0:
 	    /* eof */
 	    break;
 	 case '/':
-	    nextch();
-	    if (ch == '/') {
+	    next_codepoint();
+	    if (codepoint == '/') {
 	       /* single-line comment */
-	       while (!eof && ch != '\n') {
-		  nextch();
+	       while (!eof && codepoint != '\n') {
+		  next_codepoint();
 	       }
 	       if (eof) {
 		  error("unexpected eof in single-line comment");
 	       }
-	    } else if (ch == '*') {
+	    } else if (codepoint == '*') {
 	       /* delimited comment */
-	       nextch();
+	       next_codepoint();
 	       bool star = false;
-	       while (!eof && (!star || ch != '/')) {
-		  star = ch == '*';
-		  nextch();
+	       while (!eof && (!star || codepoint != '/')) {
+		  star = codepoint == '*';
+		  next_codepoint();
 	       }
 	       if (eof) {
 		  error("unexpected eof in delimited comment");
 	       } else {
-		  nextch();
+		  next_codepoint();
 	       }
 	    } else {
 	       /* regular expression */
@@ -175,85 +159,85 @@ bool Scanner::get_next_token(semantic_type& yylval,
 	    break;
 	 /* compound delimiters */
 	 case '-':
-	    nextch();
-	    if (ch == '>') {
-	       nextch(); token = parser::token::ARROW;
-	    } else if (ch == '-') {
-	       nextch(); token = parser::token::MINUSMINUS;
-	    } else if (ch == '=') {
-	       nextch(); token = parser::token::MINUS_EQ;
+	    next_codepoint();
+	    if (codepoint == '>') {
+	       next_codepoint(); token = parser::token::ARROW;
+	    } else if (codepoint == '-') {
+	       next_codepoint(); token = parser::token::MINUSMINUS;
+	    } else if (codepoint == '=') {
+	       next_codepoint(); token = parser::token::MINUS_EQ;
 	    } else {
 	       token = parser::token::MINUS;
 	    }
 	    break;
 	 case '<':
-	    nextch();
-	    if (ch == '=') {
-	       nextch(); token = parser::token::LE;
+	    next_codepoint();
+	    if (codepoint == '=') {
+	       next_codepoint(); token = parser::token::LE;
 	    } else {
 	       token = parser::token::LT;
 	    }
 	    break;
 	 case '>':
-	    nextch();
-	    if (ch == '=') {
-	       nextch(); token = parser::token::GE;
+	    next_codepoint();
+	    if (codepoint == '=') {
+	       next_codepoint(); token = parser::token::GE;
 	    } else {
 	       token = parser::token::GT;
 	    }
 	    break;
 	 case '!':
-	    nextch();
-	    if (ch == '=') {
-	       nextch(); token = parser::token::NE;
+	    next_codepoint();
+	    if (codepoint == '=') {
+	       next_codepoint(); token = parser::token::NE;
 	    } else {
 	       token = parser::token::NOT;
 	    }
 	    break;
 	 case '=':
-	    nextch();
-	    if (ch == '~') {
-	       nextch(); token = parser::token::MATCHES;
-	    } else if (ch == '=') {
-	       nextch(); token = parser::token::EQEQ;
+	    next_codepoint();
+	    if (codepoint == '~') {
+	       next_codepoint(); token = parser::token::MATCHES;
+	    } else if (codepoint == '=') {
+	       next_codepoint(); token = parser::token::EQEQ;
 	    } else {
 	       token = parser::token::EQ;
 	    }
 	    break;
 	 case '&':
-	    nextch();
-	    if (ch == '&') {
-	       nextch(); token = parser::token::AND;
-	    } else if (ch == '=') {
-	       nextch(); token = parser::token::AMP_EQ;
+	    next_codepoint();
+	    if (codepoint == '&') {
+	       next_codepoint(); token = parser::token::AND;
+	    } else if (codepoint == '=') {
+	       next_codepoint(); token = parser::token::AMP_EQ;
 	    } else {
 	       token = parser::token::AMPERSAND;
 	    }
 	    break;
 	 case '+':
-	    nextch();
-	    if (ch == '=') {
-	       nextch(); token = parser::token::PLUS_EQ;
-	    } else if (ch == '+') {
-	       nextch(); token = parser::token::PLUSPLUS;
+	    next_codepoint();
+	    if (codepoint == '=') {
+	       next_codepoint(); token = parser::token::PLUS_EQ;
+	    } else if (codepoint == '+') {
+	       next_codepoint(); token = parser::token::PLUSPLUS;
 	    } else {
 	       token = parser::token::PLUS;
 	    }
 	    break;
 	 case '|':
-	    nextch();
-	    if (ch == '|') {
-	       nextch(); token = parser::token::OR;
+	    next_codepoint();
+	    if (codepoint == '|') {
+	       next_codepoint(); token = parser::token::OR;
 	    } else {
 	       error("invalid token");
 	    }
 	    break;
 	 case '.':
-	    nextch();
-	    if (ch == '.') {
-	       nextch();
-	       if (ch == '.') {
-		  nextch();
+	    next_codepoint();
+	    if (codepoint == '.') {
+	       next_codepoint();
+	       if (codepoint == '.') {
+		  next_codepoint();
 		  token = parser::token::DOTS;
 	       } else {
 		  error("invalid token");
@@ -264,31 +248,31 @@ bool Scanner::get_next_token(semantic_type& yylval,
 	    break;
 	 /* single-character delimiters */
 	 case ':':
-	    nextch(); token = parser::token::COLON; break;
+	    next_codepoint(); token = parser::token::COLON; break;
 	 case '(':
-	    nextch(); token = parser::token::LPAREN; break;
+	    next_codepoint(); token = parser::token::LPAREN; break;
 	 case ')':
-	    nextch(); token = parser::token::RPAREN; break;
+	    next_codepoint(); token = parser::token::RPAREN; break;
 	 case ';':
-	    nextch(); token = parser::token::SEMICOLON; break;
+	    next_codepoint(); token = parser::token::SEMICOLON; break;
 	 case '*':
-	    nextch(); token = parser::token::STAR; break;
+	    next_codepoint(); token = parser::token::STAR; break;
 	 case '^':
-	    nextch(); token = parser::token::POWER; break;
+	    next_codepoint(); token = parser::token::POWER; break;
 	 case '?':
-	    nextch(); token = parser::token::QMARK; break;
+	    next_codepoint(); token = parser::token::QMARK; break;
 	 case ',':
-	    nextch(); token = parser::token::COMMA; break;
+	    next_codepoint(); token = parser::token::COMMA; break;
 	 case '{':
-	    nextch(); token = parser::token::LBRACE; break;
+	    next_codepoint(); token = parser::token::LBRACE; break;
 	 case '}':
-	    nextch(); token = parser::token::RBRACE; break;
+	    next_codepoint(); token = parser::token::RBRACE; break;
 	 case '[':
-	    nextch(); token = parser::token::LBRACKET; break;
+	    next_codepoint(); token = parser::token::LBRACKET; break;
 	 case ']':
-	    nextch(); token = parser::token::RBRACKET; break;
+	    next_codepoint(); token = parser::token::RBRACKET; break;
 	 default:
-	    nextch();
+	    next_codepoint();
 	    error("invalid token");
 	    return false; // fetch tokens from the token buffer
       }
@@ -306,7 +290,7 @@ void Scanner::push_token(int token, semantic_type yylval, location yylloc) {
 
 void Scanner::scan_text() {
    assert(tokenstr == nullptr);
-   nextch(); // eat opening '{'
+   next_codepoint(); // eat opening '{'
    bool whitespace = true; // so far we have seen whitespace only
    bool current_whitespace = true; // just whitespace seen in current line
    bool last_current_whitespace = true;
@@ -315,15 +299,15 @@ void Scanner::scan_text() {
    std::string current_text("");
    bool newline = false; // add newline to current_text if sth follows
    unsigned int nestlevel = 0;
-   while (!eof && (nestlevel > 0 || ch != '}')) {
+   while (!eof && (nestlevel > 0 || codepoint != '}')) {
       last_current_whitespace = current_whitespace;
-      if (ch == '\n') {
+      if (codepoint == '\n') {
 	 current_whitespace = true;
 	 current_indent = 0;
 	 if (whitespace) indent = 0;
-      } else if (is_whitespace(ch) && current_whitespace) {
+      } else if (is_whitespace(codepoint) && current_whitespace) {
 	 int incr = 1;
-	 if (ch == '\t') {
+	 if (codepoint == '\t') {
 	    incr = TAB_STOP - current_indent % TAB_STOP;
 	 }
 	 current_indent += incr;
@@ -332,13 +316,13 @@ void Scanner::scan_text() {
 	 current_whitespace = false;
 	 whitespace = false;
       }
-      if (ch == '{') {
+      if (codepoint == '{') {
 	 ++nestlevel;
-      } else if (ch == '}') {
+      } else if (codepoint == '}') {
 	 --nestlevel;
       }
       if (!current_whitespace) {
-	 if (ch == '$') {
+	 if (codepoint == '$') {
 	    if (current_text.size() > 0 || current_indent > indent || newline) {
 	       if (newline) {
 		  current_text += '\n'; newline = false;
@@ -358,14 +342,14 @@ void Scanner::scan_text() {
 	       current_text = "";
 	    }
 	    tokenloc.begin = oldpos;
-	    nextch();
-	    if (ch == '{') {
+	    next_codepoint();
+	    if (codepoint == '{') {
 	       // support ${...} construct which permits an
 	       // arbitrary expression within the braces
 	       push_token(parser::token::LBRACE,
 		  NodePtr(nullptr), tokenloc);
 	       location startloc = tokenloc;
-	       nextch();
+	       next_codepoint();
 	       int token;
 	       int nestlevel = 0;
 	       semantic_type yylval; location yylloc;
@@ -389,25 +373,25 @@ void Scanner::scan_text() {
 		  tokenloc = startloc;
 		  error("opening '${' is not closed"); continue;
 	       }
-	    } else if (ch == '.') {
+	    } else if (codepoint == '.') {
 	       // support $... construct
-	       nextch();
-	       if (ch != '.') {
+	       next_codepoint();
+	       if (codepoint != '.') {
 		  error("'$...' expected"); continue;
 	       }
-	       nextch();
-	       if (ch != '.') {
+	       next_codepoint();
+	       if (codepoint != '.') {
 		  error("'$...' expected"); continue;
 	       }
-	       nextch();
+	       next_codepoint();
 	       push_token(parser::token::DOTS, NodePtr(nullptr), tokenloc);
 	    } else {
 	       tokenstr = std::make_unique<std::string>();
-	       if (!is_letter(ch)) {
+	       if (!is_letter(codepoint)) {
 		  error("invalid variable reference in text literal"); continue;
 	       }
-	       while (is_letter(ch) || is_digit(ch)) {
-		  nextch();
+	       while (is_letter(codepoint) || is_digit(codepoint)) {
+		  next_codepoint();
 	       }
 	       int token = parser::token::VARIABLE;
 	       push_token(token,
@@ -416,15 +400,15 @@ void Scanner::scan_text() {
 	       tokenloc.begin = oldpos;
 	    }
 	    continue;
-	 } else if (ch == '\n') {
+	 } else if (codepoint == '\n') {
 	    if (newline) current_text += '\n';
 	    newline = true;
 	 } else {
 	    if (newline) {
 	       current_text += '\n'; newline = false;
 	    }
-	    if (ch == '\\') {
-	       nextch();
+	    if (codepoint == '\\') {
+	       next_codepoint();
 	    }
 	    if (last_current_whitespace) {
 	       if (current_indent > indent) {
@@ -433,13 +417,13 @@ void Scanner::scan_text() {
 		  }
 	       }
 	    }
-	    current_text += ch;
+	    current_text += codepoint;
 	 }
-      } else if (!whitespace && ch == '\n') {
+      } else if (!whitespace && codepoint == '\n') {
 	 if (newline) current_text += '\n';
 	 newline = true;
       }
-      nextch();
+      next_codepoint();
    }
    if (current_text.size() > 0) {
       int token = parser::token::TEXT_LITERAL;
@@ -450,34 +434,35 @@ void Scanner::scan_text() {
    if (eof) {
       error("eof encountered in text literal");
    } else {
-      nextch();
+      next_codepoint();
    }
 }
 
 /* if opening_delimiter is non-null, scan_regexp() supports the
    nested use of the opening and closing delimiters
 */
-void Scanner::scan_regexp(char opening_delimiter, char closing_delimiter) {
+void Scanner::scan_regexp(char32_t opening_delimiter,
+      char32_t closing_delimiter) {
    assert(opening_delimiter != closing_delimiter);
-   nextch();
+   next_codepoint();
    tokenstr = std::make_unique<std::string>();
    int nestlevel = 0;
-   while (!eof && (ch != closing_delimiter || nestlevel > 0)) {
-      if (ch == '\\') {
-	 nextch();
-      } else if (ch == opening_delimiter) {
+   while (!eof && (codepoint != closing_delimiter || nestlevel > 0)) {
+      if (codepoint == '\\') {
+	 next_codepoint();
+      } else if (codepoint == opening_delimiter) {
 	 ++nestlevel;
-      } else if (ch == closing_delimiter) {
+      } else if (codepoint == closing_delimiter) {
 	 --nestlevel;
       }
-      nextch();
+      next_codepoint();
    }
    int token = parser::token::REGEXP_LITERAL;
    NodePtr node = std::make_shared<Node>(make_loc(tokenloc),
       Token(token, std::move(tokenstr)));
    push_token(token, node, tokenloc);
-   if (ch == closing_delimiter) {
-      nextch();
+   if (codepoint == closing_delimiter) {
+      next_codepoint();
       /* check if the regex is accepted by our regex library */
       std::string pattern = node->get_token().get_text();
       Regex re(node->get_location(), pattern);
@@ -489,27 +474,27 @@ void Scanner::scan_regexp(char opening_delimiter, char closing_delimiter) {
 void Scanner::scan_string_literal(semantic_type& yylval, int& token) {
    std::string tokenval = "";
    tokenstr = std::make_unique<std::string>();
-   nextch();
-   while (!eof && ch != '"') {
-      if (ch == '\\') {
-	 nextch();
-	 if (is_octal_digit(ch)) {
-	    unsigned int val = ch - '0';
-	    nextch();
-	    if (is_octal_digit(ch)) {
-	       val = val * 8 + ch - '0';
-	       nextch();
-	       if (is_octal_digit(ch)) {
-		  val = val * 8 + ch - '0';
-		  nextch();
+   next_codepoint();
+   while (!eof && codepoint != '"') {
+      if (codepoint == '\\') {
+	 next_codepoint();
+	 if (is_octal_digit(codepoint)) {
+	    unsigned int val = codepoint - '0';
+	    next_codepoint();
+	    if (is_octal_digit(codepoint)) {
+	       val = val * 8 + codepoint - '0';
+	       next_codepoint();
+	       if (is_octal_digit(codepoint)) {
+		  val = val * 8 + codepoint - '0';
+		  next_codepoint();
 	       }
 	    }
 	    if (val >= 256) {
 	       error("octal constant within string literal is out of range");
 	    }
-	    tokenval += (unsigned char) val;
+	    tokenval += static_cast<char32_t>(val);
 	 } else {
-	    switch (ch) {
+	    switch (codepoint) {
 	       case '\\':
 		  tokenval += '\\';
 		  break;
@@ -540,19 +525,39 @@ void Scanner::scan_string_literal(semantic_type& yylval, int& token) {
 	       case 'v':
 		  tokenval += '\v';
 		  break;
+	       case 'u':
+	       case 'U':
+		  /* Unicode codepoint in hex notation */
+		  {
+		     unsigned int nof_digits = codepoint == 'u'? 4: 8;
+		     char32_t val = 0;
+		     while (nof_digits > 0) {
+			next_codepoint();
+			if (!is_hex_digit(codepoint)) {
+			   error("hex digit expected");
+			}
+			val = val * 0x10 + eval_hex_digit(codepoint);
+			--nof_digits;
+		     }
+		     if (!valid_codepoint(val)) {
+			error("invalid Unicode codepoint");
+		     }
+		     tokenval += val;
+		  }
+		  break;
 	       default:
 		  error("invalid \\-sequence in string literal");
 		  break;
 	    }
-	    nextch();
+	    next_codepoint();
 	 }
       } else {
-	 tokenval += ch;
-	 nextch();
+	 tokenval += codepoint;
+	 next_codepoint();
       }
    }
-   if (ch == '"') {
-      nextch();
+   if (codepoint == '"') {
+      next_codepoint();
    } else {
       error("unexpected eof in string literal");
    }
@@ -561,23 +566,66 @@ void Scanner::scan_string_literal(semantic_type& yylval, int& token) {
       Token(token, tokenval, std::move(tokenstr)));
 }
 
-void Scanner::nextch() {
+void Scanner::next_ch() {
    tokenloc.end = pos;
    oldpos = pos;
-   if (eof) {
+   if (eof_seen) {
       ch = 0; return;
-   }
-   if (tokenstr != nullptr) {
-      *tokenstr += ch;
    }
    char c;
    if (!in.get(c)) {
-      eof = true; ch = 0; return;
+      eof_seen = true; ch = 0; return;
    }
    ch = c;
-   if (ch == '\n') {
+}
+
+void Scanner::next_codepoint() {
+   char32_t char_val = 0;
+   char32_t expected = 0;
+   tokenloc.begin = oldpos;
+   if (eof_seen) {
+      eof = true; codepoint = 0; return;
+   }
+   if (tokenstr != nullptr) {
+      *tokenstr += codepoint;
+   }
+   for(;;) {
+      if (expected) {
+	 if ((ch >> 6) == 2) {
+	    char_val = (char_val << 6) | (ch & ((1<<6)-1));
+	    if (--expected == 0) {
+	       codepoint = char_val; break;
+	    }
+	 } else {
+	    error("invalid UTF-8 byte sequence");
+	 }
+      } else if ((ch & 0x80) == 0) {
+	 codepoint = ch; break;
+      } else if ((ch >> 5) == 6) {
+	 /* lead character with one byte following */
+	 char_val = ch & ((1<<5)-1); expected = 1;
+      } else if ((ch >> 4) == 14) {
+	 /* lead character with two bytes following */
+	 char_val = ch & ((1<<4)-1); expected = 2;
+      } else if ((ch >> 3) == 30) {
+	 /* lead character with three bytes following */
+	 char_val = ch & ((1<<3)-1); expected = 3;
+      } else if ((ch >> 2) == 62) {
+	 /* lead character with four bytes following */
+	 char_val = ch & ((1<<2)-1); expected = 4;
+      } else if ((ch >> 1) == 126) {
+	 /* lead character with five bytes following */
+	 char_val = ch & 1; expected = 5;
+      } else {
+	 error("invalid UTF-8 byte sequence");
+      }
+      next_ch();
+   }
+   next_ch();
+
+   if (codepoint == '\n') {
       pos.lines();
-   } else if (ch == '\t') {
+   } else if (codepoint == '\t') {
       unsigned blanks = 8 - (pos.column - 1) % 8;
       pos.columns(blanks);
    } else {

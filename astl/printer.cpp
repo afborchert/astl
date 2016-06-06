@@ -33,6 +33,7 @@
 #include <astl/scanner.hpp>
 #include <astl/syntax-tree.hpp>
 #include <astl/tree-expressions.hpp>
+#include <astl/utf8.hpp>
 
 namespace Astl {
 
@@ -53,15 +54,18 @@ static bool expand_variable(std::ostream& out, std::string name,
 }
 
 static int get_indent(const std::string text) {
-   int i = text.size() - 1;
+   auto range = codepoint_range(text);
+   auto it = range.end();
    unsigned int indent = 0;
-   while (i >= 0 && is_whitespace(text[i])) {
-      if (text[i] == '\n') return indent;
-      ++indent; --i;
+   while (it != range.begin()) {
+      auto ch = *--it;
+      if (!is_whitespace(ch)) break;
+      if (ch == '\n') return indent;
+      ++indent;
    }
-   while (i >= 0) {
-      if (text[i] == '\n') return 0;
-      --i;
+   while (it != range.begin()) {
+      auto ch = *--it;
+      if (ch == '\n') return 0;
    }
    return -1;
 }
@@ -69,8 +73,7 @@ static int get_indent(const std::string text) {
 static void expand_text(std::ostream& out, const Token& t,
       unsigned int indent) {
    std::string text = t.get_text();
-   for (unsigned int i = 0; i < text.size(); ++i) {
-      char ch = text[i];
+   for (auto ch: codepoint_range(text)) {
       out << ch;
       if (ch == '\n') {
 	 for (unsigned int wi = 0; wi < indent; ++wi) {

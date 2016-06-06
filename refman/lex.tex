@@ -8,10 +8,10 @@ source files are refered to.
 
 \section{Character set}\index{character set}
 
-Astl program sources are sequences of octets that are interpreted as
-ASCII characters. Octets within string literals, program text literals,
-and comments are not interpreted except to find the end of the lexical
-construct or to find embedded references within program text literals.
+Astl program sources are to be encoded in UTF-8\index{UTF-8}. While most Astl
+token including identifiers consist of ASCII\index{ASCII} characters only,
+arbitrary non-ASCII characters are permitted in string literals,
+program text literals, regular expression literals, and comments.
 
 Case is significant.
 
@@ -24,7 +24,8 @@ program source\index{source file}. The newline\index{newline} character
 and considered otherwise as being equivalent to the space\index{space}
 character (ASCII 32). Tabs\index{tab} (ASCII 9) are similarly treated as
 space characters but cause the current column to be advanced to the next
-multiply of 8 plus 1.
+multiply of 8 plus 1. Unicode\index{Unicode} codepoints are counted as one character
+independent from the number of bytes required to encode them in UTF-8\index{UTF-8}.
 
 \section{Comments}\index{comment}
 
@@ -143,6 +144,9 @@ question mark & ? & \lstinline!\?! \\
 single quote & ' & \lstinline!\'! \\
 double quote & " & \lstinline!\"! \\
 octal number & \textit{ooo} & \lstinline!\!\textit{ooo} \\
+16-bit Unicode codepoint in hex & \textit{hhhh} & \lstinline!\u!\textit{hhhh} \\
+32-bit Unicode codepoint in hex & \textit{hhhhhhhh}
+   & \lstinline!\U!\textit{hhhhhhhh} \\
 \hline
 \end{tabular}
 
@@ -157,7 +161,9 @@ Examples: \lstinline!"Hello, world"! represents the text ``Hello, world'',
 \lstinline!"\""! represents the double quote ``"'',
 \lstinline!"\\"! represents the backslash ``\lstinline!\!'',
 and \lstinline!"Two\nlines"! represents ``Two'', followed by
-a line terminator, and ``lines''.
+a line terminator, and ``lines''. Unicode codepoints can be
+specified using four (using \lstinline!\u!) or height hex digits
+(using \lstinline!\U!). Example: \lstinline^"\U0001f37a Cheers!"^.
 
 \subsection{Regular expressions}\label{regexlit}
 \index{regular expression}\index{literal!regular expression}
@@ -170,7 +176,7 @@ Regular Expression} library (PCRE).\footnote{See
 \url{http://www.pcre.org/current/doc/html/pcre2syntax.html}. The
 options \textit{PCRE2\_ALT\_BSUX}, \textit{PCRE2\_UCP},
 and \textit{PCRE2\_UTF} are set.} Regular expressions
-must be encoded in UTF-8.
+must be encoded in UTF-8\index{UTF-8} and expect the text to be in UTF-8.
 
 Example: \lstinline!m{[a-zA-Z_][a-zA-Z_0-9]*}!
 

@@ -84,7 +84,7 @@ namespace Astl {
 
 	 // accessors
 	 Type get_type() const;
-	 unsigned int size() const;
+	 std::size_t size() const;
 
 	 // for dictionaries:
 	 AttributePtr get_value(const std::string& key) const;

@@ -21,6 +21,7 @@
 #include <memory>
 #include <astl/attribute.hpp>
 #include <astl/flow-graph.hpp>
+#include <astl/utf8.hpp>
 
 using namespace std;
 
@@ -187,7 +188,7 @@ AttributePtr Attribute::get_value(unsigned int index) const {
    }
 }
 
-unsigned int Attribute::size() const {
+std::size_t Attribute::size() const {
    switch (type) {
       case list:
 	 return values.size();
@@ -196,7 +197,13 @@ unsigned int Attribute::size() const {
 	 return dict.size();
 
       case string:
-	 return svalue.size();
+	 {
+	    size_t len = 0;
+	    for (auto ch: codepoint_range(svalue)) {
+	       len += 1 + ch * 0; /* count & suppress warning */
+	    }
+	    return len;
+	 }
 
       case integer:
 	 return ivalue->to_string().size();

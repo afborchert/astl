@@ -55,7 +55,8 @@ to override them by local declarations.
       returns true if the value is of type string \\
    \ident{len} & function &
       returns the length of the list, or the number of keys
-      in a dictionary, or the length of a string, or the
+      in a dictionary, or the number of Unicode codepoints
+      within a string (with linear complexity), or the
       number of captured substrings in a match result \\
    \ident{location} & function &
       its operand must be a node of an abstract syntax tree;

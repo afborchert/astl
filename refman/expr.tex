@@ -439,6 +439,18 @@ case, it is converted to a string (see \ref{stringconv}) and
 then interpreted as an regular expression like the corresponding
 literals but without the enclosing braces.
 
+The regular expression engine is aware of the encoding
+in UTF-8\index{UTF-8}:
+\begin{itemize}
+   \item A dot in the regular expression does not match a byte
+      but a Unicode codepoint.
+   \item Captures select sequences of Unicode codepoints.
+   \item Unicode extensions for regular expressions are
+      supported.\footnote{See
+      \url{http://www.pcre.org/current/doc/html/pcre2syntax.html}
+      for details.}
+\end{itemize}
+
 Invalid regular expressions cause runtime exceptions.
 
 Example: The following function \textit{ast\_summary} takes
