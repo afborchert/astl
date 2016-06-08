@@ -78,11 +78,12 @@ parser.tab.o: parser.tab.cpp ../astl/error.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/parser.hpp \
  ../astl/yystype.hpp ../astl/syntax-tree.hpp ../astl/attribute.hpp \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/parser.tab.hpp \
- ../astl/stack.hh ../astl/location.hh ../astl/operators.hpp \
- ../astl/scanner.hpp ../astl/yytname.hpp parser.tab.hpp
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
+ ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh \
+ ../astl/operators.hpp ../astl/scanner.hpp ../astl/yytname.hpp \
+ parser.tab.hpp
 parser.tab.o: parser.tab.hpp stack.hh location.hh position.hh
 yytname.o: yytname.cpp
 operators.o: operators.cpp ../astl/operator.hpp ../astl/token.hpp
@@ -90,57 +91,60 @@ error.o: error.cpp ../astl/error.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/parser.hpp \
  ../astl/yystype.hpp ../astl/syntax-tree.hpp ../astl/attribute.hpp \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/parser.tab.hpp \
- ../astl/stack.hh ../astl/location.hh
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
+ ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh
 scanner.o: scanner.cpp ../astl/error.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/parser.hpp \
  ../astl/yystype.hpp ../astl/syntax-tree.hpp ../astl/attribute.hpp \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/parser.tab.hpp \
- ../astl/stack.hh ../astl/location.hh ../astl/keywords.hpp \
- ../astl/regex.hpp ../astl/scanner.hpp ../astl/utf8.hpp
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
+ ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh \
+ ../astl/keywords.hpp ../astl/regex.hpp ../astl/scanner.hpp \
+ ../astl/utf8.hpp
 syntax-tree.o: syntax-tree.cpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
  ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
  ../astl/token.hpp
 keywords.o: keywords.cpp ../astl/keywords.hpp ../astl/parser.hpp \
  ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
  ../astl/position.hh ../astl/treeloc.hpp ../astl/yystype.hpp \
  ../astl/syntax-tree.hpp ../astl/attribute.hpp ../astl/exception.hpp \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/parser.tab.hpp \
- ../astl/stack.hh ../astl/location.hh ../astl/scanner.hpp
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
+ ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh \
+ ../astl/scanner.hpp
 rule-table.o: rule-table.cpp ../astl/operators.hpp ../astl/operator.hpp \
  ../astl/token.hpp ../astl/opset.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/types.hpp \
- ../astl/rule-table.hpp ../astl/rule.hpp ../astl/syntax-tree.hpp \
- ../astl/attribute.hpp ../astl/function.hpp ../astl/bindings.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp
+ ../astl/rule-table.hpp ../astl/rule.hpp ../astl/arity.hpp \
+ ../astl/syntax-tree.hpp ../astl/attribute.hpp ../astl/function.hpp \
+ ../astl/bindings.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/context.hpp
 tree-expressions.o: tree-expressions.cpp ../astl/bindings.hpp \
  ../astl/attribute.hpp ../astl/exception.hpp ../astl/treeloc.hpp \
  ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
- ../astl/position.hh ../astl/function.hpp ../astl/builtin-functions.hpp \
- ../astl/types.hpp ../astl/integer.hpp ../astl/syntax-tree.hpp \
- ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
- ../astl/expression.hpp ../astl/designator.hpp \
+ ../astl/position.hh ../astl/function.hpp ../astl/arity.hpp \
+ ../astl/builtin-functions.hpp ../astl/types.hpp ../astl/integer.hpp \
+ ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp ../astl/expression.hpp ../astl/designator.hpp \
  ../astl/tree-expressions.hpp ../astl/operators.hpp ../astl/opset.hpp \
  ../astl/regex.hpp
 printer.o: printer.cpp ../astl/bindings.hpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/builtin-functions.hpp ../astl/types.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/cloner.hpp \
- ../astl/default-bindings.hpp ../astl/expression.hpp \
+ ../astl/function.hpp ../astl/arity.hpp ../astl/builtin-functions.hpp \
+ ../astl/types.hpp ../astl/integer.hpp ../astl/syntax-tree.hpp \
+ ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
+ ../astl/cloner.hpp ../astl/default-bindings.hpp ../astl/expression.hpp \
  ../astl/designator.hpp ../astl/tree-expressions.hpp \
  ../astl/operators.hpp ../astl/parenthesizer.hpp \
  ../astl/operator-table.hpp ../astl/printer.hpp ../astl/rule-table.hpp \
@@ -151,74 +155,77 @@ printer.o: printer.cpp ../astl/bindings.hpp ../astl/attribute.hpp \
 loader.o: loader.cpp ../astl/loader.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/syntax-tree.hpp \
- ../astl/attribute.hpp ../astl/function.hpp ../astl/bindings.hpp \
- ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
- ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
- ../astl/parser.hpp ../astl/yystype.hpp ../astl/parser.tab.hpp \
- ../astl/stack.hh ../astl/location.hh ../astl/scanner.hpp
+ ../astl/attribute.hpp ../astl/function.hpp ../astl/arity.hpp \
+ ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
+ ../astl/integer.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp ../astl/parser.hpp ../astl/yystype.hpp \
+ ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh \
+ ../astl/scanner.hpp
 rule.o: rule.cpp ../astl/operator.hpp ../astl/token.hpp \
- ../astl/operators.hpp ../astl/rule.hpp ../astl/opset.hpp \
- ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
- ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/types.hpp ../astl/syntax-tree.hpp ../astl/attribute.hpp \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/context.hpp
+ ../astl/operators.hpp ../astl/rule.hpp ../astl/arity.hpp \
+ ../astl/opset.hpp ../astl/exception.hpp ../astl/treeloc.hpp \
+ ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
+ ../astl/position.hh ../astl/types.hpp ../astl/syntax-tree.hpp \
+ ../astl/attribute.hpp ../astl/function.hpp ../astl/bindings.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp
 rules.o: rules.cpp ../astl/exception.hpp ../astl/treeloc.hpp \
  ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
  ../astl/position.hh ../astl/operator.hpp ../astl/token.hpp \
  ../astl/operators.hpp ../astl/rules.hpp ../astl/loader.hpp \
  ../astl/syntax-tree.hpp ../astl/attribute.hpp ../astl/function.hpp \
- ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/context.hpp ../astl/operator-table.hpp \
- ../astl/rule-table.hpp ../astl/rule.hpp ../astl/opset.hpp \
- ../astl/state-machine.hpp ../astl/flow-graph.hpp
+ ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
+ ../astl/operator-table.hpp ../astl/rule-table.hpp ../astl/rule.hpp \
+ ../astl/opset.hpp ../astl/state-machine.hpp ../astl/flow-graph.hpp
 operator-table.o: operator-table.cpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/operator-table.hpp \
  ../astl/operator.hpp ../astl/token.hpp ../astl/types.hpp \
  ../astl/operators.hpp ../astl/opset.hpp ../astl/rules.hpp \
  ../astl/loader.hpp ../astl/syntax-tree.hpp ../astl/attribute.hpp \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/context.hpp ../astl/rule-table.hpp \
- ../astl/rule.hpp ../astl/state-machine.hpp ../astl/flow-graph.hpp
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
+ ../astl/rule-table.hpp ../astl/rule.hpp ../astl/state-machine.hpp \
+ ../astl/flow-graph.hpp
 parenthesizer.o: parenthesizer.cpp ../astl/operator-table.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
  ../astl/operator.hpp ../astl/token.hpp ../astl/types.hpp \
  ../astl/parenthesizer.hpp ../astl/syntax-tree.hpp ../astl/attribute.hpp \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/context.hpp
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp
 treeloc.o: treeloc.cpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh
 selective-printer.o: selective-printer.cpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/operator.hpp \
  ../astl/token.hpp ../astl/rule-table.hpp ../astl/rule.hpp \
- ../astl/opset.hpp ../astl/types.hpp ../astl/selective-printer.hpp \
- ../astl/printer.hpp ../astl/bindings.hpp ../astl/attribute.hpp \
- ../astl/function.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
- ../astl/syntax-tree.hpp ../astl/context.hpp
+ ../astl/arity.hpp ../astl/opset.hpp ../astl/types.hpp \
+ ../astl/selective-printer.hpp ../astl/printer.hpp ../astl/bindings.hpp \
+ ../astl/attribute.hpp ../astl/function.hpp ../astl/builtin-functions.hpp \
+ ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp
 cloner.o: cloner.cpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/function.hpp \
- ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/cloner.hpp
+ ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp ../astl/cloner.hpp
 candidate.o: candidate.cpp ../astl/candidate.hpp ../astl/bindings.hpp \
  ../astl/attribute.hpp ../astl/exception.hpp ../astl/treeloc.hpp \
  ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
- ../astl/position.hh ../astl/function.hpp ../astl/builtin-functions.hpp \
- ../astl/types.hpp ../astl/integer.hpp ../astl/syntax-tree.hpp \
- ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
- ../astl/rule.hpp ../astl/opset.hpp ../astl/tree-expressions.hpp \
- ../astl/cloner.hpp ../astl/execution.hpp ../astl/candidate-set.hpp \
- ../astl/prg.hpp ../astl/rule-table.hpp ../astl/expression.hpp \
- ../astl/designator.hpp ../astl/operators.hpp
+ ../astl/position.hh ../astl/function.hpp ../astl/arity.hpp \
+ ../astl/builtin-functions.hpp ../astl/types.hpp ../astl/integer.hpp \
+ ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp ../astl/rule.hpp ../astl/opset.hpp \
+ ../astl/tree-expressions.hpp ../astl/cloner.hpp ../astl/execution.hpp \
+ ../astl/candidate-set.hpp ../astl/prg.hpp ../astl/rule-table.hpp \
+ ../astl/expression.hpp ../astl/designator.hpp ../astl/operators.hpp
 execution.o: execution.cpp ../astl/designator.hpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
  ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
  ../astl/token.hpp ../astl/execution.hpp ../astl/candidate-set.hpp \
  ../astl/candidate.hpp ../astl/rule.hpp ../astl/opset.hpp \
@@ -230,126 +237,131 @@ candidate-set.o: candidate-set.cpp ../astl/candidate-set.hpp \
  ../astl/bindings.hpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/function.hpp \
- ../astl/builtin-functions.hpp ../astl/types.hpp ../astl/integer.hpp \
- ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
- ../astl/token.hpp ../astl/candidate.hpp ../astl/rule.hpp \
- ../astl/opset.hpp ../astl/tree-expressions.hpp ../astl/prg.hpp \
- ../astl/rule-table.hpp ../astl/default-bindings.hpp
+ ../astl/arity.hpp ../astl/builtin-functions.hpp ../astl/types.hpp \
+ ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
+ ../astl/operator.hpp ../astl/token.hpp ../astl/candidate.hpp \
+ ../astl/rule.hpp ../astl/opset.hpp ../astl/tree-expressions.hpp \
+ ../astl/prg.hpp ../astl/rule-table.hpp ../astl/default-bindings.hpp
 context.o: context.cpp ../astl/bindings.hpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/builtin-functions.hpp ../astl/types.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/tree-expressions.hpp
+ ../astl/function.hpp ../astl/arity.hpp ../astl/builtin-functions.hpp \
+ ../astl/types.hpp ../astl/integer.hpp ../astl/syntax-tree.hpp \
+ ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
+ ../astl/tree-expressions.hpp
 attribute.o: attribute.cpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/function.hpp \
- ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/flow-graph.hpp
+ ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp ../astl/flow-graph.hpp ../astl/utf8.hpp
 expression.o: expression.cpp ../astl/arithmetic-ops.hpp \
  ../astl/attribute.hpp ../astl/exception.hpp ../astl/treeloc.hpp \
  ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
- ../astl/position.hh ../astl/function.hpp ../astl/bindings.hpp \
- ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
- ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
- ../astl/token.hpp ../astl/operators.hpp ../astl/expression.hpp \
- ../astl/designator.hpp ../astl/tree-expressions.hpp \
- ../astl/flow-graph.hpp ../astl/list-ops.hpp ../astl/regex.hpp \
- ../astl/set-ops.hpp ../astl/string-ops.hpp
+ ../astl/position.hh ../astl/function.hpp ../astl/arity.hpp \
+ ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
+ ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
+ ../astl/operator.hpp ../astl/token.hpp ../astl/operators.hpp \
+ ../astl/expression.hpp ../astl/designator.hpp \
+ ../astl/tree-expressions.hpp ../astl/flow-graph.hpp ../astl/list-ops.hpp \
+ ../astl/regex.hpp ../astl/set-ops.hpp ../astl/string-ops.hpp
 bindings.o: bindings.cpp ../astl/bindings.hpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/builtin-functions.hpp ../astl/types.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp
+ ../astl/function.hpp ../astl/arity.hpp ../astl/builtin-functions.hpp \
+ ../astl/types.hpp ../astl/integer.hpp ../astl/syntax-tree.hpp \
+ ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp
 designator.o: designator.cpp ../astl/designator.hpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
  ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
  ../astl/token.hpp ../astl/flow-graph.hpp
 builtin-functions.o: builtin-functions.cpp ../astl/builtin-functions.hpp \
  ../astl/attribute.hpp ../astl/exception.hpp ../astl/treeloc.hpp \
  ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
- ../astl/position.hh ../astl/function.hpp ../astl/bindings.hpp \
- ../astl/types.hpp ../astl/integer.hpp ../astl/syntax-tree.hpp \
- ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp
+ ../astl/position.hh ../astl/function.hpp ../astl/arity.hpp \
+ ../astl/bindings.hpp ../astl/types.hpp ../astl/integer.hpp \
+ ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp
 function.o: function.cpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/function.hpp \
- ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/execution.hpp \
- ../astl/candidate-set.hpp ../astl/candidate.hpp ../astl/rule.hpp \
- ../astl/opset.hpp ../astl/tree-expressions.hpp ../astl/prg.hpp \
- ../astl/rule-table.hpp
+ ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp ../astl/execution.hpp ../astl/candidate-set.hpp \
+ ../astl/candidate.hpp ../astl/rule.hpp ../astl/opset.hpp \
+ ../astl/tree-expressions.hpp ../astl/prg.hpp ../astl/rule-table.hpp
 std-functions.o: std-functions.cpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/flow-graph.hpp \
  ../astl/types.hpp ../astl/printer.hpp ../astl/bindings.hpp \
- ../astl/attribute.hpp ../astl/function.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/rule-table.hpp \
- ../astl/rule.hpp ../astl/opset.hpp ../astl/std-functions.hpp
-default-bindings.o: default-bindings.cpp ../astl/atrules-function.hpp \
- ../astl/function.hpp ../astl/attribute.hpp ../astl/exception.hpp \
- ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
- ../astl/location.hh ../astl/position.hh ../astl/integer.hpp \
+ ../astl/attribute.hpp ../astl/function.hpp ../astl/arity.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp \
  ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
- ../astl/token.hpp ../astl/types.hpp ../astl/bindings.hpp \
- ../astl/builtin-functions.hpp ../astl/rule-table.hpp ../astl/rule.hpp \
- ../astl/opset.hpp ../astl/default-bindings.hpp \
- ../astl/prrules-function.hpp ../astl/rules.hpp ../astl/loader.hpp \
- ../astl/operator-table.hpp ../astl/state-machine.hpp \
- ../astl/flow-graph.hpp ../astl/std-functions.hpp \
- ../astl/trrules-function.hpp
+ ../astl/token.hpp ../astl/rule-table.hpp ../astl/rule.hpp \
+ ../astl/opset.hpp ../astl/std-functions.hpp
+default-bindings.o: default-bindings.cpp ../astl/atrules-function.hpp \
+ ../astl/function.hpp ../astl/arity.hpp ../astl/attribute.hpp \
+ ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
+ ../astl/position.hh ../astl/location.hh ../astl/position.hh \
+ ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
+ ../astl/operator.hpp ../astl/token.hpp ../astl/types.hpp \
+ ../astl/bindings.hpp ../astl/builtin-functions.hpp \
+ ../astl/rule-table.hpp ../astl/rule.hpp ../astl/opset.hpp \
+ ../astl/default-bindings.hpp ../astl/prrules-function.hpp \
+ ../astl/rules.hpp ../astl/loader.hpp ../astl/operator-table.hpp \
+ ../astl/state-machine.hpp ../astl/flow-graph.hpp \
+ ../astl/std-functions.hpp ../astl/trrules-function.hpp
 run.o: run.cpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/function.hpp \
- ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/candidate-set.hpp \
- ../astl/candidate.hpp ../astl/rule.hpp ../astl/opset.hpp \
- ../astl/tree-expressions.hpp ../astl/prg.hpp ../astl/rule-table.hpp \
- ../astl/default-bindings.hpp ../astl/execution.hpp ../astl/loader.hpp \
- ../astl/parenthesizer.hpp ../astl/operator-table.hpp ../astl/printer.hpp \
- ../astl/rules.hpp ../astl/state-machine.hpp ../astl/flow-graph.hpp \
- ../astl/run.hpp ../astl/generator.hpp ../astl/sm-execution.hpp \
- ../astl/mt19937.hpp
+ ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp ../astl/candidate-set.hpp ../astl/candidate.hpp \
+ ../astl/rule.hpp ../astl/opset.hpp ../astl/tree-expressions.hpp \
+ ../astl/prg.hpp ../astl/rule-table.hpp ../astl/default-bindings.hpp \
+ ../astl/execution.hpp ../astl/loader.hpp ../astl/parenthesizer.hpp \
+ ../astl/operator-table.hpp ../astl/printer.hpp ../astl/rules.hpp \
+ ../astl/state-machine.hpp ../astl/flow-graph.hpp ../astl/run.hpp \
+ ../astl/generator.hpp ../astl/sm-execution.hpp ../astl/mt19937.hpp
 arithmetic-ops.o: arithmetic-ops.cpp ../astl/arithmetic-ops.hpp \
  ../astl/attribute.hpp ../astl/exception.hpp ../astl/treeloc.hpp \
  ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
- ../astl/position.hh ../astl/function.hpp ../astl/bindings.hpp \
- ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
- ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
- ../astl/token.hpp ../astl/operators.hpp
+ ../astl/position.hh ../astl/function.hpp ../astl/arity.hpp \
+ ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
+ ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
+ ../astl/operator.hpp ../astl/token.hpp ../astl/operators.hpp
 string-ops.o: string-ops.cpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/function.hpp \
- ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/operators.hpp \
- ../astl/string-ops.hpp
+ ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp ../astl/operators.hpp ../astl/string-ops.hpp
 flow-graph.o: flow-graph.cpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/function.hpp \
- ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/flow-graph.hpp
+ ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp ../astl/flow-graph.hpp
 list-ops.o: list-ops.cpp ../astl/list-ops.hpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
  ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
  ../astl/token.hpp ../astl/operators.hpp
 state-machine.o: state-machine.cpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
  ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
  ../astl/token.hpp ../astl/execution.hpp ../astl/candidate-set.hpp \
  ../astl/candidate.hpp ../astl/rule.hpp ../astl/opset.hpp \
@@ -360,8 +372,8 @@ state-machine.o: state-machine.cpp ../astl/attribute.hpp \
 sm-execution.o: sm-execution.cpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
  ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
  ../astl/token.hpp ../astl/execution.hpp ../astl/candidate-set.hpp \
  ../astl/candidate.hpp ../astl/rule.hpp ../astl/opset.hpp \
@@ -374,24 +386,25 @@ opset.o: opset.cpp ../astl/exception.hpp ../astl/treeloc.hpp \
  ../astl/position.hh ../astl/operators.hpp ../astl/operator.hpp \
  ../astl/token.hpp ../astl/rules.hpp ../astl/loader.hpp \
  ../astl/syntax-tree.hpp ../astl/attribute.hpp ../astl/function.hpp \
- ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/context.hpp ../astl/operator-table.hpp \
- ../astl/rule-table.hpp ../astl/rule.hpp ../astl/opset.hpp \
- ../astl/state-machine.hpp ../astl/flow-graph.hpp
+ ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
+ ../astl/operator-table.hpp ../astl/rule-table.hpp ../astl/rule.hpp \
+ ../astl/opset.hpp ../astl/state-machine.hpp ../astl/flow-graph.hpp
 atrules-function.o: atrules-function.cpp ../astl/atrules-function.hpp \
- ../astl/function.hpp ../astl/attribute.hpp ../astl/exception.hpp \
- ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
- ../astl/location.hh ../astl/position.hh ../astl/integer.hpp \
- ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
- ../astl/token.hpp ../astl/types.hpp ../astl/bindings.hpp \
- ../astl/builtin-functions.hpp ../astl/rule-table.hpp ../astl/rule.hpp \
- ../astl/opset.hpp ../astl/execution.hpp ../astl/candidate-set.hpp \
- ../astl/candidate.hpp ../astl/tree-expressions.hpp ../astl/prg.hpp
+ ../astl/function.hpp ../astl/arity.hpp ../astl/attribute.hpp \
+ ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
+ ../astl/position.hh ../astl/location.hh ../astl/position.hh \
+ ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
+ ../astl/operator.hpp ../astl/token.hpp ../astl/types.hpp \
+ ../astl/bindings.hpp ../astl/builtin-functions.hpp \
+ ../astl/rule-table.hpp ../astl/rule.hpp ../astl/opset.hpp \
+ ../astl/execution.hpp ../astl/candidate-set.hpp ../astl/candidate.hpp \
+ ../astl/tree-expressions.hpp ../astl/prg.hpp
 trrules-function.o: trrules-function.cpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
  ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
  ../astl/token.hpp ../astl/execution.hpp ../astl/candidate-set.hpp \
  ../astl/candidate.hpp ../astl/rule.hpp ../astl/opset.hpp \
@@ -401,52 +414,53 @@ set-ops.o: set-ops.cpp ../astl/integer.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/operators.hpp \
  ../astl/operator.hpp ../astl/token.hpp ../astl/set-ops.hpp \
- ../astl/attribute.hpp ../astl/function.hpp ../astl/bindings.hpp \
- ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/syntax-tree.hpp \
- ../astl/context.hpp
+ ../astl/attribute.hpp ../astl/function.hpp ../astl/arity.hpp \
+ ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
+ ../astl/syntax-tree.hpp ../astl/context.hpp
 prrules-function.o: prrules-function.cpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/bindings.hpp ../astl/types.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
  ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
  ../astl/token.hpp ../astl/printer.hpp ../astl/rule-table.hpp \
  ../astl/rule.hpp ../astl/opset.hpp ../astl/prrules-function.hpp
 testlex.o: testlex.cpp ../astl/bindings.hpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh \
- ../astl/function.hpp ../astl/builtin-functions.hpp ../astl/types.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/candidate.hpp \
- ../astl/rule.hpp ../astl/opset.hpp ../astl/tree-expressions.hpp \
- ../astl/parser.hpp ../astl/yystype.hpp ../astl/parser.tab.hpp \
- ../astl/stack.hh ../astl/location.hh ../astl/scanner.hpp \
- ../astl/yytname.hpp
+ ../astl/function.hpp ../astl/arity.hpp ../astl/builtin-functions.hpp \
+ ../astl/types.hpp ../astl/integer.hpp ../astl/syntax-tree.hpp \
+ ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
+ ../astl/candidate.hpp ../astl/rule.hpp ../astl/opset.hpp \
+ ../astl/tree-expressions.hpp ../astl/parser.hpp ../astl/yystype.hpp \
+ ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh \
+ ../astl/scanner.hpp ../astl/yytname.hpp
 testparser.o: testparser.cpp ../astl/exception.hpp ../astl/treeloc.hpp \
  ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
  ../astl/position.hh ../astl/loader.hpp ../astl/syntax-tree.hpp \
- ../astl/attribute.hpp ../astl/function.hpp ../astl/bindings.hpp \
- ../astl/types.hpp ../astl/builtin-functions.hpp ../astl/integer.hpp \
- ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
- ../astl/operators.hpp ../astl/parser.hpp ../astl/yystype.hpp \
- ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh \
- ../astl/printer.hpp ../astl/rule-table.hpp ../astl/rule.hpp \
- ../astl/opset.hpp ../astl/rules.hpp ../astl/operator-table.hpp \
- ../astl/state-machine.hpp ../astl/flow-graph.hpp ../astl/scanner.hpp \
- ../astl/yytname.hpp
+ ../astl/attribute.hpp ../astl/function.hpp ../astl/arity.hpp \
+ ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
+ ../astl/integer.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp ../astl/operators.hpp ../astl/parser.hpp \
+ ../astl/yystype.hpp ../astl/parser.tab.hpp ../astl/stack.hh \
+ ../astl/location.hh ../astl/printer.hpp ../astl/rule-table.hpp \
+ ../astl/rule.hpp ../astl/opset.hpp ../astl/rules.hpp \
+ ../astl/operator-table.hpp ../astl/state-machine.hpp \
+ ../astl/flow-graph.hpp ../astl/scanner.hpp ../astl/yytname.hpp
 testregex.o: testregex.cpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/function.hpp \
- ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp \
- ../astl/operator.hpp ../astl/token.hpp ../astl/regex.hpp
+ ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp \
+ ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
+ ../astl/token.hpp ../astl/regex.hpp
 astl-run.o: astl-run.cpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/treeloc.hpp \
  ../astl/operators.hpp ../astl/operator.hpp ../astl/token.hpp \
  ../astl/parser.hpp ../astl/yystype.hpp ../astl/syntax-tree.hpp \
  ../astl/attribute.hpp ../astl/exception.hpp ../astl/function.hpp \
- ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/context.hpp ../astl/parser.tab.hpp \
- ../astl/stack.hh ../astl/location.hh ../astl/run.hpp \
- ../astl/generator.hpp ../astl/loader.hpp ../astl/scanner.hpp \
- ../astl/yytname.hpp
+ ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
+ ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh \
+ ../astl/run.hpp ../astl/generator.hpp ../astl/loader.hpp \
+ ../astl/scanner.hpp ../astl/yytname.hpp

@@ -48,11 +48,7 @@ rules and definitions are added to the global pool of rules and definitions.
 Multiple attempts to import the same library unit are permitted. In this
 case, just the first import clause is executed.
 
-A global name space in regard to function definitions, state machines,
-and some predefined bindings is shared among all units. Names must not
-conflict.
-
-Multiple operator rules are not permitted.
+Multiple operator rules (see \ref{oprules}) are not permitted.
 
 \section{Operator set clauses}\label{opset}
 
@@ -90,12 +86,13 @@ global rule sets, their order is defined as follows:
 
 The global scope includes all predefined bindings (see \ref{predefined}),
 global functions (see \ref{functiondef}), named attribution rules
-(see \ref{named-atrules}), and named transformation rules (see
-\ref{named-trrules}). In case of the function definitions, the order
-of appearance does not matter as all global functions see all other
-global functions.  The name of state machines do not belong to the global
-bindings, i.e. a global function name can conflict with the name of a
-state machine but this is not recommended.
+(see \ref{named-atrules}), named generating transformation rules (see
+\ref{named-trrules}), and named in-place transformation rules
+(see \ref{named-inplace-trrules}). In case of the function definitions,
+the order of appearance does not matter as all global functions see all
+other global functions.  The name of state machines do not belong to
+the global bindings, i.e. a global function name can conflict with the
+name of a state machine but this is not recommended.
 
 \section{Execution order}\label{xorder}
 
@@ -111,9 +108,10 @@ Following steps are performed if a valid and non-empty
 abstract syntax tree is present:
 
 \begin{enumerate}
-   \item Attribution rules are executed, if they exist.
-   \item State machines are executed, if they exist and a control flow
-      graph has been constructed using attribution rules.
+   \item Regular attribution rules (see \ref{reg-attr}) are executed,
+      if they exist.
+   \item State machines (see \ref{sm}) are executed, if they exist
+      and a control flow graph has been constructed using attribution rules.
    \item The \textit{main}\index{main} function is executed, if it exists.
    \item The regular transformation rules are executed, provided
       that print rules exist.

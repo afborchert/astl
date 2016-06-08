@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009 Andreas Franz Borchert
+   Copyright (C) 2009, 2016 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -18,32 +18,86 @@
 
 #include <cassert>
 #include <memory>
+#include <set>
 #include <astl/attribute.hpp>
 #include <astl/execution.hpp>
 #include <astl/function.hpp>
+#include <astl/syntax-tree.hpp>
 
 namespace Astl {
 
-Function::Function(BindingsPtr bindings_param) : bindings(bindings_param) {
+Function::Function(BindingsPtr bindings) :
+      bindings(bindings), bind_parameters(true) {
 }
 
-BuiltinFunction::BuiltinFunction(Builtin bf_param, BindingsPtr bindings_param) :
-      Function(bindings_param), bf(bf_param) {
+Function::Function(BindingsPtr bindings,
+	 std::initializer_list<std::string> parameters) :
+      bindings(bindings), arity(parameters.size()), parameters(parameters),
+      bind_parameters(true) {
 }
 
-RegularFunction::RegularFunction(NodePtr block_param,
-      BindingsPtr bindings_param) :
-      Function(bindings_param), block(block_param) {
+Function::Function(BindingsPtr bindings, NodePtr pnode) throw(Exception) :
+      bindings(bindings), arity(pnode->size()), parameters(pnode->size()),
+      bind_parameters(true) {
+   std::set<std::string> pnames;
+   for (std::size_t index = 0; index < arity.arity; ++index) {
+      parameters[index] = pnode->get_operand(index)->get_token().get_text();
+      auto res = pnames.insert(parameters[index]);
+      if (!res.second) {
+	 throw Exception(pnode->get_operand(index)->get_location(),
+	    "parameter multiply declared: " + parameters[index]);
+      }
+   }
+}
+
+BuiltinFunction::BuiltinFunction(Builtin bf, BindingsPtr bindings) :
+      Function(bindings), bf(bf) {
+   bind_parameters = false; // parameters are passed directly
+}
+
+BuiltinFunction::BuiltinFunction(Builtin bf, BindingsPtr bindings,
+	 std::initializer_list<std::string> parameters) :
+      Function(bindings, parameters), bf(bf) {
+}
+
+RegularFunction::RegularFunction(NodePtr block,
+      BindingsPtr bindings) :
+      Function(bindings), block(block) {
+}
+
+RegularFunction::RegularFunction(NodePtr block, BindingsPtr bindings,
+	 NodePtr parameters) throw(Exception) :
+      Function(bindings, parameters), block(block) {
+}
+
+BindingsPtr Function::process_parameters(AttributePtr args) const
+      throw(Exception) {
+   BindingsPtr local_scope = std::make_shared<Bindings>(bindings);
+   if (bind_parameters) {
+      if (arity.fixed) {
+	 if (args->size() != arity.arity) {
+	    throw Exception("wrong number of arguments");
+	 }
+	 for (std::size_t index = 0; index < arity.arity; ++index) {
+	    bool ok = local_scope->define(parameters[index],
+	       args->get_value(index));
+	    assert(ok);
+	 }
+      } else {
+	 bool ok = local_scope->define("args", args); assert(ok);
+      }
+   }
+   return local_scope;
 }
 
 AttributePtr RegularFunction::eval(AttributePtr args) const throw(Exception) {
-   BindingsPtr local_scope = std::make_shared<Bindings>(bindings);
-   bool ok = local_scope->define("args", args); assert(ok);
+   auto local_scope = process_parameters(args);
    return execute(block, local_scope);
 }
 
 AttributePtr BuiltinFunction::eval(AttributePtr args) const throw(Exception) {
-   return (*bf)(bindings, args);
+   auto local_scope = process_parameters(args);
+   return (*bf)(local_scope, args);
 }
 
 } // namespace Astl

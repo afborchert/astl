@@ -57,10 +57,19 @@ BindingsPtr create_default_bindings(NodePtr root,
    // add global bindings
    if (rulesp) {
       const FunctionTable& ftab = rulesp->get_function_table();
-      for (FunctionTable::const_iterator it = ftab.begin();
-	    it != ftab.end(); ++it) {
-	 FunctionPtr f =
-	    std::make_shared<RegularFunction>(it->second, bindings);
+      for (auto it = ftab.begin(); it != ftab.end(); ++it) {
+	 auto fnode = it->second;
+	 FunctionPtr f;
+	 if (fnode->size() == 2) {
+	    /* variable number of parameters */
+	    auto block = fnode->get_operand(1);
+	    f = std::make_shared<RegularFunction>(block, bindings);
+	 } else {
+	    /* fixed number of parameters */
+	    auto params = fnode->get_operand(1);
+	    auto block = fnode->get_operand(2);
+	    f = std::make_shared<RegularFunction>(block, bindings, params);
+	 }
 	 if (!bindings->define(it->first, std::make_shared<Attribute>(f))) {
 	    throw Exception(it->second->get_location(),
 	       "multiply defined: " + it->first);

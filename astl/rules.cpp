@@ -132,9 +132,8 @@ void Rules::scan(NodePtr root) throw(Exception) {
 	    rules->get_operand(1), Op::print_rule);
       } else if (op == Op::function_definition) {
 	 std::string name = rules->get_operand(0)->get_token().get_text();
-	 NodePtr block = rules->get_operand(1);
 	 std::pair<FunctionTable::iterator, bool> result =
-	    ftab.insert(make_pair(name, block));
+	    ftab.insert(make_pair(name, rules));
 	 if (!result.second) {
 	    throw Exception(rules->get_location(),
 	       "function " + name + " multiply defined");

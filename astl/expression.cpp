@@ -215,10 +215,17 @@ AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
 	 }
       case ASTL_OPERATOR_FUNCTION_CONSTRUCTOR:
 	 {
-	    auto block = expr->get_operand(0);
+	    FunctionPtr f;
 	    auto local_bindings = std::make_shared<Bindings>(bindings);
-	    FunctionPtr f =
-	       std::make_shared<RegularFunction>(block, local_bindings);
+	    if (expr->size() == 1) {
+	       auto block = expr->get_operand(0);
+	       f = std::make_shared<RegularFunction>(block, local_bindings);
+	    } else {
+	       auto params = expr->get_operand(0);
+	       auto block = expr->get_operand(1);
+	       f = std::make_shared<RegularFunction>(block,
+		  local_bindings, params);
+	    }
 	    return std::make_shared<Attribute>(f);
 	 }
       case ASTL_OPERATOR_LIST_AGGREGATE:

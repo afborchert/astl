@@ -282,11 +282,15 @@ std::string Attribute::convert_to_string() const throw(Exception) {
 	 return fgnode->get_type();
       case function:
 	 {
-	    AttributePtr rval = func->eval(AttributePtr(nullptr));
-	    if (rval) {
-	       return rval->convert_to_string();
+	    if (func->get_arity().fixed) {
+	       throw Exception("invalid conversion of a function to a string");
 	    } else {
-	       return "";
+	       AttributePtr rval = func->eval(AttributePtr(nullptr));
+	       if (rval) {
+		  return rval->convert_to_string();
+	       } else {
+		  return "";
+	       }
 	    }
 	 }
       case list:

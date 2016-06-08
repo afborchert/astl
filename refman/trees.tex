@@ -1,6 +1,6 @@
 \chapter{Tree expressions}\label{treeexpr}\index{tree expression}
 
-Tree expressions are used in attribution rules (see \ref{attr},
+Tree expressions are used in attribution rules (see \ref{attr}),
 transformation rules (see \ref{trans}), and print rules (see
 \ref{print}). A tree expression matches or fails for a particular node
 in an abstract syntax tree. Whenever a tree expression matches and the
@@ -15,24 +15,28 @@ by nested tree expressions, variable names, variable-length lists
 using the ``...'' operator, or by using the wildcard operator
 ``*''. Tree expressions containing the operator ``...'' or the wildcard
 operator\index{wildcard operator} ``*'' are of variable arity.  A tree
-expression matches if and only if the corresponding abstract syntax tree
-is an operator node with an operator that is included in the operator
-set and where the number of subnodes matches or the arity is variable and
-where each of the subtree expressions matches the corresponding subtree.
+expression matches a node of an abstract syntax tree if and only if
+\begin{itemize}
+   \item the corresponding node is an operator node
+      with an operator that is included in the operator set, and where
+   \item in case of a fixed arity, the number of subnodes matches
+      the arity, and where
+   \item each of the subtree expressions matches the corresponding subtree.
+\end{itemize}
 
 Regular expressions\index{regular expression} match token nodes only
-where the token literal matches the regular expression. String literals
-match token only where the token literal is equal to the string literal.
+where the regular expression matches the token literal. String literals
+match tokens only where the token literal is equal to the string literal.
 
 Whenever a named variable is used within \nonterminal{subnode}, it
 is, if defined, compared against the corresponding subtree, or, if
 undefined, bound to the corresponding subtree. In the former case the
-variable can be either an abstract syntax tree or an arbitrary value
-that can be converted into a string. In case of an abstract syntax tree,
-a comparison covering operators, operands and tokens but not attributes
-is done recursively. In case of a string, the match succeeds if and only
-if the corresponding subtree represents a token and if the texts are
-identical.
+variable can be either an node of an abstract syntax tree or an arbitrary value
+that can be converted into a string. In case of a node of an abstract
+syntax tree, a comparison covering operators, operands and tokens but
+not attributes is done recursively. In case of a string, the match
+succeeds if and only if the corresponding subtree represents a token
+and if the texts are identical.
 
 Within a list of subnodes, one (and at maximum only one) named variable
 may be followed by a ``...'' operator. In this case the variable is

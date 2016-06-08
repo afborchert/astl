@@ -1,19 +1,20 @@
 \chapter{Print rules}\label{print}
 
-Print rules define how abstract syntax trees are converted
-into strings. They are implicitly used by the \ident{gentext}
-function (see \ref{predefined}). Print rules consist of
-individual rules giving a tree expression (see \ref{treeexpr})
-and a program text literal (see below). The generation of
-texts starts with the top-level node passed to \ident{gentext}.
-This node is matched against the available rules. If none matches,
-a run-time error is raised, specifying the operator and its arity.
-If multiple rules match, the last is taken. The program text
-literal of the matching rule specifies the to be generated text.
-This literal may include placeholders which are interpolated.
-If one of these placeholders refers to a bound subnode, the
-print rules are executed recursively to generate the to be
-interpolated text for the subnode.
+Print rules define how abstract syntax trees are converted into
+strings. They are implicitly used by the \ident{gentext} function
+(see \ref{predefined}) and for generating the results of the regular
+transformation rules (see \ref{regtrans}). Print rules consist of
+individual rules giving a tree expression (see \ref{treeexpr}) and a
+program text literal (see below). The generation of texts starts with
+the top-level node passed to \ident{gentext} or at the root node of
+the transformed syntax tree. This node is matched
+against the available rules. If none matches, a run-time error is
+raised, specifying the operator and its arity. If multiple rules
+match, the last is taken. The program text literal of the matching
+rule specifies the to be generated text. This literal may include
+placeholders which are interpolated. If one of these placeholders refers
+to a bound subnode, the print rules are executed recursively to generate
+the to be interpolated text for the subnode.
 
 \begin{grammar}
    \nonterminal{print-rules}

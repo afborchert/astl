@@ -1,7 +1,7 @@
 \chapter{Types}\index{type}
 
 Variables are untyped but values are typed. There exist nine different
-type of values: \keyword{null}, Boolean values, integers, strings,
+types of values: \keyword{null}, Boolean values, integers, strings,
 lists, dictionaries, functions, abstract syntax trees, and matching
 results of a regular expression.
 
@@ -35,7 +35,7 @@ values are not supported.
 
 \section{String values}\index{string}\label{string}
 
-Strings are sequences of octets which can be of arbitrary length.
+Strings are sequences of Unicode codepoints which can be of arbitrary length.
 
 The following example demonstrates how implicitly strings can be
 converted to integers or integers to strings. Firstly, the variable
@@ -104,18 +104,17 @@ Dictionaries are data structures that map string-valued keys
 to values of arbitrary type (including \keyword{null}).
 
 The attribution rule in the following example shows how dictionaries
-can be used to construct symbol tables. Abstract syntax trees that
-are bound to variables (\ident{id}, \ident{declarator} and \ident{block}
-in this example) can be used as dictionaries to attach attributes to
-a node of the syntax tree. In this example, \textit{block.vars}
-designates the entry of the dictionary \ident{block} selected
-by the key \ident{vars}. Whenever a key is constant and an identifier,
+can be used to construct symbol tables. Abstract syntax trees that are
+bound to variables (\ident{id}, \ident{declarator} and \ident{block} in
+this example) can be used as dictionaries to attach attributes to a node
+of the syntax tree. In this example, \textit{block.vars} designates the
+entry of the dictionary \ident{block} selected by the key \ident{vars}.
+Whenever a key is constant and an identifier (see \ref{identifier}),
 the dot-operator can be used as a selecting operator of dictionaries.
 Selector expressions can be put into \lstinline!{...}! as demonstrated
-by \lstinline!{id}! in this example. As shown below, dictionaries
-can be constructed using the \lstinline!{...}! syntax. In this
-case the keys in front of the ``\lstinline!->!'' delimiter must be
-identifiers.
+by \lstinline!{id}! in this example. As shown below, dictionaries can be
+constructed using the \lstinline!{...}! syntax. In this case the keys in
+front of the ``\lstinline!->!'' delimiter must be identifiers.
 
 \begin{lstlisting}
 ("direct_declarator" ("identifier" id)) as declarator
@@ -176,7 +175,8 @@ are supported for sets (see \ref{setassignment}).
 
 \section{Functions}\index{function}\label{function}
 
-Function values consist of a function body and a closure\index{closure}.
+Function values consist of an optional parameter list, a function body
+and a closure\index{closure}.
 A closure of an anonymous function\index{function!anonymous} allows a
 function body to refer to all lexically visible bindings at the point
 where the function was constructed.
@@ -196,7 +196,7 @@ var decr = sub { return --counter; };
 An abstract syntax tree is either a token\index{token} or a
 node\index{node}\index{operator node} consisting of an operator
 represented by a string and an ordered list of subtrees\index{subtree}.
-Please note that there exist two kinds of leafs\index{leaf}, i.e. token
+There exists two kinds of leafs\index{leaf}, i.e. token
 leafs or operator nodes with an empty list of subtrees.
 
 Each node (be it a regular node or a leaf node representing a token)
@@ -221,16 +221,16 @@ operator and token nodes. An operator node can be examined like a list
 to retrieve the individual subtrees.
 
 \begin{lstlisting}
-sub traverse {
+sub traverse (node) {
    var result = "";
-   if (isoperator(args[0])) {
-      result = "(" & operator(args[0]);
-      foreach operand in (args[0]) {
+   if (isoperator(node)) {
+      result = "(" & operator(node);
+      foreach operand in (node) {
          result &= " " & traverse(operand);
       }
       result &= ")";
    } else {
-      result = tokenliteral(args[0]);
+      result = tokenliteral(node);
    }
    return result;
 };
@@ -240,28 +240,31 @@ sub traverse {
 Alternatively, the individual operands can be indexed:
 
 \begin{lstlisting}
-sub traverse {
+sub traverse (node) {
    var result = "";
-   if (isoperator(args[0])) {
-      result = "(" & operator(args[0]);
+   if (isoperator(node)) {
+      result = "(" & operator(node);
       var index = 0;
-      while (index < len(args)) {
-         result &= " " & traverse(operand[index]);
+      while (index < len(node)) {
+         result &= " " & traverse(node[index]);
 	 ++index;
       }
       result &= ")";
    } else {
-      result = tokenliteral(args[0]);
+      result = tokenliteral(node);
    }
    return result;
 };
 \end{lstlisting}
 
 \noindent
-In the following attribution rule, \ident{block} is bound
-to a operator node with the operator \lstinline!"compound_statement"!.
-The assignments set the attributes \ident{vars}, \ident{level}, and
-\ident{up} of \ident{block} to various values.
+The following attribution rules matches all operator nodes where
+the operator is \lstinline!"compound_statement"! with an arbitrary
+number of subnodes. Whenever the rule is executed, the operator
+node is bound to \ident{block} due to the \keyword{as} clause.
+Abstract syntax trees provide a dictionary that can be used for
+per-node attributes. The example below initializes the attributes
+\ident{vars}, \ident{level}, and \ident{up} of \ident{block}:
 
 \begin{lstlisting}
 ("compound_statement" *) as block -> {
@@ -289,22 +292,21 @@ or when objects of this type are put into a list context,
 the captured substrings are delivered.
 
 Examples: In the following transformation rule\index{transformation rule}
+(see \ref{trans}),
 \ident{dec} is bound to the sequence of digits recognized by the
 regular expression. Variables bound to matching results can be
 used like scalars to refer to the matched text.
 
 \begin{lstlisting}
-("decimal_literal" m{^\d+$} as dec) ->
-   ("decimal_literal" {dec + 1});
+("decimal_literal" m{^\d+$} as dec) -> ("decimal_literal" {dec + 1});
 \end{lstlisting}%stopzone
 
 \noindent
-In the following transformation rule the regular expression
+The regular expression of the following example 
 captures one substring which is refered to by \lstinline!dec[0]!.
 
 \begin{lstlisting}
-("decimal_literal" m{^\d+(\d)$} as dec) ->
-   ("decimal_literal" {dec & dec[0]});
+("decimal_literal" m{^\d+(\d)$} as dec) -> ("decimal_literal" {dec & dec[0]});
 \end{lstlisting}%stopzone
 
 \section{Control flow graph nodes}\index{control flow graph}
@@ -324,13 +326,12 @@ diverting from a node must have distinct labels. Labels are used
 to tag conditional branches. Typically \lstinline!"t"! is chosen
 for true and \lstinline!"f"! for false.
 
-Each control flow node has a set of attributes that is
-organized as a dictionary. If a control flow node is associated
-to a node of an abstract syntax tree, the \ident{astnode} field
-allows to access it. In addition, a \keyword{foreach} loop
-may be used to iterate through all the successor nodes.
-In case of labeled edges, the branches can be examined in
-the \ident{branch} dictionary.
+Each control flow node has (like syntax tree nodes) a set of attributes
+that is organized as a dictionary. If a control flow node is associated
+to a node of an abstract syntax tree, the \ident{astnode} field allows
+to access it. In addition, a \keyword{foreach} loop may be used to
+iterate through all the successor nodes. In case of labeled edges, the
+branches can be examined in the \ident{branch} dictionary.
 
 The set of graphs $G$ is represented by the predefined
 dictionary \ident{graph}\index{graph}. Per convention
@@ -372,7 +373,8 @@ abstract syntax trees, a conversion delivers either the result of
 the standard function \ident{operator}\index{operator} in case of
 operator nodes or \ident{tokentext}\index{tokentext} otherwise. In case
 of lists and dictionaries, the size is returned (equivalent to the
-\ident{len}\index{len} standard function). Functions are invoked with
+\ident{len}\index{len} standard function). Functions without
+parameter lists are invoked with
 \ident{args} bound to \keyword{null} and their result is converted
 into string type. An empty string is delivered if \keyword{null} is
 returned.
@@ -429,7 +431,7 @@ into an abstract syntax tree consisting just of a token whose
 token text is identical to the string. A null value is treated
 similarly but an empty string is taken.
 
-\section{Examining the type of an object}
+\section{Examining the type of an object}\label{exam-type}
 
 The predefined function \ident{type} takes an arbitrary object as
 value and returns its type as string:

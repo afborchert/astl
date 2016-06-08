@@ -232,6 +232,19 @@ rule: print_rules
 
 function_definition: SUB IDENT block
       { $$ = BINARY(function_definition, $2, $3); }
+   | SUB IDENT parameter_list block
+      { $$ = TERTIARY(function_definition, $2, $3, $4); }
+   ;
+
+parameter_list: LPAREN identifier_list RPAREN
+      { $$ = FLATTEN(NODE(parameter_list), $2, identifier_list); }
+   | LPAREN RPAREN
+      { $$ = NODE(parameter_list); }
+   ;
+
+identifier_list: IDENT
+   | identifier_list COMMA IDENT
+      { $$ = BINARY(identifier_list, $1, $3); }
    ;
 
 print_rules:
@@ -481,6 +494,8 @@ function_call: primary LPAREN RPAREN
 
 function_constructor: SUB block
       { $$ = UNARY(function_constructor, $2); }
+   | SUB parameter_list block
+      { $$ = BINARY(function_constructor, $2, $3); }
    ;
 
 expression_list: expression

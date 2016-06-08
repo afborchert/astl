@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009 Andreas Franz Borchert
+   Copyright (C) 2009, 2016 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -16,33 +16,16 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef ASTL_RULE
-#define ASTL_RULE
+#ifndef ASTL_RULE_H
+#define ASTL_RULE_H
 
 #include <memory>
+#include <astl/arity.hpp>
 #include <astl/operator.hpp>
 #include <astl/opset.hpp>
 #include <astl/types.hpp>
 
 namespace Astl {
-
-   struct Arity {
-      Arity() : fixed(false), arity(0) {
-      }
-      Arity(unsigned int arity) : fixed(true), arity(arity) {
-      }
-      Arity(const Arity& other) : fixed(other.fixed), arity(other.arity) {
-      }
-      bool operator<(const Arity& other) const {
-	 if (fixed != other.fixed) {
-	    return fixed > other.fixed;
-	 } else {
-	    return arity < other.arity;
-	 }
-      }
-      bool fixed;
-      unsigned int arity;
-   };
 
    class BasicRule {
       public:

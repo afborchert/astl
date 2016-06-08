@@ -178,7 +178,7 @@ Key values which are not of string type are converted implicitly
 to strings (see \ref{stringconv}). Null values are not permitted
 as keys.
 
-\section{Function constructors}\index{function!constructor}
+\section{Function constructors}\index{function!constructor}\label{funcon}
 
 Function constructors define local functions.\index{function!local}
 Their lexical closure,\index{lexical closure}
@@ -190,32 +190,52 @@ can be refered to.
 
 \begin{grammar}
    \nonterminal{function-constructor}
-      \produces \lexkeyword{sub} \nonterminal{block}
+      \produces \lexkeyword{sub} \nonterminal{block} \\
+      \produces \lexkeyword{sub} \nonterminal{parameter-list}
+	 \nonterminal{block} \\
+   \nonterminal{parameter-list}
+      \produces \lextoken{(} \lextoken{)} \\
+      \produces \lextoken{(} \nonterminal{identifier-list}
+	 \lextoken{)} \\
+   \nonterminal{identifier-list}
+      \produces \nonterminal{identifier} \\
+      \produces \nonterminal{identifier-list} \lextoken{,}
+	 \nonterminal{identifier}
 \end{grammar}
 
-\section{Function calls}\index{function!invocation}
+If no parameter list is specified, the number of parameters
+is variable. All actual arguments are then converted into
+a list and bound to \ident{args}. Otherwise, if a parameter
+list is given, the number of parameters is fixed and the
+formal parameters are bound to the corresponding actual
+parameters.
 
-Functions can be invoked with an arbitrary number of parameters.
+\section{Function calls}\index{function!invocation}\label{call}
+
+Functions without parameter lists can be invoked with an
+arbitrary number of parameters.
 All parameters are evaluated left to right and their results
 bound to the elements of the list \ident{args}. This list is
-empty if no parameters are passed.
+empty if no parameters are passed. Otherwise, if the function
+has a parameter list, the number of actual arguments must
+match the number of named parameters.
 
 \begin{grammar}
    \nonterminal{function-call}
       \produces \nonterminal{primary} \lextoken{(} \lextoken{)} \\
-   \nonterminal{function-call}
       \produces \nonterminal{primary}
          \lextoken{(} \nonterminal{expression-list} \lextoken{)}
 \end{grammar}
 
 \noindent
 The value of a function call is determined by its return value
-(see \ref{return}). If a function, has no \keyword{return}
+(see \ref{return}). If a function has no \keyword{return}
 statement, \keyword{null} is returned.
 
-Note that function can also be implicitly invoked through an implicit
-conversion of a function value to a string (see \ref{functionconv}).
-In this case, \ident{args} is bound to \keyword{null}.
+Note that functions without parameter lists can also be implicitly
+invoked through an implicit conversion of a function value to a string
+(see \ref{functionconv}). In this case, \ident{args} is bound to
+\keyword{null}.
 
 \section{Primaries}
 
@@ -459,8 +479,7 @@ text representation of it. If this representation extends over
 multiple lines, the intermediate lines are replaced by dots:
 
 \begin{lstlisting}
-sub ast_summary {
-   var tree = args[0];
+sub ast_summary (tree) {
    var text = gentext(tree);
    var res;
    if (res = text =~ m{([^\n]*)\n.*\n(.*)}) {

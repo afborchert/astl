@@ -1,4 +1,4 @@
-\chapter{State machines}
+\chapter{State machines}\label{sm}
 
 \section{Regular state machines}
 \index{state machine!regular}
@@ -36,9 +36,10 @@ colon.
 
 \noindent
 State machine instances are executed during a recursive traverse
-of the control flow graph. Initially, all global state machines
+of the control flow graph (see \ref{xorder}). Initially, all global
+state machines
 are instantiated. Local state machines are instantiated whenever a
-\keyword{create} clause fires the first time for a control flow graph
+\keyword{create} clause fires for the first time for a control flow graph
 node. State machines instances continue to run through the traverse
 until they are explicitly stopped. If a node of the control flow graph
 has multiple exits, a copy of a state machine is created for each of
@@ -75,8 +76,8 @@ but kept private for each path taken by a state machine.
 \end{grammar}
 
 \noindent
-Local functions can be declared within a state machine. They inherit
-the scope from their state machine instance including all shared and
+Local functions can be declared within a state machine.\label{sm-localfun}
+They inherit the scope from their state machine instance including all shared and
 private variables.
 
 \begin{grammar}
@@ -297,10 +298,10 @@ and \ident{unlock} are properly balanced:
 
 \begin{lstlisting}
 state machine lock_checker: global_tracker (unlocked, locked, broken) {
-   ("function_call" ("identifier" "lock")) at before_call
+   ("function_call" ("identifier" "lock")) at call
       when unlocked -> locked
       when locked -> broken { err("lock possibly called twice"); }
-   ("function_call" ("identifier" "unlock")) at before_call
+   ("function_call" ("identifier" "unlock")) at call
       when locked -> unlocked
       when unlocked -> broken { err("unlock possibly called unbalanced"); }
 
@@ -325,11 +326,11 @@ regular state machines. Abstract state machines are never instantiated.
 If a state machine (be it regular or abstract) is derived from an
 abstract state machine, all its variables and rules are inherited.
 
-All blocks associated to a rule of a state machine share the same
-scope. This includes all blocks inherited from the abstract state
-machine a regular state machine has been derived from. In consequence,
-all variables of a state machine, independent from the location
-of their declaration, are visible to all blocks of that state machine.
+All outer blocks associated to a rule of a state machine share the same
+scope. This includes all outer blocks of a regular state machine and
+all inherited outer blocks. In consequence, a block within an
+abstract state machine can use variables that are defined in a
+regular state machine that is derived from the abstract state machine.
 
 \begin{grammar}
    \nonterminal{abstract-state-machine}
@@ -360,14 +361,14 @@ The nesting is checked through the private variable \ident{chain}.
 \begin{lstlisting}
 abstract state machine global {
    private var chain = {nestlevel -> 0};
-   at call
+   at actual_call
       if local -> cut;
       if extern -> cache(node.branch.local) {
-	 chain = {
-	    nestlevel -> chain.nestlevel + 1,
-	    next -> chain,
-	    callid -> node.callid
-	 };
+         chain = {
+            nestlevel -> chain.nestlevel + 1,
+            next -> chain,
+            callid -> node.callid
+         };
       }
    at rtn where chain.nestlevel == 0 || chain.callid != node.callid -> retract;
    at rtn where chain.nestlevel > 0 && chain.callid == node.callid -> {

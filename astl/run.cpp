@@ -123,6 +123,11 @@ void run(NodePtr root,
 
    NodePtr main = rules.get_function("main");
    if (main) {
+      if (main->size() != 2) {
+	 throw Exception(main->get_location(),
+	    "main must be declared without parameter list");
+      }
+      main = main->get_operand(1);
       // invoke main with the remaining arguments
       AttributePtr args(std::make_shared<Attribute>(Attribute::list));
       while (argc > 0) {

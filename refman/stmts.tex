@@ -2,7 +2,7 @@
 
 \section{Blocks}
 
-A blocks groups a sequence of instructions and opens a nested scope,
+A block groups a sequence of instructions and opens a nested scope,
 i.e. variables declared within a block are not visible outside the
 block. Whenever a block is executed, a new instance of it is created
 with its own set of local variables (see \ref{var}). Blocks and
@@ -106,7 +106,8 @@ to each list member in turn and executes the associated block for it.
 The second variant with two variable names expects a dictionary
 (see \ref{dictionary}) and binds the given variables to each
 key and its associated value in the dictionary and executes the
-associated block for it.
+associated block for it. The order of the keys is
+implementation-dependent.
 
 \section{Return statement}\label{return}
 

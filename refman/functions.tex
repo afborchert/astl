@@ -6,20 +6,30 @@ to the set of predefined bindings and the other function definitions.
 
 \begin{grammar}
    \nonterminal{function-definition}
-      \produces \keyword{sub} \nonterminal{identifier} \nonterminal{block}
+      \produces \keyword{sub} \nonterminal{identifier} \nonterminal{block} \\
+      \produces \keyword{sub} \nonterminal{identifier}
+	 \nonterminal{parameter-list} \nonterminal{block}
 \end{grammar}
 
 \noindent
-As in the case of locally constructed functions, arguments are passed
-through the list \ident{args}.
+Parameter passing is handled as for locally constructed functions
+(see \ref{funcon} and \ref{call}):
+
+\begin{itemize}
+   \item If a parameter list is given, the number of actual
+      arguments must match the length of the parameter list
+      and each of the named parameters is bound to the corresponding
+      actual argument on invocation.
+   \item Otherwise, if no parameter list is given, any number
+      of actual parameters is permitted, and passed through
+      the list \ident{args}.
+\end{itemize}
 
 Example: The following function computes the greatest common divisor
-of the two arguments:
+of the two arguments \ident{a} and \ident{b}:
 
 \begin{lstlisting}
-sub gcd {
-   var a = args[0];
-   var b = args[1];
+sub gcd (a, b) {
    while (a != b) {
       if (a > b) {
 	 a -= b;
@@ -30,5 +40,19 @@ sub gcd {
    return a;
 }
 \end{lstlisting}
+
+Each function returns a value. If the function ends without
+executing \keyword{return} or if the \keyword{return}-statement
+is without value, \keyword{null} is returned. Otherwise, the
+value of the \keyword{return} expression is returned (see \ref{return}).
+
+\noindent
+Local functions\index{functions!local} can be defined using function constructors
+(see \ref{funcon}) and within state machines (see \ref{sm-localfun}).
+
+Named attribution rules (see \ref{named-atrules}),
+named generating transformation rules (see \ref{named-trrules}),
+and named in-place transformation rules (see \ref{named-inplace-trrules}) can be
+used like global functions.
 
 \endinput

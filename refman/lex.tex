@@ -25,7 +25,8 @@ and considered otherwise as being equivalent to the space\index{space}
 character (ASCII 32). Tabs\index{tab} (ASCII 9) are similarly treated as
 space characters but cause the current column to be advanced to the next
 multiply of 8 plus 1. Unicode\index{Unicode} codepoints are counted as one character
-independent from the number of bytes required to encode them in UTF-8\index{UTF-8}.
+independently from the number of bytes required to encode
+them in UTF-8\index{UTF-8}.
 
 \section{Comments}\index{comment}
 
@@ -80,7 +81,7 @@ be part of a longer token which is not a literal:
 
 \section{Compound delimiters}\index{delimiter}
 
-Following delimiter consists of one or multiple characters:
+Following delimiter consist of one or multiple characters:
 
 \bigskip
 \noindent
@@ -103,7 +104,7 @@ Following keywords are reserved. They cannot be used as identifiers.
 \noindent
 \input{keywords}
 
-\section{Identifiers}\index{identifier}
+\section{Identifiers}\index{identifier}\label{identifier}
 
 Identifiers begin with a letter, i.e. ``A'' to ``Z'' and ``a'' to ``z'',
 or an underscore ``\_'', and are optionally continued with a sequence
@@ -153,7 +154,7 @@ octal number & \textit{ooo} & \lstinline!\!\textit{ooo} \\
 \bigskip
 
 \noindent
-(This covers the set of \nonterminal{simple-escape-sequence} and
+(This includes the set of \nonterminal{simple-escape-sequence} and
 \nonterminal{octal-escape-sequence} of the C language as defined
 by the ISO standard 9899-1999.)
 
