@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009 Andreas Franz Borchert
+   Copyright (C) 2009, 2016 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -122,7 +122,7 @@ AttributePtr Attribute::pop() {
    return rval;
 }
 
-void Attribute::update(unsigned int index, AttributePtr val) {
+void Attribute::update(std::size_t index, AttributePtr val) {
    assert(type == list);
    assert(index < size());
    values[index] = val;
@@ -173,7 +173,7 @@ Attribute::DictionaryInserter Attribute::get_inserter() {
    return std::inserter(dict, dict.end());
 }
 
-AttributePtr Attribute::get_value(unsigned int index) const {
+AttributePtr Attribute::get_value(std::size_t index) const {
    switch (type) {
       case list:
 	 assert(index < size());
@@ -353,7 +353,7 @@ AttributePtr Attribute::convert_to_list() throw(Exception) {
       if (!n->is_leaf()) {
 	 // generate a list with all the subnodes of n
 	 AttributePtr l = std::make_shared<Attribute>(Attribute::list);
-	 for (unsigned int i = 0; i < n->size(); ++i) {
+	 for (std::size_t i = 0; i < n->size(); ++i) {
 	    l->push_back(std::make_shared<Attribute>(n->get_operand(i)));
 	 }
 	 return l;
@@ -363,7 +363,7 @@ AttributePtr Attribute::convert_to_list() throw(Exception) {
    } else if (type == Attribute::match_result) {
       // generate a list with all the matched subtokens
       AttributePtr l = std::make_shared<Attribute>(Attribute::list);
-      for (unsigned int i = 0; i < size(); ++i) {
+      for (std::size_t i = 0; i < size(); ++i) {
 	 l->push_back(get_value(i));
       }
       return l;
@@ -391,7 +391,7 @@ AttributePtr Attribute::convert_to_dict() throw(Exception) {
    AttributePtr l = convert_to_list();
    AttributePtr set = std::make_shared<Attribute>(Attribute::dictionary);
    // and use all the list members as keys
-   for (unsigned int index = 0; index < l->size(); ++index) {
+   for (std::size_t index = 0; index < l->size(); ++index) {
       AttributePtr member = l->get_value(index);
       if (member) {
 	 // convert member to string to use it as a key
@@ -541,7 +541,7 @@ std::ostream& operator<<(std::ostream& out, AttributePtr at) {
 
 	 case Attribute::list:
 	    out << "[";
-	    for (unsigned int i = 0; i < at->size(); ++i) {
+	    for (std::size_t i = 0; i < at->size(); ++i) {
 	       if (i > 0) out << ", ";
 	       out << at->values[i];
 	    }
@@ -552,7 +552,7 @@ std::ostream& operator<<(std::ostream& out, AttributePtr at) {
 	    out << "{matched -> \"" << at->subtokens[0] << '"';
 	    if (at->size() > 0) {
 	       out << ", captures -> [";
-	       for (unsigned int i = 0; i < at->size(); ++i) {
+	       for (std::size_t i = 0; i < at->size(); ++i) {
 		  if (i > 0) out << ", ";
 		  out << '"' << at->subtokens[i+1] << '"';
 	       }

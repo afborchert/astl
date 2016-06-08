@@ -47,7 +47,7 @@ AttributePtr builtin_push(BindingsPtr bindings,
    if (!list || list->get_type() != Attribute::list) {
       throw Exception("list expected as first argument of push");
    }
-   for (unsigned int i = 1; i < args->size(); ++i) {
+   for (std::size_t i = 1; i < args->size(); ++i) {
       list->push_back(args->get_value(i));
    }
    return list;
@@ -210,11 +210,11 @@ AttributePtr builtin_location(BindingsPtr bindings,
 AttributePtr builtin_println(BindingsPtr bindings,
       AttributePtr args) throw(Exception) {
    if (args) {
-      for (unsigned int i = 0; i < args->size(); ++i) {
+      for (std::size_t i = 0; i < args->size(); ++i) {
 	 AttributePtr at = args->get_value(i);
 	 if (at) {
 	    if (at->get_type() == Attribute::list) {
-	       for (unsigned int j = 0; j < at->size(); ++j) {
+	       for (std::size_t j = 0; j < at->size(); ++j) {
 		  AttributePtr ait = at->get_value(j);
 		  std::cout << ait->convert_to_string();
 	       }

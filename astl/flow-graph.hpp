@@ -51,12 +51,12 @@ namespace Astl {
 	 void link(FlowGraphNodePtr fgnode, const std::string& label);
 
 	 // accessors
-	 unsigned int get_id() const;
+	 std::size_t get_id() const;
 	 const std::string& get_type() const;
-	 unsigned int get_type_number() const;
+	 std::size_t get_type_number() const;
 	 NodePtr get_node() const;
 	 AttributePtr get_attribute() const;
-	 unsigned int get_number_of_outgoing_links() const;
+	 std::size_t get_number_of_outgoing_links() const;
 	 Iterator begin_links() const;
 	 Iterator end_links() const;
 	 FlowGraphNodePtr get_branch(const std::string& label) const;
@@ -65,20 +65,20 @@ namespace Astl {
 
       private:
 	 BindingsPtr bindings;
-	 unsigned int id;
+	 std::size_t id;
 	 std::string type;
-	 unsigned int type_number;
+	 std::size_t type_number;
 	 NodePtr node;
 	 std::list<std::pair<std::string, FlowGraphNodePtr> > links;
 	 std::map<std::string, FlowGraphNodePtr> labeled_links;
 	 AttributePtr at;
    };
 
-   unsigned int nof_node_types(BindingsPtr bindings);
-   unsigned int node_type_by_name(BindingsPtr bindings,
+   std::size_t nof_node_types(BindingsPtr bindings);
+   std::size_t node_type_by_name(BindingsPtr bindings,
       const std::string& type);
-   unsigned int nof_labels(BindingsPtr bindings);
-   unsigned int label_by_name(BindingsPtr bindings,
+   std::size_t nof_labels(BindingsPtr bindings);
+   std::size_t label_by_name(BindingsPtr bindings,
       const std::string& label);
 
 } // namespace Astl

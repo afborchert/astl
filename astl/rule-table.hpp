@@ -19,6 +19,7 @@
 #ifndef ASTL_RULE_TABLE_H
 #define ASTL_RULE_TABLE_H
 
+#include <cstdlib>
 #include <map>
 #include <string>
 #include <memory>
@@ -30,7 +31,7 @@ namespace Astl {
 
    class RuleTable {
       public:
-	 typedef unsigned int Rank;
+	 typedef std::size_t Rank;
 	 typedef std::pair<std::string, Arity> key_pair;
 	 typedef std::map<Rank, RulePtr> submap_type;
 	 typedef std::pair<Rank, RulePtr> value_pair;
@@ -63,7 +64,7 @@ namespace Astl {
 	  */
 	 print_iterator reversed_find(const Operator& op, Arity arity,
 	    print_iterator& end) const;
-	 unsigned int size() const;
+	 std::size_t size() const;
 
       private:
 	 Rank current_rank;

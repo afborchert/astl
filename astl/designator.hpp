@@ -54,7 +54,7 @@ namespace Astl {
 	 AttributePtr at; // selector
 	 bool lvalue; // is it a lvalue?
 	 std::string key; // if at->get_type() == dictionary
-	 unsigned int index; // if type == list
+	 std::size_t index; // if type == list
 	 void dereference(const Location& loc);
    };
    typedef std::shared_ptr<Designator> DesignatorPtr;

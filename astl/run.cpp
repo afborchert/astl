@@ -40,7 +40,7 @@ namespace Astl {
 
 class MyConsumer: public Consumer {
    public:
-      MyConsumer(const char* p, Rules& r, unsigned int count,
+      MyConsumer(const char* p, Rules& r, std::size_t count,
 	    const Operator& parentheses, std::ostream& out,
 	    BindingsPtr bindings) :
 	    counter(0), width(0), pattern(p),
@@ -93,7 +93,7 @@ class MyConsumer: public Consumer {
 	 return true;
       }
    private:
-      unsigned int counter;
+      std::size_t counter;
       int width;
       const char* pattern;
       Rules& rules;
@@ -105,7 +105,7 @@ class MyConsumer: public Consumer {
 void run(NodePtr root,
       Loader& loader,
       const char* rules_filename, const char* pattern,
-      unsigned int count,
+      std::size_t count,
       const Operator& parentheses,
       std::ostream& out,
       int argc, char** argv) throw(Exception) {
@@ -167,7 +167,7 @@ void run(NodePtr root,
 
 void run(NodePtr root,
       const char* rules_filename, const char* pattern,
-      unsigned int count,
+      std::size_t count,
       const Operator& parentheses,
       std::ostream& out) throw(Exception) {
    Loader loader;

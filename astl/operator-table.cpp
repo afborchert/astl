@@ -52,7 +52,7 @@ void OperatorTable::scan(NodePtr root, const Rules& rules) throw(Exception) {
       } else {
 	 assert(false); std::abort();
       }
-      for (unsigned int opindex = 0; opindex < operators->size(); ++opindex) {
+      for (std::size_t opindex = 0; opindex < operators->size(); ++opindex) {
 	 NodePtr opnode = operators->get_operand(opindex);
 	 OperatorSet opset(opnode, rules);
 	 for (OperatorSet::Iterator opit = opset.begin();

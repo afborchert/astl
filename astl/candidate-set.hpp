@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009, 2010 Andreas Franz Borchert
+   Copyright (C) 2009, 2010, 2016 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -19,6 +19,7 @@
 #ifndef ASTL_CANDIDATE_SET_H
 #define ASTL_CANDIDATE_SET_H
 
+#include <cstdlib>
 #include <memory>
 #include <vector>
 #include <astl/bindings.hpp>
@@ -49,14 +50,14 @@ namespace Astl {
 	    PseudoRandomGeneratorPtr prg);
 
 	 // accessors
-	 unsigned int size() const;
-	 CandidatePtr operator[](unsigned int index) const;
+	 std::size_t size() const;
+	 CandidatePtr operator[](std::size_t index) const;
 
 	 // generators
 	 // general PRE: consumer and prg must be well-defined */
 	 void gen_mutation() throw(Exception);
 	 void gen_mutations() throw(Exception);
-	 void gen_mutations(unsigned int count) throw(Exception);
+	 void gen_mutations(std::size_t count) throw(Exception);
 
 	 // mutators
 	 void set_consumer(ConsumerPtr consumer_param);

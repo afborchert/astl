@@ -30,7 +30,7 @@ void parenthesize(NodePtr root, const OperatorTable& optab,
    if (optab.included(op) && root->size() > 0) {
       OperatorTable::Associativity assoc = optab.get_associativity(op);
       OperatorTable::Rank rank = optab.get_rank(op);
-      for (unsigned int i = 0; i < root->size(); ++i) {
+      for (std::size_t i = 0; i < root->size(); ++i) {
 	 NodePtr& subnode(root->get_operand(i));
 	 if (!subnode->is_leaf() && subnode->size() > 0) {
 	    NodePtr dnode(subnode);
@@ -55,7 +55,7 @@ void parenthesize(NodePtr root, const OperatorTable& optab,
 	 }
       }
    } else {
-      for (unsigned int i = 0; i < root->size(); ++i) {
+      for (std::size_t i = 0; i < root->size(); ++i) {
 	 parenthesize(root->get_operand(i), optab, parentheses);
       }
    }

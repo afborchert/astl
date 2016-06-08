@@ -19,6 +19,7 @@
 #ifndef ASTL_OPERATOR_TABLE_H
 #define ASTL_OPERATOR_TABLE_H
 
+#include <cstdlib>
 #include <map>
 #include <string>
 #include <astl/exception.hpp>
@@ -29,7 +30,7 @@ namespace Astl {
 
    class OperatorTable {
       public:
-	 typedef unsigned int Rank;
+	 typedef std::size_t Rank;
 	 typedef enum {left, right, nonassoc} Associativity;
 	 // constructors
 	 OperatorTable();

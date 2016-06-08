@@ -201,7 +201,7 @@ AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
 	    auto args(std::make_shared<Attribute>(Attribute::list));
 	    if (expr->size() == 2) {
 	       auto expr_list = expr->get_operand(1);
-	       for (unsigned int i = 0; i < expr_list->size(); ++i) {
+	       for (std::size_t i = 0; i < expr_list->size(); ++i) {
 		  auto arg = recursive_evaluation(expr_list->get_operand(i));
 		  args->push_back(arg);
 	       }
@@ -231,7 +231,7 @@ AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
       case ASTL_OPERATOR_LIST_AGGREGATE:
 	 {
 	    auto list = std::make_shared<Attribute>(Attribute::list);
-	    for (unsigned int i = 0; i < expr->size(); ++i) {
+	    for (std::size_t i = 0; i < expr->size(); ++i) {
 	       auto elem = recursive_evaluation(expr->get_operand(i));
 	       list->push_back(elem);
 	    }
@@ -240,7 +240,7 @@ AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
       case ASTL_OPERATOR_DICTIONARY_AGGREGATE:
 	 {
 	    auto dict = std::make_shared<Attribute>(Attribute::dictionary);
-	    for (unsigned int i = 0; i < expr->size(); ++i) {
+	    for (std::size_t i = 0; i < expr->size(); ++i) {
 	       auto pair = expr->get_operand(i);
 	       assert(pair->get_op() == Op::key_value_pair);
 	       std::string key = pair->get_operand(0)->get_token().get_text();

@@ -41,14 +41,14 @@ AttributePtr list_binary_op(const Operator& op,
 	    if (leftAt->get_type() != Attribute::list) {
 	       resultAt->push_back(leftAt);
 	    } else {
-	       for (unsigned int i = 0; i < leftAt->size(); ++i) {
+	       for (std::size_t i = 0; i < leftAt->size(); ++i) {
 		  resultAt->push_back(leftAt->get_value(i));
 	       }
 	    }
 	    if (rightAt->get_type() != Attribute::list) {
 	       resultAt->push_back(rightAt);
 	    } else {
-	       for (unsigned int i = 0; i < rightAt->size(); ++i) {
+	       for (std::size_t i = 0; i < rightAt->size(); ++i) {
 		  resultAt->push_back(rightAt->get_value(i));
 	       }
 	    }

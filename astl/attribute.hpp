@@ -80,7 +80,7 @@ namespace Astl {
 	 /** Update a list */
 	 void push_back(AttributePtr val);
 	 AttributePtr pop();
-	 void update(unsigned int index, AttributePtr val);
+	 void update(std::size_t index, AttributePtr val);
 
 	 // accessors
 	 Type get_type() const;
@@ -95,7 +95,7 @@ namespace Astl {
 	 DictionaryInserter get_inserter();
 
 	 // for lists and match results:
-	 AttributePtr get_value(unsigned int index) const;
+	 AttributePtr get_value(std::size_t index) const;
 
 	 NodePtr get_node() const throw(Exception);
 

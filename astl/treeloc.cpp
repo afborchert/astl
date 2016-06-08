@@ -53,7 +53,7 @@ Position::Position(const position& pos) :
 }
 
 Position::Position(const std::string* filename_param,
-      unsigned int line_param, unsigned int column_param) :
+      std::size_t line_param, std::size_t column_param) :
       line(line_param), column(column_param),
       filename_defined(filename_param != 0),
       filename(get_string(filename_param)) {
@@ -67,11 +67,11 @@ Position::Position(const Position& other) :
 
 // accessors ----------------------------------------------------------------
 
-unsigned int Position::get_line() const {
+std::size_t Position::get_line() const {
    return line;
 }
 
-unsigned int Position::get_column() const {
+std::size_t Position::get_column() const {
    return column;
 }
 
@@ -86,25 +86,27 @@ const std::string& Position::get_filename() const {
 
 // operators ----------------------------------------------------------------
 
-Position& Position::operator+=(int incr) {
-   assert((int) column + incr >= 1);
-   column = (int) column + incr;
+Position& Position::operator+=(Offset incr) {
+   assert((Offset) column + incr >= 1);
+   column = (Offset) column + incr;
    return *this;
 }
 
-Position& Position::operator-=(int decr) {
-   assert((int) column - decr >= 1);
-   column = (int) column - decr;
+Position& Position::operator-=(Offset decr) {
+   assert((Offset) column - decr >= 1);
+   column = (Offset) column - decr;
    return *this;
 }
 
-Position Position::operator+(int incr) const {
+/*
+Position Position::operator+(Offset incr) const {
    return *this + incr;
 }
 
-Position Position::operator-(int decr) const {
+Position Position::operator-(Offset decr) const {
    return *this - decr;
 }
+*/
 
 // implementation of Location ===============================================
 

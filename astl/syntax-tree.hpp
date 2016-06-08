@@ -19,6 +19,7 @@
 #ifndef ASTL_SYNTAX_TREE_H
 #define ASTL_SYNTAX_TREE_H
 
+#include <cstdlib>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -135,13 +136,13 @@ namespace Astl {
 	  * This accessor is restricted to operator nodes and
 	  * returns the number of operands (i.e. subnodes).
 	  */
-	 unsigned int size() const;
+	 std::size_t size() const;
 
 	 /**
 	  * This accessor is restricted to operator nodes and
 	  * returns the index-th operand, counting from 0.
 	  */
-	 const NodePtr& get_operand(unsigned int index) const;
+	 const NodePtr& get_operand(std::size_t index) const;
 
 	 /**
 	  * Assignment operator for nodes.
@@ -158,7 +159,7 @@ namespace Astl {
 	  * This mutator is restricted to operator nodes
 	  * and allows to replace the index-th operand.
 	  */
-	 NodePtr& get_operand(unsigned int index);
+	 NodePtr& get_operand(std::size_t index);
 
 	 void set_context(const Context& context_param);
 	 Context& get_context();

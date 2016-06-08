@@ -10,7 +10,7 @@ CPPSources := $(GeneratedCPPSources) \
    error.cpp scanner.cpp syntax-tree.cpp keywords.cpp \
    rule-table.cpp tree-expressions.cpp printer.cpp \
    loader.cpp rule.cpp rules.cpp operator-table.cpp \
-   parenthesizer.cpp treeloc.cpp selective-printer.cpp cloner.cpp \
+   parenthesizer.cpp treeloc.cpp cloner.cpp \
    candidate.cpp execution.cpp \
    candidate-set.cpp context.cpp attribute.cpp expression.cpp \
    bindings.cpp designator.cpp builtin-functions.cpp \
@@ -196,14 +196,6 @@ parenthesizer.o: parenthesizer.cpp ../astl/operator-table.hpp \
  ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp
 treeloc.o: treeloc.cpp ../astl/treeloc.hpp ../astl/location.hpp \
  ../astl/position.hh ../astl/location.hh ../astl/position.hh
-selective-printer.o: selective-printer.cpp ../astl/exception.hpp \
- ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
- ../astl/location.hh ../astl/position.hh ../astl/operator.hpp \
- ../astl/token.hpp ../astl/rule-table.hpp ../astl/rule.hpp \
- ../astl/arity.hpp ../astl/opset.hpp ../astl/types.hpp \
- ../astl/selective-printer.hpp ../astl/printer.hpp ../astl/bindings.hpp \
- ../astl/attribute.hpp ../astl/function.hpp ../astl/builtin-functions.hpp \
- ../astl/integer.hpp ../astl/syntax-tree.hpp ../astl/context.hpp
 cloner.o: cloner.cpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
  ../astl/location.hh ../astl/position.hh ../astl/function.hpp \

@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009 Andreas Franz Borchert
+   Copyright (C) 2009, 2016 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <cstdlib>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -37,7 +38,7 @@ NodePtr Candidate::transform() const throw(Exception) {
    NodePtr rhs = rule->get_rhs();
    NodePtr pre_block; NodePtr post_block;
    if (!rhs->is_leaf() && rhs->get_op() == Op::transformation_instructions) {
-      for (unsigned int i = 1; i < rhs->size(); ++i) {
+      for (std::size_t i = 1; i < rhs->size(); ++i) {
 	 NodePtr block = rhs->get_operand(i);
 	 if (block->get_op() == Op::pre_transformation_block) {
 	    pre_block = block->get_operand(0);
@@ -69,7 +70,7 @@ void Candidate::transform_inplace() const throw(Exception) {
    NodePtr rhs = rule->get_rhs();
    NodePtr pre_block; NodePtr post_block;
    if (!rhs->is_leaf() && rhs->get_op() == Op::transformation_instructions) {
-      for (unsigned int i = 1; i < rhs->size(); ++i) {
+      for (std::size_t i = 1; i < rhs->size(); ++i) {
 	 NodePtr block = rhs->get_operand(i);
 	 if (block->get_op() == Op::pre_transformation_block) {
 	    pre_block = block->get_operand(0);
@@ -114,7 +115,7 @@ NodePtr Candidate::gen_tree(NodePtr troot) const throw(Exception) {
       std::string opname = troot->get_operand(0)->get_token().get_text();
       Operator op(opname);
       newroot = std::make_shared<Node>(troot->get_location(), op);
-      for (unsigned int i = 1; i < troot->size(); ++i) {
+      for (std::size_t i = 1; i < troot->size(); ++i) {
 	 NodePtr subnode = troot->get_operand(i);
 	 if (!subnode->is_leaf() && subnode->get_op() == Op::subnode_list) {
 	    std::string varname =
@@ -122,7 +123,7 @@ NodePtr Candidate::gen_tree(NodePtr troot) const throw(Exception) {
 	    if (bindings->defined(varname)) {
 	       AttributePtr valist = bindings->get(varname);
 	       if (valist->get_type() == Attribute::list) {
-		  for (unsigned int j = 0; j < valist->size(); ++j) {
+		  for (std::size_t j = 0; j < valist->size(); ++j) {
 		     AttributePtr element = valist->get_value(j);
 		     if (element && element->get_type() == Attribute::tree) {
 			*newroot += valist->get_value(j)->get_node();

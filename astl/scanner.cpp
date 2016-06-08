@@ -294,11 +294,11 @@ void Scanner::scan_text() {
    bool whitespace = true; // so far we have seen whitespace only
    bool current_whitespace = true; // just whitespace seen in current line
    bool last_current_whitespace = true;
-   unsigned int indent = 0; // of the first line
-   unsigned int current_indent = 0; // of the current line
+   std::size_t indent = 0; // of the first line
+   std::size_t current_indent = 0; // of the current line
    std::string current_text("");
    bool newline = false; // add newline to current_text if sth follows
-   unsigned int nestlevel = 0;
+   std::size_t nestlevel = 0;
    while (!eof && (nestlevel > 0 || codepoint != '}')) {
       last_current_whitespace = current_whitespace;
       if (codepoint == '\n') {
@@ -329,7 +329,7 @@ void Scanner::scan_text() {
 	       }
 	       if (last_current_whitespace || current_text.size() == 0) {
 		  if (current_indent > indent) {
-		     for (unsigned int i = 0;
+		     for (std::size_t i = 0;
 			i < current_indent - indent; ++i) {
 			current_text += ' ';
 		     }
@@ -412,7 +412,7 @@ void Scanner::scan_text() {
 	    }
 	    if (last_current_whitespace) {
 	       if (current_indent > indent) {
-		  for (unsigned int i = 0; i < current_indent - indent; ++i) {
+		  for (std::size_t i = 0; i < current_indent - indent; ++i) {
 		     current_text += ' ';
 		  }
 	       }

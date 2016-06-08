@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009, 2010 Andreas Franz Borchert
+   Copyright (C) 2009, 2010, 2016 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -83,7 +83,7 @@ void CandidateSet::traverse(NodePtr& node, Context& context) const {
    bool suppressed = suppress_conflicts && found;
    if (!suppressed) {
       context.descend(node);
-      for (unsigned int i = 0; i < node->size(); ++i) {
+      for (std::size_t i = 0; i < node->size(); ++i) {
 	 traverse(node->get_operand(i), context);
       }
       // suppress the postfix visitation in case of transformations if
@@ -128,12 +128,12 @@ bool CandidateSet::add_matching_candidates(NodePtr& node,
    return false;
 }
 
-unsigned int CandidateSet::size() const {
+std::size_t CandidateSet::size() const {
    generate();
    return candidates.size();
 }
 
-CandidatePtr CandidateSet::operator[](unsigned int index) const {
+CandidatePtr CandidateSet::operator[](std::size_t index) const {
    generate();
    assert(index < size());
    return candidates[index];
@@ -149,21 +149,21 @@ void CandidateSet::gen_mutation() throw(Exception) {
 void CandidateSet::gen_mutations() throw(Exception) {
    generate();
    assert(consumer); assert(prg);
-   for (unsigned int i = 0; i < size(); ++i) {
+   for (std::size_t i = 0; i < size(); ++i) {
       CandidatePtr candidate = candidates[i];
       consumer->consume(candidate->transform(), candidate);
    }
 }
 
-void CandidateSet::gen_mutations(unsigned int count) throw(Exception) {
+void CandidateSet::gen_mutations(std::size_t count) throw(Exception) {
    generate();
    assert(consumer); assert(prg);
    if (count > size()) count = size();
    /* select count candidates,
       see section 3.4.2 in Donald E. Knuth, TAOCP, Volume 2
    */
-   unsigned int selected = 0; unsigned int seen = 0;
-   for (unsigned int i = 0; i < size(); ++i) {
+   std::size_t selected = 0; std::size_t seen = 0;
+   for (std::size_t i = 0; i < size(); ++i) {
       double rval = prg->val();
       if ((candidates.size() - seen) * rval < count - selected) {
 	 CandidatePtr candidate = candidates[i];

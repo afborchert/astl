@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <cstdlib>
 #include <memory>
 #include <astl/attribute.hpp>
 #include <astl/cloner.hpp>
@@ -33,7 +34,7 @@ void gen_clone_tree_and_ptr(const NodePtr& root, const NodePtr& ptr,
       const Location& loc = root->get_location();
       Operator op = root->get_op();
       cloned_root = std::make_shared<Node>(loc, op);
-      for (unsigned int i = 0; i < root->size(); ++i) {
+      for (std::size_t i = 0; i < root->size(); ++i) {
 	 /* insert dummy node */
 	 *cloned_root += std::make_shared<Node>();
 	 /* fetch reference of dummy node ... */

@@ -148,12 +148,12 @@ Operator Node::get_op() const {
    return op;
 }
 
-unsigned int Node::size() const {
+std::size_t Node::size() const {
    assert(!leaf);
    return subnodes.size();
 }
 
-const NodePtr& Node::get_operand(unsigned int index) const {
+const NodePtr& Node::get_operand(std::size_t index) const {
    assert(!leaf && index < subnodes.size());
    return subnodes[index];
 }
@@ -173,7 +173,7 @@ Node& Node::operator+=(NodePtr subnode) {
    return *this;
 }
 
-NodePtr& Node::get_operand(unsigned int index) {
+NodePtr& Node::get_operand(std::size_t index) {
    assert(!leaf && index < subnodes.size());
    return subnodes[index];
 }
@@ -197,7 +197,7 @@ bool Node::deep_tree_equality(NodePtr other) const {
    if (leaf) return token.get_text() == other->token.get_text();
    if (op != other->op) return false;
    if (subnodes.size() != other->subnodes.size()) return false;
-   for (unsigned int i = 0; i < subnodes.size(); ++i) {
+   for (std::size_t i = 0; i < subnodes.size(); ++i) {
       if (!subnodes[i]->deep_tree_equality(other->subnodes[i])) return false;
    }
    return true;
@@ -209,7 +209,7 @@ bool deep_tree_equality(NodePtr node1, NodePtr node2) {
 
 // I/O methods ===============================================================
 
-static void visit_node(std::ostream& out, unsigned int level,
+static void visit_node(std::ostream& out, std::size_t level,
       NodePtr node) {
    if (node->is_leaf()) {
       Token token = node->get_token();
@@ -222,15 +222,15 @@ static void visit_node(std::ostream& out, unsigned int level,
       }
       if (node->size() > 0) {
 	 out << std::endl;
-	 for (unsigned int i = 0; i < node->size(); ++i) {
-	    for (unsigned int j = 0; j < level+1; ++j) out << "   ";
+	 for (std::size_t i = 0; i < node->size(); ++i) {
+	    for (std::size_t j = 0; j < level+1; ++j) out << "   ";
 	    visit_node(out, level+1, node->get_operand(i));
 	    if (i + 1 < node->size()) {
 	       out << ", ";
 	    }
 	    out << std::endl;
 	 }
-	 for (unsigned int i = 0; i < level; ++i) out << "   ";
+	 for (std::size_t i = 0; i < level; ++i) out << "   ";
       }
       out << ")";
    }

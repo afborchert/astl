@@ -38,11 +38,11 @@
 namespace Astl {
 
 static bool recursive_print(std::ostream& out, const NodePtr root,
-	 const RuleTable& rules, BindingsPtr bindings, unsigned int indent,
+	 const RuleTable& rules, BindingsPtr bindings, std::size_t indent,
 	 Context& context) throw(Exception);
 
 static bool expand_variable(std::ostream& out, std::string name,
-      const RuleTable& rules, unsigned int indent,
+      const RuleTable& rules, std::size_t indent,
       BindingsPtr bindings, BindingsPtr local_bindings,
       Context& context) throw(Exception) {
    if (name.size() > 0 && local_bindings->defined(name)) {
@@ -56,7 +56,7 @@ static bool expand_variable(std::ostream& out, std::string name,
 static int get_indent(const std::string text) {
    auto range = codepoint_range(text);
    auto it = range.end();
-   unsigned int indent = 0;
+   std::size_t indent = 0;
    while (it != range.begin()) {
       auto ch = *--it;
       if (!is_whitespace(ch)) break;
@@ -71,12 +71,12 @@ static int get_indent(const std::string text) {
 }
 
 static void expand_text(std::ostream& out, const Token& t,
-      unsigned int indent) {
+      std::size_t indent) {
    std::string text = t.get_text();
    for (auto ch: codepoint_range(text)) {
       out << ch;
       if (ch == '\n') {
-	 for (unsigned int wi = 0; wi < indent; ++wi) {
+	 for (std::size_t wi = 0; wi < indent; ++wi) {
 	    out << ' ';
 	 }
       }
@@ -85,7 +85,7 @@ static void expand_text(std::ostream& out, const Token& t,
 
 static bool recursive_print(std::ostream& out, const NodePtr root,
 	 const RuleTable& rules, BindingsPtr bindings,
-	 unsigned int indent,
+	 std::size_t indent,
 	 Context& context) throw(Exception) {
    if (root->is_leaf()) {
       return !!(out << root->get_token().get_literal());
@@ -124,8 +124,8 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
       }
       context.descend(root);
       const NodePtr& node = it->second->get_rhs();
-      unsigned int add_indent = 0;
-      for (unsigned int pi = 0; pi < node->size(); ++pi) {
+      std::size_t add_indent = 0;
+      for (std::size_t pi = 0; pi < node->size(); ++pi) {
 	 const NodePtr& subnode = node->get_operand(pi);
 	 if (subnode->is_leaf()) {
 	    Token t = subnode->get_token();
@@ -168,7 +168,7 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
 	       recursive_print(out, list->get_value(0)->get_node(),
 		  rules, bindings, indent + add_indent, context);
 	    }
-	    for (unsigned int i = 1; i < list->size(); ++i) {
+	    for (std::size_t i = 1; i < list->size(); ++i) {
 	       if (subnode->size() == 2) {
 		  Token t = subnode->get_operand(1)->get_token();
 		  expand_text(out, t, indent);

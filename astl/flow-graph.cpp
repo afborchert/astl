@@ -30,7 +30,7 @@ namespace Astl {
 #define LABELS "labels"
 #define ID "nextid"
 
-static unsigned int by_name(BindingsPtr bindings,
+static std::size_t by_name(BindingsPtr bindings,
       const std::string& dict, const std::string& key) {
    if (key.size() == 0) return 0;
    if (!bindings) return 0;
@@ -52,14 +52,13 @@ static unsigned int by_name(BindingsPtr bindings,
       }
    } else {
       // +1 as 0 is reserved for empty keys and various error conditions
-      unsigned int next = dictAt->size() + 1;
+      std::size_t next = dictAt->size() + 1;
       dictAt->update(key, std::make_shared<Attribute>(next));
       return next;
    }
 }
 
-static unsigned int nof(BindingsPtr bindings,
-      const std::string& dict) {
+static std::size_t nof(BindingsPtr bindings, const std::string& dict) {
    if (!bindings) return 1;
    AttributePtr graph = bindings->get("graph");
    if (!graph) return 1;
@@ -72,25 +71,25 @@ static unsigned int nof(BindingsPtr bindings,
    return dictAt->size() + 1;
 }
 
-unsigned int nof_node_types(BindingsPtr bindings) {
+std::size_t nof_node_types(BindingsPtr bindings) {
    return nof(bindings, NODE_TYPES);
 }
 
-unsigned int node_type_by_name(BindingsPtr bindings,
+std::size_t node_type_by_name(BindingsPtr bindings,
       const std::string& type) {
    return by_name(bindings, NODE_TYPES, type);
 }
 
-unsigned int nof_labels(BindingsPtr bindings) {
+std::size_t nof_labels(BindingsPtr bindings) {
    return nof(bindings, LABELS);
 }
 
-unsigned int label_by_name(BindingsPtr bindings,
+std::size_t label_by_name(BindingsPtr bindings,
       const std::string& label) {
    return by_name(bindings, LABELS, label);
 }
 
-static unsigned int new_id(BindingsPtr bindings) {
+static std::size_t new_id(BindingsPtr bindings) {
    if (!bindings) return 0;
    AttributePtr graph = bindings->get("graph");
    if (!graph) return 0;
@@ -101,7 +100,7 @@ static unsigned int new_id(BindingsPtr bindings) {
    AttributePtr idAt = graph->get_value(ID);
    assert(idAt);
    Location loc;
-   unsigned int id = idAt->get_integer()->get_unsigned_int(loc);
+   std::size_t id = idAt->get_integer()->get_unsigned_int(loc);
    graph->update(ID, std::make_shared<Attribute>(id + 1));
    return id;
 }
@@ -152,7 +151,7 @@ void FlowGraphNode::link(FlowGraphNodePtr fgnode, const std::string& label) {
    branches->update(label, std::make_shared<Attribute>(fgnode));
 }
 
-unsigned int FlowGraphNode::get_id() const {
+std::size_t FlowGraphNode::get_id() const {
    return id;
 }
 
@@ -160,7 +159,7 @@ const std::string& FlowGraphNode::get_type() const {
    return type;
 }
 
-unsigned int FlowGraphNode::get_type_number() const {
+std::size_t FlowGraphNode::get_type_number() const {
    return type_number;
 }
 
@@ -172,7 +171,7 @@ AttributePtr FlowGraphNode::get_attribute() const {
    return at;
 }
 
-unsigned int FlowGraphNode::get_number_of_outgoing_links() const {
+std::size_t FlowGraphNode::get_number_of_outgoing_links() const {
    return links.size();
 }
 

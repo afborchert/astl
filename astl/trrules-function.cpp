@@ -58,7 +58,7 @@ AttributePtr TransformationRuleSetFunction::eval(AttributePtr args)
    local_bindings->define("root", std::make_shared<Attribute>(root));
    CandidateSet candidates(root, rtab, local_bindings);
    AttributePtr list = std::make_shared<Attribute>(Attribute::list);
-   for (unsigned int i = 0; i < candidates.size(); ++i) {
+   for (std::size_t i = 0; i < candidates.size(); ++i) {
       NodePtr newroot = candidates[i]->transform();
       list->push_back(std::make_shared<Attribute>(newroot));
    }
@@ -97,7 +97,7 @@ AttributePtr InplaceTransformationRuleSetFunction::eval(AttributePtr args)
    local_bindings->define("root", std::make_shared<Attribute>(root));
    CandidateSet candidates(root, rtab, local_bindings);
    candidates.suppress_transformation_conflicts();
-   for (unsigned int i = 0; i < candidates.size(); ++i) {
+   for (std::size_t i = 0; i < candidates.size(); ++i) {
       candidates[i]->transform_inplace();
    }
    return std::make_shared<Attribute>(candidates.size());

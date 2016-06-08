@@ -32,7 +32,7 @@
 
 namespace Astl {
 
-   typedef boost::dynamic_bitset<unsigned long> StateSet;
+   typedef boost::dynamic_bitset<std::size_t> StateSet;
 
    class StateMachine;
    typedef std::shared_ptr<StateMachine> StateMachinePtr;
@@ -117,12 +117,13 @@ namespace Astl {
 	 typedef std::list<StateMachineRulePtr>::const_iterator Iterator;
 	 // constructor
 	 StateMachine(BindingsPtr bindings,
-	    const std::string& name, unsigned int id);
+	    const std::string& name, std::size_t id);
 	 StateMachine(BindingsPtr bindings,
 	    const std::string& name); // abstract state machine
 	 // mutators
 	 void import_asm(StateMachinePtr sm);
-	 void add_state(const std::string& state, const Location& loc);
+	 void add_state(const std::string& state,
+	    const Location& loc) throw(Exception);
 	 void add_rule(StateMachineRulePtr rule);
 	 typedef enum {privateVar, sharedVar} VarKind;
 	 void add_var(VarKind varkind, const std::string& varname,
@@ -134,13 +135,13 @@ namespace Astl {
 	    NodePtr block) throw(Exception);
 	 // accessors
 	 bool is_abstract() const;
-	 unsigned int get_id() const;
+	 std::size_t get_id() const;
 	 BindingsPtr get_shared_bindings() const;
 	 BindingsPtr add_private_bindings(BindingsPtr shared_bindings) const;
 	 void update_function_bindings(BindingsPtr local_bindings) const;
 	 std::string get_name() const;
-	 unsigned int get_nofstates() const;
-	 unsigned int get_nofxstates() const;
+	 std::size_t get_nofstates() const;
+	 std::size_t get_nofxstates() const;
 	 const std::string& get_state_by_number(int index) const;
 	 int get_state_by_name(const std::string& name) const;
 	 bool is_global() const;
@@ -177,14 +178,14 @@ namespace Astl {
 	 typedef std::map<std::string, NodePtr> FunctionTable;
 	 FunctionTable local_functions;
 	 // non-abstract state machines:
-	 unsigned int id;
+	 std::size_t id;
 	 std::map<int, std::string> stateByNumber;
 	 std::map<std::string, int> stateByName;
    };
 
    typedef std::map<std::string, StateMachinePtr> AbstractStateMachineTable;
    StateMachinePtr construct_sm(BindingsPtr bindings, NodePtr root,
-      unsigned int id, const AbstractStateMachineTable& asmt) throw(Exception);
+      std::size_t id, const AbstractStateMachineTable& asmt) throw(Exception);
    // construct abstract state machine
    StateMachinePtr construct_asm(BindingsPtr bindings, NodePtr root,
       const AbstractStateMachineTable& asmt) throw(Exception);
@@ -196,7 +197,7 @@ namespace Astl {
 	 void add(StateMachinePtr sm);
 	 void clear();
 	 // accessors
-	 unsigned int nof_state_machines() const;
+	 std::size_t nof_state_machines() const;
 	 Iterator get_global_begin() const;
 	 Iterator get_global_end() const;
 	 Iterator get_local_begin() const;

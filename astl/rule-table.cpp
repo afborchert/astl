@@ -63,7 +63,7 @@ void RuleTable::traverse(NodePtr node,
       }
    } else {
       /* recursive traverse */
-      for (unsigned int i = 0; i < node->size(); ++i) {
+      for (std::size_t i = 0; i < node->size(); ++i) {
 	 traverse(node->get_operand(i), ruleop, rules);
       }
    }
@@ -108,7 +108,7 @@ RuleTable::print_iterator RuleTable::reversed_find(const Operator& op,
    }
 }
 
-unsigned int RuleTable::size() const {
+std::size_t RuleTable::size() const {
    return current_rank;
 }
 

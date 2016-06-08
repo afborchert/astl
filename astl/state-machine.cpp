@@ -32,7 +32,7 @@ namespace Astl {
 // ========== StateMachine =================================================
 
 StateMachine::StateMachine(BindingsPtr bindings,
-      const std::string& name, unsigned int id) :
+      const std::string& name, std::size_t id) :
    abstract(false), global(true),
    name(name), bindings(bindings), id(id) {
 }
@@ -55,7 +55,8 @@ void StateMachine::import_asm(StateMachinePtr sm) {
    local_functions = sm->local_functions;
 }
 
-void StateMachine::add_state(const std::string& state, const Location& loc) {
+void StateMachine::add_state(const std::string& state,
+      const Location& loc) throw(Exception) {
    assert(!abstract);
    int nextid = stateByName.size();
    std::pair<std::map<std::string, int>::iterator, bool> result =
@@ -177,7 +178,7 @@ bool StateMachine::is_abstract() const {
    return abstract;
 }
 
-unsigned int StateMachine::get_id() const {
+std::size_t StateMachine::get_id() const {
    assert(!abstract);
    return id;
 }
@@ -186,12 +187,12 @@ std::string StateMachine::get_name() const {
    return name;
 }
 
-unsigned int StateMachine::get_nofstates() const {
+std::size_t StateMachine::get_nofstates() const {
    assert(!abstract);
    return stateByName.size();
 }
 
-unsigned int StateMachine::get_nofxstates() const {
+std::size_t StateMachine::get_nofxstates() const {
    assert(!abstract);
    return stateByName.size() * stateByName.size();
 }
@@ -407,7 +408,7 @@ void StateMachineTable::clear() {
    global.clear(); local.clear();
 }
 
-unsigned int StateMachineTable::nof_state_machines() const {
+std::size_t StateMachineTable::nof_state_machines() const {
    return global.size() + local.size();
 }
 
@@ -435,7 +436,7 @@ static StateMachineRuleAlternativePtr create_alternative(StateMachinePtr sm,
    StateMachineRuleAlternative::Action action =
       StateMachineRuleAlternative::null;
    int newstate = -1;
-   unsigned int nextop = 0;
+   std::size_t nextop = 0;
    NodePtr return_node;
    if (smblock->get_operand(0)->get_op() == Op::sm_action) {
       NodePtr action_node = smblock->get_operand(0)->get_operand(0);
@@ -532,7 +533,7 @@ static void get_nodetypes(BindingsPtr bindings, NodePtr root,
       root = root->get_operand(1);
    }
    std::string nodetype = root->get_token().get_text();
-   unsigned int index = node_type_by_name(bindings, nodetype);
+   std::size_t index = node_type_by_name(bindings, nodetype);
    if (index >= nodetypes.size()) {
       nodetypes.resize(index + 1);
    }
@@ -560,7 +561,7 @@ static void get_labelset(BindingsPtr bindings, NodePtr root, LabelSet& labels) {
       root = root->get_operand(1);
    }
    std::string label = root->get_operand(0)->get_token().get_text();
-   unsigned int index = label_by_name(bindings, label);
+   std::size_t index = label_by_name(bindings, label);
    if (index >= labels.size()) {
       labels.resize(index + 1);
    }
@@ -593,7 +594,7 @@ static void add_alternatives(StateMachinePtr sm, StateMachineRulePtr rule,
    assert(root->get_op() == Op::sm_alternative);
    NodePtr smblock = root->get_operand(root->size() - 1);
    StateMachineRuleAlternativePtr alternative = create_alternative(sm, smblock);
-   unsigned int nextop = 0;
+   std::size_t nextop = 0;
    if (root->get_operand(nextop)->get_op() == Op::cfg_edge_condition) {
       NodePtr edge_cond = root->get_operand(nextop++);
       LabelSet labels(nof_labels(bindings));
@@ -669,7 +670,7 @@ static void add_rules(StateMachinePtr sm, BindingsPtr bindings, NodePtr root) {
 }
 
 StateMachinePtr construct_sm(BindingsPtr bindings, NodePtr root,
-      unsigned int id, const AbstractStateMachineTable& asmt) throw(Exception) {
+      std::size_t id, const AbstractStateMachineTable& asmt) throw(Exception) {
    assert(root && root->get_op() == Op::state_machine);
    assert(root->size() == 5 || root->size() == 6);
    int argi = 0;

@@ -127,8 +127,8 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
       OperatorSet opset(expression->get_operand(0), bindings->get_rules());
       if (!opset.includes(root->get_op())) return false;
       // does the arity match?
-      unsigned int arity = expression->size() - 1;
-      unsigned int remaining_arity = 0;
+      std::size_t arity = expression->size() - 1;
+      std::size_t remaining_arity = 0;
       if (remaining_subnodes) {
 	 remaining_arity = remaining_subnodes->size();
       }
@@ -138,15 +138,15 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 	 if (root->size() != arity) return false;
       }
       // do the subtrees match?
-      for (unsigned int i = 0; i < arity; ++i) {
+      for (std::size_t i = 0; i < arity; ++i) {
 	 if (!recursive_matches(root->get_operand(i),
 	       expression->get_operand(i+1), bindings, context)) {
 	    return false;
 	 }
       }
       if (remaining_subnodes) {
-	 unsigned int root_arity = root->size();
-	 for (unsigned int i = 0; i < remaining_arity; ++i) {
+	 std::size_t root_arity = root->size();
+	 for (std::size_t i = 0; i < remaining_arity; ++i) {
 	    int j = root_arity - remaining_arity + i;
 	    if (!recursive_matches(root->get_operand(j),
 		  remaining_subnodes->get_operand(i), bindings, context)) {
@@ -154,7 +154,7 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 	    }
 	 }
       }
-      unsigned int remaining = root->size() - arity - remaining_arity;
+      std::size_t remaining = root->size() - arity - remaining_arity;
       if (variable_length && valist) {
 	 std::string varname = valist->get_token().get_text();
 	 if (bindings->defined(varname)) {
@@ -162,7 +162,7 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 	    AttributePtr at = bindings->get(varname);
 	    if (!at || at->get_type() != Attribute::list) return false;
 	    if (at->size() != remaining) return false;
-	    for (unsigned int i = 0; i < remaining; ++i) {
+	    for (std::size_t i = 0; i < remaining; ++i) {
 	       AttributePtr element = at->get_value(i);
 	       NodePtr node = root->get_operand(arity + i);
 	       if (!element) return false;
@@ -182,7 +182,7 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 	 } else {
 	    /* place holder */
 	    AttributePtr list = std::make_shared<Attribute>(Attribute::list);
-	    for (unsigned int i = 0; i < remaining; ++i) {
+	    for (std::size_t i = 0; i < remaining; ++i) {
 	       NodePtr node = root->get_operand(arity + i);
 	       list->push_back(std::make_shared<Attribute>(node));
 	    }

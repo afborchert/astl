@@ -19,6 +19,7 @@
 #ifndef ASTL_RUN_H
 #define ASTL_RUN_H
 
+#include <cstdlib>
 #include <iostream>
 #include <astl/exception.hpp>
 #include <astl/generator.hpp>
@@ -30,7 +31,7 @@ namespace Astl {
 
 void run(NodePtr root,
       const char* rules_filename, const char* pattern,
-      unsigned int count,
+      std::size_t count,
       const Operator& parentheses,
       std::ostream& out) throw(Exception);
 

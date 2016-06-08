@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <cstdlib>
 #include <memory>
 #include <sstream>
 #include <astl/bindings.hpp>
@@ -36,7 +37,7 @@ std::string get_here_name(BindingsPtr bindings, BindingsPtr local_bindings) {
    if (!bindings->defined("here") && local_bindings->defined("here")) {
       return "here";
    }
-   for (unsigned int counter = 1; ; ++counter) {
+   for (std::size_t counter = 1; ; ++counter) {
       std::ostringstream os;
       os << "here" << counter;
       if (!bindings->defined(os.str())) {

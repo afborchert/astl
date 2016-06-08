@@ -19,9 +19,11 @@
 #ifndef ASTL_TREELOC_H
 #define ASTL_TREELOC_H
 
+#include <cstdlib>
 #include <iostream>
 #include <memory>
 #include <string>
+#include <type_traits>
 
 namespace Astl {
 
@@ -38,23 +40,26 @@ namespace Astl {
 	 Position(const position& pos);
 	 Position(const Position& other);
 	 Position(const std::string* filename_param,
-	    unsigned int line_param, unsigned int column_param);
+	    std::size_t line_param, std::size_t column_param);
 
 	 // accessors
-	 unsigned int get_line() const;
-	 unsigned int get_column() const;
+	 std::size_t get_line() const;
+	 std::size_t get_column() const;
 	 bool is_filename_defined() const;
 	 const std::string& get_filename() const;
 
 	 // operators
-	 Position& operator+=(int incr);
-	 Position& operator-=(int decr);
-	 Position operator+(int incr) const;
-	 Position operator-(int decr) const;
+	 typedef std::make_signed<std::size_t>::type Offset;
+	 Position& operator+=(Offset incr);
+	 Position& operator-=(Offset decr);
+	 /*
+	 Position operator+(Offset incr) const;
+	 Position operator-(Offset decr) const;
+	 */
 
       private:
-	 unsigned int line;
-	 unsigned int column;
+	 std::size_t line;
+	 std::size_t column;
 	 bool filename_defined;
 	 StringPtr filename;
    };
