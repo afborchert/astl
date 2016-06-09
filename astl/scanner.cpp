@@ -567,7 +567,6 @@ void Scanner::scan_string_literal(semantic_type& yylval, int& token) {
 }
 
 void Scanner::next_ch() {
-   tokenloc.end = pos;
    oldpos = pos;
    if (eof_seen) {
       ch = 0; return;
@@ -582,7 +581,7 @@ void Scanner::next_ch() {
 void Scanner::next_codepoint() {
    char32_t char_val = 0;
    char32_t expected = 0;
-   tokenloc.begin = oldpos;
+   tokenloc.end = oldpos;
    if (eof_seen) {
       eof = true; codepoint = 0; return;
    }

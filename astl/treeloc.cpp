@@ -98,16 +98,6 @@ Position& Position::operator-=(Offset decr) {
    return *this;
 }
 
-/*
-Position Position::operator+(Offset incr) const {
-   return *this + incr;
-}
-
-Position Position::operator-(Offset decr) const {
-   return *this - decr;
-}
-*/
-
 // implementation of Location ===============================================
 
 // constructors -------------------------------------------------------------
@@ -160,7 +150,6 @@ std::ostream& operator<<(std::ostream& out, const Location& loc) {
    const Position& first(loc.get_begin());
    Position last = loc.get_end();
    out << first;
-   if (last.get_column() > 1) last -= 1;
    if (last.is_filename_defined() &&
 	 (!first.is_filename_defined() ||
 	    first.get_filename() != last.get_filename())) {

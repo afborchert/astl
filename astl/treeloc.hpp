@@ -52,10 +52,6 @@ namespace Astl {
 	 typedef std::make_signed<std::size_t>::type Offset;
 	 Position& operator+=(Offset incr);
 	 Position& operator-=(Offset decr);
-	 /*
-	 Position operator+(Offset incr) const;
-	 Position operator-(Offset decr) const;
-	 */
 
       private:
 	 std::size_t line;

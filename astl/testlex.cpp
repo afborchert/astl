@@ -66,6 +66,7 @@ int main(int argc, char** argv) {
 	    cout << " \"" << yylval->get_token().get_text() << '"';
 	    yylval = NodePtr(nullptr);
 	 }
+	 cout << " at " << make_loc(loc);
 	 cout << endl;
       }
    } catch (Exception e) {
