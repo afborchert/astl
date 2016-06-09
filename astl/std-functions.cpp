@@ -207,7 +207,7 @@ AttributePtr builtin_location(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_println(BindingsPtr bindings,
+AttributePtr builtin_prints(BindingsPtr bindings,
       AttributePtr args) throw(Exception) {
    if (args) {
       for (std::size_t i = 0; i < args->size(); ++i) {
@@ -224,8 +224,14 @@ AttributePtr builtin_println(BindingsPtr bindings,
 	 }
       }
    }
-   std::cout << std::endl;
    return AttributePtr(nullptr);
+}
+
+AttributePtr builtin_println(BindingsPtr bindings,
+      AttributePtr args) throw(Exception) {
+   auto res = builtin_prints(bindings, args);
+   std::cout << std::endl;
+   return res;
 }
 
 AttributePtr builtin_integer(BindingsPtr bindings,
@@ -402,6 +408,7 @@ void insert_std_functions(BuiltinFunctions& bfs) {
    bfs.add("operator", builtin_operator);
    bfs.add("pop", builtin_pop);
    bfs.add("println", builtin_println);
+   bfs.add("prints", builtin_prints);
    bfs.add("push", builtin_push);
    bfs.add("string", builtin_string);
    bfs.add("tokenliteral", builtin_tokenliteral);
