@@ -125,7 +125,7 @@ front of the ``\lstinline!->!'' delimiter must be identifiers.
       minlevel -> -1,
       minblock -> null,
    };
-};
+}
 \end{lstlisting}
 
 \noindent
@@ -233,7 +233,7 @@ sub traverse (node) {
       result = tokenliteral(node);
    }
    return result;
-};
+}
 \end{lstlisting}
 
 \noindent
@@ -254,7 +254,7 @@ sub traverse (node) {
       result = tokenliteral(node);
    }
    return result;
-};
+}
 \end{lstlisting}
 
 \noindent
@@ -271,7 +271,7 @@ per-node attributes. The example below initializes the attributes
    block.vars = {};
    block.level = 0;
    block.up = null;
-};
+}
 \end{lstlisting}
 
 \noindent
@@ -298,7 +298,7 @@ regular expression. Variables bound to matching results can be
 used like scalars to refer to the matched text.
 
 \begin{lstlisting}
-("decimal_literal" m{^\d+$} as dec) -> ("decimal_literal" {dec + 1});
+("decimal_literal" m{^\d+$} as dec) -> ("decimal_literal" {dec + 1})
 \end{lstlisting}%stopzone
 
 \noindent
@@ -306,7 +306,7 @@ The regular expression of the following example
 captures one substring which is refered to by \lstinline!dec[0]!.
 
 \begin{lstlisting}
-("decimal_literal" m{^\d+(\d)$} as dec) -> ("decimal_literal" {dec & dec[0]});
+("decimal_literal" m{^\d+(\d)$} as dec) -> ("decimal_literal" {dec & dec[0]})
 \end{lstlisting}%stopzone
 
 \section{Control flow graph nodes}\index{control flow graph}

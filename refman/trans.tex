@@ -32,9 +32,9 @@ rule found'').
 	 \lextoken{\{} \nonterminal{transformations}
 	 \lextoken{\}} \\
    \nonterminal{transformations}
-      \produces \nonterminal{transformation} \lextoken{;} \\
+      \produces \nonterminal{transformation} \\
       \produces \nonterminal{transformations}
-	 \nonterminal{transformation} \lextoken{;} \\
+	 \nonterminal{transformation} \\
    \nonterminal{transformation}
       \produces \optional{\nonterminal{identifier} \lextoken{:}}
 	 \nonterminal{conditional-tree-expression}
@@ -88,7 +88,7 @@ an addition by a multiplication and exchanges the two operands:
 
 \begin{lstlisting}
 transformation rules {
-   ("+" op1 op2) -> ("*" op2 op1);
+   ("+" op1 op2) -> ("*" op2 op1)
 }
 \end{lstlisting}
 

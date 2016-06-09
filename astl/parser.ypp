@@ -211,10 +211,7 @@ opt_rules:
    ;
 
 rules: rule
-   | rule SEMICOLON
    | rules rule
-      { $$ = BINARY(rules, $1, $2); }
-   | rules rule SEMICOLON
       { $$ = BINARY(rules, $1, $2); }
    ;
 
@@ -270,7 +267,7 @@ sequence_of_print_rules: print_rule
       { $$ = BINARY(sequence_of_print_rules, $1, $2); }
    ;
 
-print_rule: conditional_tree_expression ARROW print_expression SEMICOLON
+print_rule: conditional_tree_expression ARROW print_expression
       { $$ = BINARY(print_rule, $1, $3); }
    ;
 
@@ -571,8 +568,8 @@ named_inplace_transformation_rules:
 	       FLATTEN(NODE(transformation_rules), $6, transformations)); }
    ;
 
-transformations: transformation SEMICOLON
-   | transformations transformation SEMICOLON
+transformations: transformation
+   | transformations transformation
       { $$ = BINARY(transformations, $1, $2); }
    ;
 
@@ -657,8 +654,8 @@ named_attribution_rules:
 	       FLATTEN(NODE(attribution_rules), $5, attributions)); }
    ;
 
-attributions: attribution SEMICOLON
-   | attributions attribution SEMICOLON
+attributions: attribution
+   | attributions attribution
       { $$ = BINARY(attributions, $1, $2); }
    ;
 
@@ -802,18 +799,11 @@ sm_rules: sm_rule
       { $$ = BINARY(sm_rules, $1, $2); }
    ;
 
-sm_rule: sm_condition ARROW sm_block SEMICOLON
-      { $$ = BINARY(sm_rule, $1, $3); }
-   | sm_condition ARROW sm_block
+sm_rule: sm_condition ARROW sm_block
       { $$ = BINARY(sm_rule, $1, $3); }
    | sm_condition sm_alternatives
       { $$ = BINARY(sm_rule, $1, $2); }
    // creation rule
-   | sm_condition ARROW CREATE block SEMICOLON
-      {
-	 $$ = BINARY(sm_rule, $1,
-		  BINARY(sm_block, UNARY(sm_action, NODE(CREATE)), $4));
-      }
    | sm_condition ARROW CREATE block
       {
 	 $$ = BINARY(sm_rule, $1,
@@ -821,8 +811,6 @@ sm_rule: sm_condition ARROW sm_block SEMICOLON
       }
    // handler
    | ON CLOSE sm_handler
-      { $$ = UNARY(sm_rule, BINARY(ON, NODE(CLOSE), $3)); }
-   | ON CLOSE sm_handler SEMICOLON
       { $$ = UNARY(sm_rule, BINARY(ON, NODE(CLOSE), $3)); }
    ;
 
@@ -862,10 +850,7 @@ sm_block: block
    ;
 
 sm_alternatives: sm_alternative
-   | sm_alternative SEMICOLON
    | sm_alternatives sm_alternative
-      { $$ = BINARY(sm_alternatives, $1, $2); }
-   | sm_alternatives sm_alternative SEMICOLON
       { $$ = BINARY(sm_alternatives, $1, $2); }
    ;
 

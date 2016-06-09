@@ -20,9 +20,8 @@ be used to specify the order.
 	 \lextoken{\{} \nonterminal{attributions}
 	 \lextoken{\}} \\
    \nonterminal{attributions}
-      \produces \nonterminal{attribution} \lextoken{;} \\
-      \produces \nonterminal{attributions}
-	 \nonterminal{attribution} \lextoken{;} \\
+      \produces \nonterminal{attribution} \\
+      \produces \nonterminal{attributions} \nonterminal{attribution} \\
    \nonterminal{attribution}
       \produces \nonterminal{conditional-tree-expressions}
 	 \lextoken{->} \nonterminal{block} \\
@@ -46,12 +45,12 @@ Finally, the third rule is executed last as it is a postfix rule.
       block.vars = {};
       block.level = 0;
       block.up = null;
-   };
+   }
    ("compound_statement" *) as inner_block
          in ("compound_statement" *) as outer_block -> {
       inner_block.level = outer_block.level + 1;
       inner_block.up = outer_block;
-   };
+   }
    ("compound_statement" *) as block in ("translation_unit" *) as root -> post {
       foreach varname in (block.vars) {
 	 var entry = block.vars{varname};
@@ -64,7 +63,7 @@ Finally, the third rule is executed last as it is a postfix rule.
 	    println(location(entry.decl) & ": unused variable " & varname);
 	 }
       }
-   };
+   }
 \end{lstlisting}
 
 \section{Named attribution rules}\label{named-atrules}

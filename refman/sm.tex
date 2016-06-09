@@ -132,12 +132,12 @@ and (2) (see \nonterminal{sm-condition}):
 \begin{grammar}
    \nonterminal{sm-rule}
       \produces \nonterminal{sm-condition} \lextoken{->}
-	 \nonterminal{sm-block} \optional{\lextoken{;}} \\
+	 \nonterminal{sm-block} \\
       \produces \nonterminal{sm-condition} \nonterminal{sm-alternatives} \\
       \produces \nonterminal{sm-condition} \lextoken{->}
-	 \lexkeyword{create} \nonterminal{block} \optional{\lextoken{;}} \\
+	 \lexkeyword{create} \nonterminal{block} \\
       \produces \lexkeyword{on} \lexkeyword{close}
-	 \nonterminal{sm-handler} \optional{\lextoken{;}} \\
+	 \nonterminal{sm-handler} \\
    \nonterminal{sm-condition}
       \produces \nonterminal{conditional-tree-expression} \\
       \produces \lexkeyword{at} \nonterminal{cfg-node-expression} \\
@@ -154,9 +154,9 @@ and (2) (see \nonterminal{sm-condition}):
       \produces \nonterminal{cfg-node-types} \lexkeyword{or}
 	 \nonterminal{identifier} \\
    \nonterminal{sm-alternatives}
-      \produces \nonterminal{sm-alternative} \optional{\lextoken{;}} \\
+      \produces \nonterminal{sm-alternative} \\
       \produces \nonterminal{sm-alternatives}
-	 \nonterminal{sm-alternative} \optional{\lextoken{;}} \\
+	 \nonterminal{sm-alternative} \\
    \nonterminal{sm-alternative}
       \produces \lexkeyword{if} \nonterminal{cfg-edge-condition}
 	 \lextoken{->} \nonterminal{sm-block} \\
@@ -362,7 +362,7 @@ The nesting is checked through the private variable \ident{chain}.
 abstract state machine global {
    private var chain = {nestlevel -> 0};
    at actual_call
-      if local -> cut;
+      if local -> cut
       if extern -> cache(node.branch.local) {
          chain = {
             nestlevel -> chain.nestlevel + 1,
@@ -370,7 +370,7 @@ abstract state machine global {
             callid -> node.callid
          };
       }
-   at rtn where chain.nestlevel == 0 || chain.callid != node.callid -> retract;
+   at rtn where chain.nestlevel == 0 || chain.callid != node.callid -> retract
    at rtn where chain.nestlevel > 0 && chain.callid == node.callid -> {
       chain = chain.next;
    }

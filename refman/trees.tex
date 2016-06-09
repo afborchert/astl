@@ -146,7 +146,7 @@ used on the right-hand-side of an assignment expression in C:
 \begin{lstlisting}
    ("identifier" id) in (assignment_operators lhs here) as assignment -> {
       println(id, " used on rhs of ", gentext(assignment));
-   };
+   }
 \end{lstlisting}
 
 \noindent
@@ -159,7 +159,7 @@ then on the right-hand-side:
          in (assignment_operators here1 rhs) as inner_assignment and
          in (assignment_operators lhs here2) as outer_assignment -> {
       println(id, " is assigned to and used in ", gentext(outer_assignment));
-   };
+   }
 \end{lstlisting}
 
 \section{Conditional tree expressions}\index{tree expression!conditional}\index{conditional tree expression}
