@@ -580,13 +580,13 @@ void Scanner::next_ch() {
 
 void Scanner::next_codepoint() {
    char32_t char_val = 0;
-   char32_t expected = 0;
+   unsigned int expected = 0;
    tokenloc.end = oldpos;
    if (eof_seen) {
       eof = true; codepoint = 0; return;
    }
    if (tokenstr != nullptr) {
-      *tokenstr += codepoint;
+      add_codepoint(*tokenstr, codepoint);
    }
    for(;;) {
       if (expected) {

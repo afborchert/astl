@@ -31,7 +31,9 @@ namespace Astl {
     */
    inline Location make_loc(const location& loc) {
       return Location(
-	 Position(loc.begin.filename,
+	 Position(
+	    /* fix a bison bug where the initial position is w/o filename */
+	    loc.begin.filename? loc.begin.filename: loc.end.filename,
 	    loc.begin.line, loc.begin.column),
 	 Position(loc.end.filename,
 	    loc.end.line, loc.end.column));

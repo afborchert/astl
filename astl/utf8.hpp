@@ -68,6 +68,10 @@ inline std::string& operator+=(std::string& s, char32_t codepoint) {
    return s;
 }
 
+inline void add_codepoint(std::string& s, char32_t codepoint) {
+   convert_to_utf8(std::back_inserter(s), codepoint);
+}
+
 /* print codepoint to an UTF-8 encoded output stream */
 inline std::ostream& operator<<(std::ostream& out, char32_t codepoint) {
    convert_to_utf8(std::ostreambuf_iterator<char>(out), codepoint);
