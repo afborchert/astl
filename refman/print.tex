@@ -1,9 +1,16 @@
-\chapter{Print rules}\label{print}
+\chapter{Print rules}\label{print}\index{print rules}
 
 Print rules define how abstract syntax trees are converted into
-strings. They are implicitly used by the \ident{gentext} function
+strings.
+
+\section{Regular print rules}\index{print rules!regular}\label{regprint}
+
+Regular print rules do not belong to a named set of print rules.
+They are implicitly used by the \ident{gentext} function
 (see \ref{predefined}) and for generating the results of the regular
-transformation rules (see \ref{regtrans}). Print rules consist of
+transformation rules (see \ref{regtrans}).
+
+Print rules consist of
 individual rules giving a tree expression (see \ref{treeexpr}) and a
 program text literal (see below). The generation of texts starts with
 the top-level node passed to \ident{gentext} or at the root node of
@@ -86,5 +93,30 @@ the compound statement:
       }
    }
 \end{lstlisting}
+
+\section{Named sets of print rules}\index{print rules!named}\label{named-print}
+
+Named sets of print rules are not implicitly executed. Instead the
+given identifier is bound to a function that
+
+\begin{itemize}
+   \item expects an abstract syntax tree as parameter or,
+      if no parameter is given, uses \ident{root},
+   \item recursively applies the print rules as in the
+      case of regular print rules, and
+   \item returns the generated text as \ident{gentext} for the
+      regular print rules.
+\end{itemize}
+
+\noindent
+A run-time error is raised whenever during the traverse a node
+is found without a matching print rule within the set.
+
+\begin{grammar}
+   \nonterminal{named-print-rules}
+      \produces \lexkeyword{print} \lexkeyword{rules} \nonterminal{identifier}
+	 \lextoken{\{} \nonterminal{sequence-of-print-rules}
+	 \lextoken{\}} \\
+\end{grammar}
 
 \endinput

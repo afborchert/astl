@@ -32,6 +32,7 @@ provides an arbitrary number of rules and definitions:
       \produces \nonterminal{named-inplace-transformation-rules} \\
       \produces \nonterminal{operator-rules} \\
       \produces \nonterminal{print-rules} \\
+      \produces \nonterminal{named-print-rules}
 \end{grammar}
 
 \section{Libraries}
@@ -64,7 +65,7 @@ tree expressions (see \ref{treeexpr}) and operator rules
 (see \ref{oprules}). Operator set clauses must textually precede the
 tree expressions or operator rules using them.
 
-\section{Order of appearance}
+\section{Order of appearance}\label{order}
 
 In case of attribution, transformation, and print rules the order
 of appearance is significant. As all libraries can contribute to the
@@ -80,13 +81,23 @@ global rule sets, their order is defined as follows:
       same process starts recursively.
 \end{enumerate}
 
+\section{Regular rule sets}
+Regular rule sets, i.e. regular attribution rules (see \ref{reg-attr}),
+regular transformation rules (see \ref{regtrans}), and
+regular print rules (see \ref{regprint}), can be spread over
+multiple units and are implicitly united in the order of appearance
+(see \ref{order}). This allows, for example, the main program which
+is loaded first to override a particular print rule by defining
+a print rule within its unit.
+
 \section{Global scope}
 
 The global scope includes all predefined bindings (see \ref{predefined}),
 global functions (see \ref{functiondef}), named attribution rules
 (see \ref{named-atrules}), named generating transformation rules (see
-\ref{named-trrules}), and named in-place transformation rules
-(see \ref{named-inplace-trrules}). In case of the function definitions,
+\ref{named-trrules}), named in-place transformation rules
+(see \ref{named-inplace-trrules}), and named print rules
+(see \ref{named-print}). In case of the function definitions,
 the order of appearance does not matter as all global functions see all
 other global functions.  The name of state machines do not belong to
 the global bindings, i.e. a global function name can conflict with the
@@ -112,7 +123,7 @@ abstract syntax tree is present:
       and a control flow graph has been constructed using attribution rules.
    \item The \textit{main}\index{main} function is executed, if it exists.
    \item The regular transformation rules are executed, provided
-      that print rules exist.
+      that regular print rules exist (see \ref{regprint}).
       For each transformation, a new abstract syntax tree is generated
       and printed, in dependence of the command line arguments, either
       to standard output or into individual output files.
