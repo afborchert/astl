@@ -19,14 +19,20 @@
 #ifndef ASTL_UTF8_H
 #define ASTL_UTF8_H
 
-#include <cassert>
 #include <cstdlib>
 #include <iterator>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 
 namespace Astl {
+
+class utf8_error: public std::domain_error {
+   public:
+      utf8_error(const char* what_arg) : std::domain_error(what_arg) {
+      }
+};
 
 constexpr bool valid_codepoint(char32_t codepoint) {
    return codepoint < 0x80000000 &&
@@ -53,7 +59,7 @@ inline void convert_to_utf8(Iterator out, char32_t codepoint) {
       ch = 0xfc | (codepoint >> 30); bytes_left = 5;
    } else {
       /* invalid codepoint */
-      assert(false); std::abort();
+      throw utf8_error("invalid utf8 codepoint");
    }
    *out++ = ch;
    while (bytes_left > 0) {
@@ -148,7 +154,7 @@ class CodepointIterator :
 		     codepoint = char_val; break;
 		  }
 	       } else {
-		  assert(false); std::abort();
+		  throw utf8_error("invalid utf8 multibyte sequence");
 	       }
 	    } else if ((ch & 0x80) == 0) {
 	       codepoint = ch; break;
@@ -168,10 +174,12 @@ class CodepointIterator :
 	       /* lead character with five bytes following */
 	       char_val = ch & 1; expected = 5;
 	    } else {
-	       assert(false); std::abort();
+	       throw utf8_error("invalid utf8 encoding");
 	    }
 	 }
-	 assert(expected == 0);
+	 if (expected > 0) {
+	    throw utf8_error("incomplete utf8 multibyte sequence");
+	 }
       }
 
       void retreat() {
