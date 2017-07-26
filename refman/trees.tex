@@ -1,11 +1,11 @@
 \chapter{Tree expressions}\label{treeexpr}\index{tree expression}
 
-Tree expressions are used in attribution rules (see \ref{attr}),
-transformation rules (see \ref{trans}), and print rules (see
-\ref{print}). A tree expression matches or fails for a particular node
-in an abstract syntax tree. Whenever a tree expression matches and the
-associated rule gets executed, the bindings of the tree expression are
-visible in the lexical scope of the rule.
+Tree expressions are used in attribution rules (see \ref{attr}), state
+machines (see \ref{sm}), transformation rules (see \ref{trans}), and
+print rules (see \ref{print}). A tree expression matches or fails for a
+particular node in an abstract syntax tree. Whenever a tree expression
+matches and the associated rule gets executed, the bindings of the tree
+expression are visible in the lexical scope of the rule.
 
 \section{Simple tree expressions}
 
@@ -109,7 +109,7 @@ Contextual tree expressions allow to specify patterns which must
 match for one of the parent nodes. If multiple parent nodes match,
 the innermost is taken for the bindings. If multiple contexts
 are given in an ``\keyword{and} \keyword{in}''-chain, the
-next context is always taken relative to the previous matched context node.
+next context is always taken relative to the previously matched context node.
 Negated context expressions succeed if no matching parent node is
 found. No bindings result from negated context expressions and
 every negated context expression resets the context to the original node.
