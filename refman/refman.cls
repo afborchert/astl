@@ -323,7 +323,7 @@
    morecomment=[s]{/*}{*/},
    morestring=[b]"
 }
-\lstloadlanguages{astl}
+\lstloadlanguages{astl,C}
 
 %\lstset{labelsep=10pt,labelstep=1,indent=25pt,captionpos=t}
 \lstset{breaklines=true,numbersep=10pt,stepnumber=1,captionpos=t}
