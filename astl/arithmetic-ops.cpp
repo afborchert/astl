@@ -27,7 +27,7 @@ namespace Astl {
 
 AttributePtr arithmetic_binary_op(const Operator& op,
       AttributePtr leftAt, AttributePtr rightAt,
-      const Location& loc) throw(Exception) {
+      const Location& loc) {
    IntegerPtr left = leftAt? leftAt->convert_to_integer(loc): 
       std::make_shared<Integer>(0l);
    IntegerPtr right = rightAt? rightAt->convert_to_integer(loc): 

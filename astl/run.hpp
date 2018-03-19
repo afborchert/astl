@@ -33,10 +33,10 @@ void run(NodePtr root,
       const char* rules_filename, const char* pattern,
       std::size_t count,
       const Operator& parentheses,
-      std::ostream& out) throw(Exception);
+      std::ostream& out);
 
 void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
-      Loader& loader, const Operator& parentheses) throw(Exception);
+      Loader& loader, const Operator& parentheses);
 
 } // namespace Astl
 

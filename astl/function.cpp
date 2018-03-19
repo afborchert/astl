@@ -36,7 +36,7 @@ Function::Function(BindingsPtr bindings,
       bind_parameters(true) {
 }
 
-Function::Function(BindingsPtr bindings, NodePtr pnode) throw(Exception) :
+Function::Function(BindingsPtr bindings, NodePtr pnode) :
       bindings(bindings), arity(pnode->size()), parameters(pnode->size()),
       bind_parameters(true) {
    std::set<std::string> pnames;
@@ -66,12 +66,11 @@ RegularFunction::RegularFunction(NodePtr block,
 }
 
 RegularFunction::RegularFunction(NodePtr block, BindingsPtr bindings,
-	 NodePtr parameters) throw(Exception) :
+	 NodePtr parameters) :
       Function(bindings, parameters), block(block) {
 }
 
-BindingsPtr Function::process_parameters(AttributePtr args) const
-      throw(Exception) {
+BindingsPtr Function::process_parameters(AttributePtr args) const {
    BindingsPtr local_scope = std::make_shared<Bindings>(bindings);
    if (bind_parameters) {
       if (arity.fixed) {
@@ -90,12 +89,12 @@ BindingsPtr Function::process_parameters(AttributePtr args) const
    return local_scope;
 }
 
-AttributePtr RegularFunction::eval(AttributePtr args) const throw(Exception) {
+AttributePtr RegularFunction::eval(AttributePtr args) const {
    auto local_scope = process_parameters(args);
    return execute(block, local_scope);
 }
 
-AttributePtr BuiltinFunction::eval(AttributePtr args) const throw(Exception) {
+AttributePtr BuiltinFunction::eval(AttributePtr args) const {
    auto local_scope = process_parameters(args);
    return (*bf)(local_scope, args);
 }

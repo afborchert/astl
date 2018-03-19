@@ -33,7 +33,7 @@ namespace Astl {
     */
    AttributePtr arithmetic_binary_op(const Operator& op,
       AttributePtr leftAt, AttributePtr rightAt,
-      const Location& loc) throw(Exception);
+      const Location& loc);
 
 } // namespace Astl
 

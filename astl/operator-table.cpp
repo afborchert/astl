@@ -37,7 +37,7 @@ OperatorTable::OperatorTable(NodePtr root, const Rules& rules) :
 
 // mutators =================================================================
 
-void OperatorTable::scan(NodePtr root, const Rules& rules) throw(Exception) {
+void OperatorTable::scan(NodePtr root, const Rules& rules) {
    assert(!root->is_leaf());
    for (Rank rank = 0; rank < root->size(); ++rank) {
       NodePtr operators = root->get_operand(rank);

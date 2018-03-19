@@ -45,7 +45,7 @@ void Designator::dereference(const Location& loc) {
 }
 
 void Designator::add_index(AttributePtr indexAt,
-      const Location& loc) throw(Exception) {
+      const Location& loc) {
    dereference(loc);
    if (!at) {
       throw Exception(loc, "cannot index null value");
@@ -88,7 +88,7 @@ void Designator::add_index(AttributePtr indexAt,
 }
 
 void Designator::add_key(const std::string& key_param,
-      const Location& loc) throw(Exception) {
+      const Location& loc) {
    dereference(loc);
    if (!at) {
       throw Exception(loc, "null cannot be used as dictionary");
@@ -128,7 +128,7 @@ bool Designator::exists() const {
 }
 
 void Designator::assign(AttributePtr value,
-      const Location& loc) throw(Exception) {
+      const Location& loc) {
    assert(lvalue);
    if (varname != "" && bindings->is_const(varname)) {
       throw Exception(loc, "constants must not be assigned to");
@@ -155,7 +155,7 @@ void Designator::assign(AttributePtr value,
    }
 }
 
-void Designator::delete_key(const Location& loc) throw(Exception) {
+void Designator::delete_key(const Location& loc) {
    assert(lvalue);
    if (varname != "" && bindings->is_const(varname)) {
       throw Exception(loc, "constants must not be changed");
@@ -177,8 +177,7 @@ void Designator::delete_key(const Location& loc) throw(Exception) {
    }
 }
 
-AttributePtr Designator::get_value(const Location& loc) const
-      throw(Exception) {
+AttributePtr Designator::get_value(const Location& loc) const {
    switch (type) {
       case simpleDesignator:
 	 return bindings->get(varname);

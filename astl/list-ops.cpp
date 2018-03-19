@@ -25,7 +25,7 @@ namespace Astl {
 
 AttributePtr list_binary_op(const Operator& op,
       AttributePtr leftAt, AttributePtr rightAt,
-      const Location& loc) throw(Exception) {
+      const Location& loc) {
    if (!leftAt) {
       leftAt = std::make_shared<Attribute>(Attribute::list);
    }

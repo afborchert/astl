@@ -226,7 +226,7 @@ std::size_t Attribute::size() const {
    }
 }
 
-NodePtr Attribute::get_node() const throw(Exception) {
+NodePtr Attribute::get_node() const {
    if (type == tree) {
       return node;
    } else if (type == flow_graph_node) {
@@ -262,7 +262,7 @@ IntegerPtr Attribute::get_integer() const {
    return ivalue;
 }
 
-std::string Attribute::convert_to_string() const throw(Exception) {
+std::string Attribute::convert_to_string() const {
    switch (type) {
       case string:
 	 return svalue;
@@ -306,8 +306,7 @@ std::string Attribute::convert_to_string() const throw(Exception) {
    }
 }
 
-IntegerPtr Attribute::convert_to_integer(const Location& loc) const
-      throw(Exception) {
+IntegerPtr Attribute::convert_to_integer(const Location& loc) const {
    if (type == integer) {
       return ivalue;
    } else if (type == boolean) {
@@ -328,7 +327,7 @@ bool Attribute::is_integer() const {
    return type == integer || type == boolean;
 }
 
-bool Attribute::convert_to_bool() const throw(Exception) {
+bool Attribute::convert_to_bool() const {
    switch (type) {
       case boolean:
 	 return bval;
@@ -344,7 +343,7 @@ bool Attribute::convert_to_bool() const throw(Exception) {
    }
 }
 
-AttributePtr Attribute::convert_to_list() throw(Exception) {
+AttributePtr Attribute::convert_to_list() {
    if (type == Attribute::list) {
       return shared_from_this();
    }
@@ -383,7 +382,7 @@ AttributePtr Attribute::convert_to_list() throw(Exception) {
    return l;
 }
 
-AttributePtr Attribute::convert_to_dict() throw(Exception) {
+AttributePtr Attribute::convert_to_dict() {
    if (type == Attribute::dictionary) {
       return shared_from_this();
    }
@@ -402,7 +401,7 @@ AttributePtr Attribute::convert_to_dict() throw(Exception) {
    return set;
 }
 
-bool Attribute::equal_to(AttributePtr other) const throw(Exception) {
+bool Attribute::equal_to(AttributePtr other) const {
    if (this == other.get()) {
       return true;
    }
@@ -470,7 +469,7 @@ AttributePtr Attribute::clone() const {
    return cat;
 }
 
-void Attribute::copy(AttributePtr other) throw(Exception) {
+void Attribute::copy(AttributePtr other) {
    if (!other) {
       Exception("source is null");
    }

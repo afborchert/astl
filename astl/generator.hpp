@@ -26,7 +26,7 @@ namespace Astl {
 
    class SyntaxTreeGenerator {
       public:
-	 virtual NodePtr gen(int& argc, char**& argv) throw(Exception) = 0;
+	 virtual NodePtr gen(int& argc, char**& argv) = 0;
    };
 
 } // namespace Astl

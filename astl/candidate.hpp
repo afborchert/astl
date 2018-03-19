@@ -41,9 +41,9 @@ namespace Astl {
 	 BindingsPtr get_bindings() const;
 
 	 // transformations, in-place and cloning
-	 void transform_inplace() const throw(Exception);
+	 void transform_inplace() const;
 	    // executes the transformation in-place
-	 NodePtr transform() const throw(Exception);
+	 NodePtr transform() const;
 	    // clones the tree, executes the transformation on the
 	    // clone, and returns it
 
@@ -52,7 +52,7 @@ namespace Astl {
 	 NodePtr* node; // points to the matched subtree
 	 BindingsPtr bindings;
 	 const RulePtr rule; // matching rule
-	 NodePtr gen_tree(NodePtr root) const throw(Exception);
+	 NodePtr gen_tree(NodePtr root) const;
    };
 
    typedef std::shared_ptr<Candidate> CandidatePtr;

@@ -122,8 +122,7 @@ namespace Astl {
 	    const std::string& name); // abstract state machine
 	 // mutators
 	 void import_asm(StateMachinePtr sm);
-	 void add_state(const std::string& state,
-	    const Location& loc) throw(Exception);
+	 void add_state(const std::string& state, const Location& loc);
 	 void add_rule(StateMachineRulePtr rule);
 	 typedef enum {privateVar, sharedVar} VarKind;
 	 void add_var(VarKind varkind, const std::string& varname,
@@ -131,8 +130,7 @@ namespace Astl {
 	 void add_var(VarKind varkind, const std::string& varname,
 	    NodePtr init_expr, const Location& loc);
 	 void add_close_handler(const StateSet& states, NodePtr handler);
-	 void add_local_function(const std::string& name,
-	    NodePtr block) throw(Exception);
+	 void add_local_function(const std::string& name, NodePtr block);
 	 // accessors
 	 bool is_abstract() const;
 	 std::size_t get_id() const;
@@ -149,8 +147,7 @@ namespace Astl {
 	 Iterator get_rules_end() const;
 	 Iterator get_creating_rules_begin() const;
 	 Iterator get_creating_rules_end() const;
-	 void run_close_handlers(int state, BindingsPtr local_bindings) const
-	    throw(Exception);
+	 void run_close_handlers(int state, BindingsPtr local_bindings) const;
       private:
 	 bool abstract;
 	 bool global;
@@ -185,10 +182,10 @@ namespace Astl {
 
    typedef std::map<std::string, StateMachinePtr> AbstractStateMachineTable;
    StateMachinePtr construct_sm(BindingsPtr bindings, NodePtr root,
-      std::size_t id, const AbstractStateMachineTable& asmt) throw(Exception);
+      std::size_t id, const AbstractStateMachineTable& asmt);
    // construct abstract state machine
    StateMachinePtr construct_asm(BindingsPtr bindings, NodePtr root,
-      const AbstractStateMachineTable& asmt) throw(Exception);
+      const AbstractStateMachineTable& asmt);
 
    class StateMachineTable {
       public:

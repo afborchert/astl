@@ -108,7 +108,7 @@ void run(NodePtr root,
       std::size_t count,
       const Operator& parentheses,
       std::ostream& out,
-      int argc, char** argv) throw(Exception) {
+      int argc, char** argv) {
    Rules rules(loader.load(rules_filename), loader);
 
    // setup default bindings
@@ -169,12 +169,12 @@ void run(NodePtr root,
       const char* rules_filename, const char* pattern,
       std::size_t count,
       const Operator& parentheses,
-      std::ostream& out) throw(Exception) {
+      std::ostream& out) {
    Loader loader;
    run(root, loader, rules_filename, pattern, count, parentheses, out, 0, 0);
 }
 
-void usage(char* cmdname) throw(Exception) {
+void usage(char* cmdname) {
    std::ostringstream os;
    os << "Usage: " << cmdname <<
       " script [source options...] source [options...]";
@@ -182,8 +182,7 @@ void usage(char* cmdname) throw(Exception) {
 }
 
 void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
-      Loader& loader, const Operator& parentheses)
-      throw(Exception) {
+      Loader& loader, const Operator& parentheses) {
    /* fetch cmdname */
    char* cmdname = *argv++; --argc;
    /* fetch name of our script */

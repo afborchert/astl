@@ -33,9 +33,8 @@ namespace Astl {
 	 Function(BindingsPtr bindings);
 	 Function(BindingsPtr bindings,
 	    std::initializer_list<std::string> parameters);
-	 Function(BindingsPtr bindings, NodePtr parameters) throw(Exception);
-	 virtual AttributePtr eval(AttributePtr args)
-	    const throw(Exception) = 0;
+	 Function(BindingsPtr bindings, NodePtr parameters);
+	 virtual AttributePtr eval(AttributePtr args) const = 0;
 	 const Arity& get_arity() const {
 	    return arity;
 	 }
@@ -45,16 +44,15 @@ namespace Astl {
 	 std::vector<std::string> parameters;
 	 bool bind_parameters;
 
-	 BindingsPtr process_parameters(AttributePtr args) const
-	    throw(Exception);
+	 BindingsPtr process_parameters(AttributePtr args) const;
    };
 
    class RegularFunction: public Function {
       public:
 	 RegularFunction(NodePtr block, BindingsPtr bindings);
 	 RegularFunction(NodePtr block, BindingsPtr bindings,
-	    NodePtr parameters) throw(Exception);
-	 virtual AttributePtr eval(AttributePtr args) const throw(Exception);
+	    NodePtr parameters);
+	 virtual AttributePtr eval(AttributePtr args) const;
       private:
 	 NodePtr block;
    };
@@ -64,7 +62,7 @@ namespace Astl {
 	 BuiltinFunction(Builtin bf, BindingsPtr bindings);
 	 BuiltinFunction(Builtin bf, BindingsPtr bindings,
 	    std::initializer_list<std::string> parameters);
-	 virtual AttributePtr eval(AttributePtr args) const throw(Exception);
+	 virtual AttributePtr eval(AttributePtr args) const;
       private:
 	 Builtin bf;
    };

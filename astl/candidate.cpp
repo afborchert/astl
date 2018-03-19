@@ -34,7 +34,7 @@ Candidate::Candidate(NodePtr root, NodePtr& node,
       root(root), node(&node), bindings(bindings), rule(rule) {
 }
 
-NodePtr Candidate::transform() const throw(Exception) {
+NodePtr Candidate::transform() const {
    NodePtr rhs = rule->get_rhs();
    NodePtr pre_block; NodePtr post_block;
    if (!rhs->is_leaf() && rhs->get_op() == Op::transformation_instructions) {
@@ -66,7 +66,7 @@ NodePtr Candidate::transform() const throw(Exception) {
    return cloned_root;
 }
 
-void Candidate::transform_inplace() const throw(Exception) {
+void Candidate::transform_inplace() const {
    NodePtr rhs = rule->get_rhs();
    NodePtr pre_block; NodePtr post_block;
    if (!rhs->is_leaf() && rhs->get_op() == Op::transformation_instructions) {
@@ -86,7 +86,7 @@ void Candidate::transform_inplace() const throw(Exception) {
    if (post_block) execute(post_block, bindings);
 }
 
-NodePtr Candidate::gen_tree(NodePtr troot) const throw(Exception) {
+NodePtr Candidate::gen_tree(NodePtr troot) const {
    bool named = false;
    std::string name;
    NodePtr newroot;

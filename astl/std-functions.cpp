@@ -26,8 +26,7 @@
 
 namespace Astl {
 
-AttributePtr builtin_assert(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_assert(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("argument missing for assert function");
    }
@@ -38,8 +37,7 @@ AttributePtr builtin_assert(BindingsPtr bindings,
    return assertion;
 }
 
-AttributePtr builtin_push(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_push(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() == 0) {
       throw Exception("argument missing for push function");
    }
@@ -53,8 +51,7 @@ AttributePtr builtin_push(BindingsPtr bindings,
    return list;
 }
 
-AttributePtr builtin_pop(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_pop(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() == 0) {
       throw Exception("argument missing for pop function");
    }
@@ -68,8 +65,7 @@ AttributePtr builtin_pop(BindingsPtr bindings,
    return list->pop();
 }
 
-AttributePtr builtin_len(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_len(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for len function");
    }
@@ -81,8 +77,7 @@ AttributePtr builtin_len(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_defined(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_defined(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for defined function");
    }
@@ -94,8 +89,7 @@ AttributePtr builtin_defined(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_isstring(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_isstring(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for defined function");
    }
@@ -104,8 +98,7 @@ AttributePtr builtin_isstring(BindingsPtr bindings,
       std::make_shared<Attribute>(at && at->get_type() == Attribute::string);
 }
 
-AttributePtr builtin_type(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_type(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for type function");
    }
@@ -139,8 +132,7 @@ AttributePtr builtin_type(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_isoperator(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_isoperator(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for isoperator function");
    }
@@ -149,8 +141,7 @@ AttributePtr builtin_isoperator(BindingsPtr bindings,
       at && at->get_type() == Attribute::tree && !at->get_node()->is_leaf());
 }
 
-AttributePtr builtin_operator(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_operator(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for operator function");
    }
@@ -162,8 +153,7 @@ AttributePtr builtin_operator(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_tokenliteral(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_tokenliteral(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for tokenliteral function");
    }
@@ -176,8 +166,7 @@ AttributePtr builtin_tokenliteral(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_tokentext(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_tokentext(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for tokenliteral function");
    }
@@ -190,8 +179,7 @@ AttributePtr builtin_tokentext(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_location(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_location(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for location function");
    }
@@ -207,8 +195,7 @@ AttributePtr builtin_location(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_prints(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_prints(BindingsPtr bindings, AttributePtr args) {
    if (args) {
       for (std::size_t i = 0; i < args->size(); ++i) {
 	 AttributePtr at = args->get_value(i);
@@ -227,15 +214,13 @@ AttributePtr builtin_prints(BindingsPtr bindings,
    return AttributePtr(nullptr);
 }
 
-AttributePtr builtin_println(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_println(BindingsPtr bindings, AttributePtr args) {
    auto res = builtin_prints(bindings, args);
    std::cout << std::endl;
    return res;
 }
 
-AttributePtr builtin_integer(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_integer(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for integer function");
    }
@@ -252,8 +237,7 @@ AttributePtr builtin_integer(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_string(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_string(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for string function");
    }
@@ -267,8 +251,7 @@ AttributePtr builtin_string(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_gentext(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_gentext(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for gentext function");
    }
@@ -280,8 +263,7 @@ AttributePtr builtin_gentext(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_clone(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_clone(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for clone function");
    }
@@ -289,8 +271,7 @@ AttributePtr builtin_clone(BindingsPtr bindings,
    return at->clone();
 }
 
-AttributePtr builtin_copy(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_copy(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 2) {
       throw Exception("wrong number of arguments for copy function");
    }
@@ -305,8 +286,7 @@ AttributePtr builtin_copy(BindingsPtr bindings,
 
 // control flow graph construction functions
 
-AttributePtr builtin_cfg_node(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_cfg_node(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() == 0) {
       return std::make_shared<Attribute>(
 	       std::make_shared<FlowGraphNode>(bindings));
@@ -354,8 +334,7 @@ AttributePtr builtin_cfg_node(BindingsPtr bindings,
    }
 }
 
-AttributePtr builtin_cfg_connect(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_cfg_connect(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() < 2 || args->size() > 3) {
       throw Exception("wrong number of arguments for cfg_connect function");
    }
@@ -381,8 +360,7 @@ AttributePtr builtin_cfg_connect(BindingsPtr bindings,
    return AttributePtr(nullptr);
 }
 
-AttributePtr builtin_cfg_type(BindingsPtr bindings,
-      AttributePtr args) throw(Exception) {
+AttributePtr builtin_cfg_type(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for cfg_type function");
    }

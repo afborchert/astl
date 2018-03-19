@@ -24,7 +24,7 @@ using namespace std;
 
 namespace Astl {
 
-void yyerror(location const* loc, char const* msg) throw(Exception) {
+void yyerror(location const* loc, char const* msg) {
    throw Exception(*loc, msg);
 }
 

@@ -29,7 +29,7 @@ AttributionRuleSetFunction::AttributionRuleSetFunction(RuleTablePtr rt_param,
 }
 
 AttributePtr AttributionRuleSetFunction::eval(AttributePtr args)
-      const throw(Exception) {
+      const {
    NodePtr root;
    if (!args || args->size() == 0) {
       AttributePtr rootat = bindings->get("root");

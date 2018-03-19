@@ -27,7 +27,7 @@
 namespace Astl {
 
    bool matches(NodePtr root, NodePtr expression,
-      BindingsPtr bindings, Context& context) throw(Exception);
+      BindingsPtr bindings, Context& context);
 
 } // namespace Astl
 

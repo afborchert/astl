@@ -31,7 +31,7 @@
 namespace Astl {
 
 static void bind_variable(BindingsPtr bindings, const Location& loc,
-      const std::string& varname, NodePtr tree) throw(Exception) {
+      const std::string& varname, NodePtr tree) {
    if (!bindings->define(varname, std::make_shared<Attribute>(tree))) {
       std::ostringstream os;
       os << "multiply defined variable: " << varname;
@@ -39,8 +39,8 @@ static void bind_variable(BindingsPtr bindings, const Location& loc,
    }
 }
 
-static void bind_variable(BindingsPtr bindings, const Location& loc, const std::string& varname,
-      AttributePtr at) throw(Exception) {
+static void bind_variable(BindingsPtr bindings,
+      const Location& loc, const std::string& varname, AttributePtr at) {
    if (!bindings->define(varname, at)) {
       std::ostringstream os;
       os << "multiply defined variable: " << varname;
@@ -49,7 +49,7 @@ static void bind_variable(BindingsPtr bindings, const Location& loc, const std::
 }
 
 static bool recursive_matches(NodePtr root, NodePtr expression,
-      BindingsPtr bindings, Context& context) throw(Exception) {
+      BindingsPtr bindings, Context& context) {
    while (!expression->is_leaf() &&
 	 expression->get_op() == Op::named_tree_expression) {
       /* tree_expression AS IDENT construct */
@@ -194,7 +194,7 @@ static bool recursive_matches(NodePtr root, NodePtr expression,
 }
 
 bool matches(NodePtr root, NodePtr expression,
-      BindingsPtr bindings, Context& context) throw(Exception) {
+      BindingsPtr bindings, Context& context) {
    BindingsPtr local_bindings = std::make_shared<Bindings>(bindings);
    assert(!expression->is_leaf());
    NodePtr where_expression = NodePtr(nullptr);

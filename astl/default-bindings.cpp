@@ -29,7 +29,7 @@
 namespace Astl {
 
 BindingsPtr create_default_bindings(NodePtr root,
-      const Rules* rulesp) throw(Exception){
+      const Rules* rulesp) {
    auto bindings = std::make_shared<Bindings>(rulesp);
    // add "root" and "graph"
    if (root) {
@@ -126,11 +126,11 @@ BindingsPtr create_default_bindings(NodePtr root,
    return std::make_shared<Bindings>(bindings);
 }
 
-BindingsPtr create_default_bindings(NodePtr root) throw(Exception) {
+BindingsPtr create_default_bindings(NodePtr root) {
    return create_default_bindings(root, nullptr);
 }
 
-BindingsPtr create_default_bindings() throw(Exception) {
+BindingsPtr create_default_bindings() {
    return create_default_bindings(NodePtr(nullptr), nullptr);
 }
 

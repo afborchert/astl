@@ -32,8 +32,7 @@ namespace Astl {
     * leftAt and rightAt and return its result.
     */
    AttributePtr list_binary_op(const Operator& op,
-      AttributePtr leftAt, AttributePtr rightAt,
-      const Location& loc) throw(Exception);
+      AttributePtr leftAt, AttributePtr rightAt, const Location& loc);
 
 } // namespace Astl
 

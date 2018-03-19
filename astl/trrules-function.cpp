@@ -32,8 +32,7 @@ TransformationRuleSetFunction::TransformationRuleSetFunction(
       Function(bindings_param), rt(rt_param) {
 }
 
-AttributePtr TransformationRuleSetFunction::eval(AttributePtr args)
-      const throw(Exception) {
+AttributePtr TransformationRuleSetFunction::eval(AttributePtr args) const {
    NodePtr root;
    if (!args || args->size() == 0) {
       AttributePtr rootat = bindings->get("root");
@@ -72,7 +71,7 @@ InplaceTransformationRuleSetFunction::InplaceTransformationRuleSetFunction(
 }
 
 AttributePtr InplaceTransformationRuleSetFunction::eval(AttributePtr args)
-      const throw(Exception) {
+      const {
    NodePtr root;
    if (!args || args->size() == 0) {
       AttributePtr rootat = bindings->get("root");

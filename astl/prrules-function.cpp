@@ -28,8 +28,7 @@ PrintRuleSetFunction::PrintRuleSetFunction(RuleTablePtr rt_param,
       Function(bindings_param), rt(rt_param) {
 }
 
-AttributePtr PrintRuleSetFunction::eval(AttributePtr args)
-      const throw(Exception) {
+AttributePtr PrintRuleSetFunction::eval(AttributePtr args) const {
    NodePtr root;
    if (!args || args->size() == 0) {
       AttributePtr rootat = bindings->get("root");

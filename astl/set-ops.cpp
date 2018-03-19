@@ -27,7 +27,7 @@ namespace Astl {
 
 AttributePtr set_binary_op(const Operator& op,
       AttributePtr leftAt, AttributePtr rightAt,
-      const Location& loc) throw(Exception) {
+      const Location& loc) {
    assert(leftAt && rightAt &&
       leftAt->get_type() == Attribute::dictionary &&
       rightAt->get_type() == Attribute::dictionary);

@@ -26,8 +26,7 @@
 
 namespace Astl {
 
-   void execute_state_machines(const Rules& rules,
-      BindingsPtr bindings) throw (Exception);
+   void execute_state_machines(const Rules& rules, BindingsPtr bindings);
 
 } // namespace Astl
 

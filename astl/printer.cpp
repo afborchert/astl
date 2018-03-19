@@ -39,12 +39,12 @@ namespace Astl {
 
 static bool recursive_print(std::ostream& out, const NodePtr root,
 	 const RuleTable& rules, BindingsPtr bindings, std::size_t indent,
-	 Context& context) throw(Exception);
+	 Context& context);
 
 static bool expand_variable(std::ostream& out, std::string name,
       const RuleTable& rules, std::size_t indent,
       BindingsPtr bindings, BindingsPtr local_bindings,
-      Context& context) throw(Exception) {
+      Context& context) {
    if (name.size() > 0 && local_bindings->defined(name)) {
       NodePtr node = local_bindings->get(name)->get_node();
       return recursive_print(out, node, rules, bindings, indent, context);
@@ -86,7 +86,7 @@ static void expand_text(std::ostream& out, const Token& t,
 static bool recursive_print(std::ostream& out, const NodePtr root,
 	 const RuleTable& rules, BindingsPtr bindings,
 	 std::size_t indent,
-	 Context& context) throw(Exception) {
+	 Context& context) {
    if (root->is_leaf()) {
       return !!(out << root->get_token().get_literal());
    } else {
@@ -193,20 +193,20 @@ static bool recursive_print(std::ostream& out, const NodePtr root,
 }
 
 bool print(std::ostream& out, const NodePtr root,
-      const RuleTable& rules) throw(Exception) {
+      const RuleTable& rules) {
    Context context;
    return recursive_print(out, root, rules,
       create_default_bindings(root), 0, context);
 }
 
 bool print(std::ostream& out, const NodePtr root,
-      const RuleTable& rules, BindingsPtr bindings) throw(Exception) {
+      const RuleTable& rules, BindingsPtr bindings) {
    Context context;
    return recursive_print(out, root, rules, bindings, 0, context);
 }
 
 AttributePtr gen_text(const RuleTable& print_rules, NodePtr root,
-      BindingsPtr bindings) throw(Exception) {
+      BindingsPtr bindings) {
    const Rules& rules(bindings->get_rules());
    std::ostringstream os;
    if (rules.operator_rules_defined()) {
@@ -234,8 +234,7 @@ AttributePtr gen_text(const RuleTable& print_rules, NodePtr root,
    }
 }
 
-AttributePtr gen_text(NodePtr root,
-      BindingsPtr bindings) throw(Exception) {
+AttributePtr gen_text(NodePtr root, BindingsPtr bindings) {
    if (!bindings->rules_defined()) {
       throw Exception("no print rules defined");
    }

@@ -33,7 +33,7 @@ namespace Astl {
 	 typedef std::set<std::string>::const_iterator Iterator;
 
 	 // constructor
-	 OperatorSet(NodePtr opset_expr, const Rules& rules) throw(Exception);
+	 OperatorSet(NodePtr opset_expr, const Rules& rules);
 
 	 // accessors
 	 unsigned int get_card() const;
@@ -44,8 +44,8 @@ namespace Astl {
 
       private:
 	 std::set<std::string> opset;
-	 void traverse(NodePtr opset_expr, const Rules& rules) throw(Exception);
-	 void add(NodePtr node, const Rules& rules) throw(Exception);
+	 void traverse(NodePtr opset_expr, const Rules& rules);
+	 void add(NodePtr node, const Rules& rules);
    };
    typedef std::shared_ptr<OperatorSet> OperatorSetPtr;
 

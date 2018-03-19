@@ -25,11 +25,11 @@
 namespace Astl {
 
 OperatorSet::OperatorSet(NodePtr opset_expr,
-      const Rules& rules) throw(Exception) {
+      const Rules& rules) {
    traverse(opset_expr, rules);
 }
 
-void OperatorSet::add(NodePtr node, const Rules& rules) throw(Exception) {
+void OperatorSet::add(NodePtr node, const Rules& rules) {
    if (node->is_leaf()) {
       /* identifier refering to an operator set clause */
       std::string name = node->get_token().get_text();
@@ -53,7 +53,7 @@ void OperatorSet::add(NodePtr node, const Rules& rules) throw(Exception) {
 }
 
 void OperatorSet::traverse(NodePtr opset_expr,
-      const Rules& rules) throw(Exception) {
+      const Rules& rules) {
    NodePtr node = opset_expr;
    std::string opname;
    while (!node->is_leaf() && node->size() == 2) {

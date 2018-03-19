@@ -37,7 +37,7 @@ namespace Astl {
 	 OperatorTable(NodePtr root, const Rules& rules);
 
 	 // mutators
-	 void scan(NodePtr root, const Rules& rules) throw(Exception);
+	 void scan(NodePtr root, const Rules& rules);
 
 	 // accessors
 	 bool included(const Operator& op) const;

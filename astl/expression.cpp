@@ -72,7 +72,7 @@ static bool is_string_op(int opcode) {
 }
 
 Expression::Expression(NodePtr expr, BindingsPtr bindings_param)
-      throw(Exception) : root(expr), bindings(bindings_param) {
+      : root(expr), bindings(bindings_param) {
    assert(!expr->is_leaf());
    assert(expr->size() == 1);
    // descend to designator if it is one
@@ -106,7 +106,7 @@ DesignatorPtr Expression::get_designator() const {
    return desat;
 }
 
-NodePtr Expression::convert_to_node() const throw(Exception) {
+NodePtr Expression::convert_to_node() const {
    if (result) {
       if (result->get_type() == Attribute::tree) {
 	 return result->get_node();
@@ -119,7 +119,7 @@ NodePtr Expression::convert_to_node() const throw(Exception) {
    }
 }
 
-bool Expression::convert_to_bool() const throw(Exception) {
+bool Expression::convert_to_bool() const {
    if (result) {
       return result->convert_to_bool();
    } else {
@@ -127,7 +127,7 @@ bool Expression::convert_to_bool() const throw(Exception) {
    }
 }
 
-IntegerPtr Expression::convert_to_integer() const throw(Exception) {
+IntegerPtr Expression::convert_to_integer() const {
    if (result) {
       return result->convert_to_integer(root->get_location());
    } else {
@@ -135,7 +135,7 @@ IntegerPtr Expression::convert_to_integer() const throw(Exception) {
    }
 }
 
-AttributePtr Expression::convert_to_list() const throw(Exception) {
+AttributePtr Expression::convert_to_list() const {
    if (!result) {
       // return an empty list for a null value
       return std::make_shared<Attribute>(Attribute::list);
@@ -143,7 +143,7 @@ AttributePtr Expression::convert_to_list() const throw(Exception) {
    return result->convert_to_list();
 }
 
-AttributePtr Expression::convert_to_dict() const throw(Exception) {
+AttributePtr Expression::convert_to_dict() const {
    if (!result) {
       // return an empty dictionary for a null value
       return std::make_shared<Attribute>(Attribute::dictionary);
@@ -151,7 +151,7 @@ AttributePtr Expression::convert_to_dict() const throw(Exception) {
    return result->convert_to_dict();
 }
 
-DesignatorPtr Expression::eval_designator(NodePtr expr) throw(Exception) {
+DesignatorPtr Expression::eval_designator(NodePtr expr) {
    if (expr->is_leaf()) {
       /* IDENT token */
       std::string varname = expr->get_token().get_text();
@@ -183,7 +183,7 @@ DesignatorPtr Expression::eval_designator(NodePtr expr) throw(Exception) {
    }
 }
 
-AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
+AttributePtr Expression::eval_primary(NodePtr expr) {
    assert(!expr->is_leaf());
    switch (expr->get_op().get_opcode()) {
       case ASTL_OPERATOR_DESIGNATOR:
@@ -319,7 +319,7 @@ AttributePtr Expression::eval_primary(NodePtr expr) throw(Exception) {
    }
 }
 
-AttributePtr Expression::recursive_evaluation(NodePtr expr) throw(Exception) {
+AttributePtr Expression::recursive_evaluation(NodePtr expr) {
    assert(!expr->is_leaf());
    if (expr->get_op() == Op::expression) {
       expr = expr->get_operand(0);

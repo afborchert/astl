@@ -139,14 +139,14 @@ CandidatePtr CandidateSet::operator[](std::size_t index) const {
    return candidates[index];
 }
 
-void CandidateSet::gen_mutation() throw(Exception) {
+void CandidateSet::gen_mutation() {
    generate();
    assert(size() > 0); assert(consumer); assert(prg);
    CandidatePtr candidate = candidates[prg->pick(size())];
    consumer->consume(candidate->transform(), candidate);
 }
 
-void CandidateSet::gen_mutations() throw(Exception) {
+void CandidateSet::gen_mutations() {
    generate();
    assert(consumer); assert(prg);
    for (std::size_t i = 0; i < size(); ++i) {
@@ -155,7 +155,7 @@ void CandidateSet::gen_mutations() throw(Exception) {
    }
 }
 
-void CandidateSet::gen_mutations(std::size_t count) throw(Exception) {
+void CandidateSet::gen_mutations(std::size_t count) {
    generate();
    assert(consumer); assert(prg);
    if (count > size()) count = size();

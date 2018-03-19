@@ -33,7 +33,7 @@ namespace Astl {
 	 }
 
 	 Regex(const Location& loc,
-	    const std::string& pattern) throw(Exception) :
+	    const std::string& pattern) :
 	       code(nullptr), match_data(nullptr) {
 	    compile(loc, pattern);
 	 }
@@ -44,7 +44,7 @@ namespace Astl {
 	 }
 
 	 void compile(const Location& loc,
-	       const std::string& pattern) throw(Exception) {
+	       const std::string& pattern) {
 	    // cleanup old state
 	    if (code) {
 	       pcre2_code* oldcode = nullptr;

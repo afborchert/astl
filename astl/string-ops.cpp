@@ -29,8 +29,7 @@
 namespace Astl {
 
 AttributePtr string_binary_op(const Operator& op,
-      AttributePtr leftAt, AttributePtr rightAt,
-      const Location& loc) throw(Exception) {
+      AttributePtr leftAt, AttributePtr rightAt, const Location& loc) {
    std::string left = leftAt? leftAt->convert_to_string(): "";
    std::string right;
    if (op.get_opcode() != ASTL_OPERATOR_X_TK) {

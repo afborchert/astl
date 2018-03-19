@@ -29,7 +29,7 @@ namespace Astl {
       public:
 	 AttributionRuleSetFunction(RuleTablePtr rt_param,
 	    BindingsPtr bindings_param);
-	 virtual AttributePtr eval(AttributePtr args) const throw(Exception);
+	 virtual AttributePtr eval(AttributePtr args) const;
       private:
 	 RuleTablePtr rt;
    };

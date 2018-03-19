@@ -57,13 +57,13 @@ namespace Astl {
 	    mpz_init(value);
 	    mpz_set(value, val);
 	 }
-	 Integer(const char* s, const Location& loc) throw(Exception) {
+	 Integer(const char* s, const Location& loc) {
 	    mpz_init(value);
 	    if (mpz_set_str(value, s, 10) < 0) {
 	       throw Exception(loc, "conversion to integer failed");
 	    }
 	 }
-	 Integer(std::string& s, const Location& loc) throw(Exception) {
+	 Integer(std::string& s, const Location& loc) {
 	    mpz_init(value);
 	    if (mpz_set_str(value, s.c_str(), 10) < 0) {
 	       throw Exception(loc, "conversion to integer failed");
@@ -99,7 +99,7 @@ namespace Astl {
 	    return *this;
 	 }
 	 Integer& power(const Integer& other,
-	       const Location& loc) throw(Exception) {
+	       const Location& loc) {
 	    if (mpz_fits_ulong_p(other.value)) {
 	       unsigned long int exp = mpz_get_ui(other.value);
 	       mpz_pow_ui(value, value, exp);
@@ -120,8 +120,7 @@ namespace Astl {
 	    return value;
 	 }
 	 // accessors
-	 unsigned long int get_unsigned_int(const Location& loc) const
-	       throw(Exception) {
+	 unsigned long int get_unsigned_int(const Location& loc) const {
 	    if (mpz_fits_ulong_p(value)) {
 	       return mpz_get_ui(value);
 	    } else {

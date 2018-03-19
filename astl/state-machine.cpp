@@ -56,7 +56,7 @@ void StateMachine::import_asm(StateMachinePtr sm) {
 }
 
 void StateMachine::add_state(const std::string& state,
-      const Location& loc) throw(Exception) {
+      const Location& loc) {
    assert(!abstract);
    int nextid = stateByName.size();
    std::pair<std::map<std::string, int>::iterator, bool> result =
@@ -89,8 +89,7 @@ void StateMachine::add_close_handler(const StateSet& states, NodePtr block) {
    close_handlers.push_back(handler);
 }
 
-void StateMachine::add_local_function(const std::string& fname,
-      NodePtr block) throw(Exception) {
+void StateMachine::add_local_function(const std::string& fname, NodePtr block) {
    assert(block);
    std::map<std::string, NodePtr>::const_iterator vit = vars.find(fname);
    if (vit != vars.end()) {
@@ -235,7 +234,7 @@ StateMachine::Iterator StateMachine::get_creating_rules_end() const {
 }
 
 void StateMachine::run_close_handlers(int state,
-	 BindingsPtr local_bindings) const throw(Exception) {
+	 BindingsPtr local_bindings) const {
    assert(state >= 0);
    local_bindings->define("current_state",
 	 std::make_shared<Attribute>(get_state_by_number(state)));
@@ -516,7 +515,7 @@ static void add_vars(StateMachinePtr sm, NodePtr root) {
    }
 }
 
-static void add_functions(StateMachinePtr sm, NodePtr root) throw(Exception) {
+static void add_functions(StateMachinePtr sm, NodePtr root) {
    if (root->get_op() == Op::sm_function_definitions) {
       add_functions(sm, root->get_operand(0));
       root = root->get_operand(1);
@@ -670,7 +669,7 @@ static void add_rules(StateMachinePtr sm, BindingsPtr bindings, NodePtr root) {
 }
 
 StateMachinePtr construct_sm(BindingsPtr bindings, NodePtr root,
-      std::size_t id, const AbstractStateMachineTable& asmt) throw(Exception) {
+      std::size_t id, const AbstractStateMachineTable& asmt) {
    assert(root && root->get_op() == Op::state_machine);
    assert(root->size() == 5 || root->size() == 6);
    int argi = 0;
@@ -706,7 +705,7 @@ StateMachinePtr construct_sm(BindingsPtr bindings, NodePtr root,
 }
 
 StateMachinePtr construct_asm(BindingsPtr bindings, NodePtr root,
-      const AbstractStateMachineTable& asmt) throw(Exception) {
+      const AbstractStateMachineTable& asmt) {
    assert(root && root->get_op() == Op::abstract_state_machine);
    assert(root->size() == 4 || root->size() == 5);
    int argi = 0;

@@ -30,27 +30,26 @@ namespace Astl {
 
    class Expression {
       public:
-	 Expression(NodePtr expr, BindingsPtr bindings_param)
-	    throw(Exception);
+	 Expression(NodePtr expr, BindingsPtr bindings_param);
 
 	 // accessors
 	 AttributePtr get_result() const;
 	 bool is_lvalue() const;
 	 DesignatorPtr get_designator() const;
-	 NodePtr convert_to_node() const throw(Exception);
-	 bool convert_to_bool() const throw(Exception);
-	 IntegerPtr convert_to_integer() const throw(Exception);
-	 AttributePtr convert_to_list() const throw(Exception);
-	 AttributePtr convert_to_dict() const throw(Exception);
+	 NodePtr convert_to_node() const;
+	 bool convert_to_bool() const;
+	 IntegerPtr convert_to_integer() const;
+	 AttributePtr convert_to_list() const;
+	 AttributePtr convert_to_dict() const;
 
       private:
 	 NodePtr root; // root of the expression tree
 	 BindingsPtr bindings;
 	 AttributePtr result;
 	 DesignatorPtr desat;
-	 DesignatorPtr eval_designator(NodePtr expr) throw(Exception);
-	 AttributePtr eval_primary(NodePtr expr) throw(Exception);
-	 AttributePtr recursive_evaluation(NodePtr expr) throw(Exception);
+	 DesignatorPtr eval_designator(NodePtr expr);
+	 AttributePtr eval_primary(NodePtr expr);
+	 AttributePtr recursive_evaluation(NodePtr expr);
    };
 
 } // namespace Astl

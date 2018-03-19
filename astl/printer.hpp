@@ -28,13 +28,13 @@
 namespace Astl {
 
    bool print(std::ostream& out, const NodePtr root,
-      const RuleTable& rules) throw(Exception);
+      const RuleTable& rules);
    bool print(std::ostream& out, const NodePtr root,
-      const RuleTable& rules, BindingsPtr bindings) throw(Exception);
+      const RuleTable& rules, BindingsPtr bindings);
    AttributePtr gen_text(NodePtr root,
-      BindingsPtr bindings) throw(Exception);
+      BindingsPtr bindings);
    AttributePtr gen_text(const RuleTable& print_rules, NodePtr root,
-	 BindingsPtr bindings) throw(Exception);
+	 BindingsPtr bindings);
 
 } // namespace Astl
 

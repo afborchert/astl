@@ -29,12 +29,11 @@
 
 namespace Astl {
 
-   AttributePtr execute(NodePtr statements, BindingsPtr bindings)
-      throw(Exception);
-   void execute(NodePtr root, const RuleTable& rules) throw(Exception);
+   AttributePtr execute(NodePtr statements, BindingsPtr bindings);
+   void execute(NodePtr root, const RuleTable& rules);
    void execute(NodePtr root, const RuleTable& rules,
-      BindingsPtr bindings) throw(Exception);
-   void execute(const CandidateSet& candidates) throw(Exception);
+      BindingsPtr bindings);
+   void execute(const CandidateSet& candidates);
 
 } // namespace Astl
 

@@ -39,10 +39,10 @@ namespace Astl {
    class Rules {
       public:
 	 Rules(Loader& loader_param);
-	 Rules(NodePtr root, Loader& loader_param) throw(Exception);
+	 Rules(NodePtr root, Loader& loader_param);
 
 	 // mutator
-	 void scan(NodePtr root) throw(Exception);
+	 void scan(NodePtr root);
 
 	 // accessors
 	 OperatorSetPtr get_opset(const std::string& name) const;

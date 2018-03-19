@@ -47,13 +47,13 @@ std::string get_here_name(BindingsPtr bindings, BindingsPtr local_bindings) {
 }
 
 bool Context::matches(NodePtr tree_expr, BindingsPtr bindings,
-      NodePtr node) throw(Exception) {
+      NodePtr node) {
    matching_it_defined = false;
    return and_matches(tree_expr, bindings, node);
 }
 
 bool Context::and_matches(NodePtr tree_expr, BindingsPtr bindings,
-      NodePtr node) throw(Exception) {
+      NodePtr node) {
    Context empty_context;
    BindingsPtr local_bindings = std::make_shared<Bindings>(bindings);
    PathMemberPtr it;

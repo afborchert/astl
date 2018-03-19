@@ -24,10 +24,9 @@
 
 namespace Astl {
 
-   BindingsPtr create_default_bindings() throw(Exception);
-   BindingsPtr create_default_bindings(NodePtr root) throw(Exception);
-   BindingsPtr create_default_bindings(NodePtr root,
-      const Rules* rulesp) throw(Exception);
+   BindingsPtr create_default_bindings();
+   BindingsPtr create_default_bindings(NodePtr root);
+   BindingsPtr create_default_bindings(NodePtr root, const Rules* rulesp);
 
 } // namespace Astl
 

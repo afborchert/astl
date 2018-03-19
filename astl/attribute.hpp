@@ -97,7 +97,7 @@ namespace Astl {
 	 // for lists and match results:
 	 AttributePtr get_value(std::size_t index) const;
 
-	 NodePtr get_node() const throw(Exception);
+	 NodePtr get_node() const;
 
 	 // for flow graph nodes:
 	 FlowGraphNodePtr get_fgnode() const;
@@ -116,22 +116,21 @@ namespace Astl {
 	 bool is_integer() const;
 
 	 // general operators
-	 bool equal_to(AttributePtr other) const throw(Exception);
+	 bool equal_to(AttributePtr other) const;
 
 	 // conversions
-	 std::string convert_to_string() const throw(Exception);
-	 IntegerPtr convert_to_integer(const Location& loc) const
-	    throw(Exception);
-	 bool convert_to_bool() const throw(Exception);
-	 AttributePtr convert_to_list() throw(Exception);
-	 AttributePtr convert_to_dict() throw(Exception);
+	 std::string convert_to_string() const;
+	 IntegerPtr convert_to_integer(const Location& loc) const;
+	 bool convert_to_bool() const;
+	 AttributePtr convert_to_list();
+	 AttributePtr convert_to_dict();
 
 	 // create a clone of this attribute
 	 // (this is one level deep, i.e. not working recursively)
 	 AttributePtr clone() const;
 
 	 // copy contents from another attribute of the very same type
-	 void copy(AttributePtr other) throw(Exception);
+	 void copy(AttributePtr other);
 
       private:
 	 friend std::ostream& operator<<(std::ostream& out, AttributePtr at);

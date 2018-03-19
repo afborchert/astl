@@ -35,8 +35,7 @@ namespace Astl {
 
 // returns true if we have to return
 bool recursive_execute(NodePtr block, BindingsPtr bindings,
-	 AttributePtr& rval)
-      throw(Exception) {
+	 AttributePtr& rval) {
    BindingsPtr local_bindings = std::make_shared<Bindings>(bindings);
    assert(block->get_op() == Op::block);
    for (std::size_t i = 0; i < block->size(); ++i) {
@@ -184,8 +183,7 @@ bool recursive_execute(NodePtr block, BindingsPtr bindings,
    return false;
 }
 
-AttributePtr execute(NodePtr block, BindingsPtr bindings)
-      throw(Exception) {
+AttributePtr execute(NodePtr block, BindingsPtr bindings) {
    AttributePtr return_value;
    if (recursive_execute(block, bindings, return_value)) {
       return return_value;
@@ -194,18 +192,17 @@ AttributePtr execute(NodePtr block, BindingsPtr bindings)
    }
 }
 
-void execute(NodePtr root, const RuleTable& rules) throw(Exception) {
+void execute(NodePtr root, const RuleTable& rules) {
    CandidateSet candidates(root, rules);
    execute(candidates);
 }
 
-void execute(NodePtr root, const RuleTable& rules,
-      BindingsPtr bindings) throw(Exception) {
+void execute(NodePtr root, const RuleTable& rules, BindingsPtr bindings) {
    CandidateSet candidates(root, rules, bindings);
    execute(candidates);
 }
 
-void execute(const CandidateSet& candidates) throw(Exception) {
+void execute(const CandidateSet& candidates) {
    for (std::size_t i = 0; i < candidates.size(); ++i) {
       CandidatePtr candidate = candidates[i];
       RulePtr rule(candidate->get_rule());

@@ -480,8 +480,7 @@ StateMachinePtr create_dummy_sm(unsigned int id, BindingsPtr bindings) {
    return dummy;
 }
 
-void execute_state_machines(const Rules& rules, BindingsPtr bindings)
-      throw(Exception) {
+void execute_state_machines(const Rules& rules, BindingsPtr bindings) {
    Thread thread; thread.node = get_root(bindings);
    if (!thread.node) return; // no starting point
    const StateMachineTable& smtab = rules.get_sm_table(bindings);

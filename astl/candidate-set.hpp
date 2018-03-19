@@ -55,9 +55,9 @@ namespace Astl {
 
 	 // generators
 	 // general PRE: consumer and prg must be well-defined */
-	 void gen_mutation() throw(Exception);
-	 void gen_mutations() throw(Exception);
-	 void gen_mutations(std::size_t count) throw(Exception);
+	 void gen_mutation();
+	 void gen_mutations();
+	 void gen_mutations(std::size_t count);
 
 	 // mutators
 	 void set_consumer(ConsumerPtr consumer_param);

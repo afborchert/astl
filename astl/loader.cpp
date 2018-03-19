@@ -33,7 +33,7 @@ bool Loader::loaded(const std::string& name) const {
    return loaded_libs.find(name) != loaded_libs.end();
 }
 
-NodePtr Loader::load(const std::string& name) throw(Exception) {
+NodePtr Loader::load(const std::string& name) {
    std::ifstream in;
    std::string path;
    if (name[0] == '/') {

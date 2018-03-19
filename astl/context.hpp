@@ -35,9 +35,9 @@ namespace Astl {
 
 	 // accessors
 	 bool matches(NodePtr tree_expr, BindingsPtr bindings,
-	       NodePtr node) throw(Exception);
+	       NodePtr node);
 	 bool and_matches(NodePtr tree_expr, BindingsPtr bindings,
-	       NodePtr node) throw(Exception);
+	       NodePtr node);
 	 bool suppressed() const;
 
 	 // mutators

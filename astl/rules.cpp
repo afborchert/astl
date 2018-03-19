@@ -34,7 +34,7 @@ Rules::Rules(Loader& loader_param) :
    transformation_rules_ok(false), attribution_rules_ok(false) {
 }
 
-Rules::Rules(NodePtr root, Loader& loader_param) throw(Exception) :
+Rules::Rules(NodePtr root, Loader& loader_param) :
       loader(loader_param),
       print_rules_ok(false), operator_rules_ok(false),
       transformation_rules_ok(false), attribution_rules_ok(false) {
@@ -57,7 +57,7 @@ void Rules::add_to_named_rules(NamedRulesTable& nrtab,
    }
 }
 
-void Rules::scan(NodePtr root) throw(Exception) {
+void Rules::scan(NodePtr root) {
    assert(!root->is_leaf());
    assert(root->get_op() == Op::unit && root->size() == 2);
 

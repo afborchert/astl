@@ -36,14 +36,14 @@ namespace Astl {
 
 	 // mutators
 	 void add_index(AttributePtr indexAt,
-	    const Location& loc) throw(Exception);
+	    const Location& loc);
 	 void add_key(const std::string& key_param,
-	    const Location& loc) throw(Exception);
-	 void assign(AttributePtr value, const Location& loc) throw(Exception);
-	 void delete_key(const Location& loc) throw(Exception);
+	    const Location& loc);
+	 void assign(AttributePtr value, const Location& loc);
+	 void delete_key(const Location& loc);
 
 	 // accessors
-	 AttributePtr get_value(const Location& loc) const throw(Exception);
+	 AttributePtr get_value(const Location& loc) const;
 	 bool is_lvalue() const;
 	 bool exists() const;
 
