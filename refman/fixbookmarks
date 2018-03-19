@@ -232,7 +232,7 @@ sub infiles {
    my @files = ();
    while (<$index>) {
       chomp;
-      next unless /^\s*\\include{(.*)}$/;
+      next unless /^\s*\\include\{(.*)\}$/;
       next if $1 eq "macros";
       push(@files, "$1.tex");
    }
