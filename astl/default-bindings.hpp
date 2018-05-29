@@ -27,6 +27,8 @@ namespace Astl {
    BindingsPtr create_default_bindings();
    BindingsPtr create_default_bindings(NodePtr root);
    BindingsPtr create_default_bindings(NodePtr root, const Rules* rulesp);
+   BindingsPtr create_default_bindings(NodePtr root,
+      const Rules* rulesp, BindingsPtr extra_bindings);
 
 } // namespace Astl
 

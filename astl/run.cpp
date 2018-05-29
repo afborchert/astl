@@ -108,11 +108,12 @@ void run(NodePtr root,
       std::size_t count,
       const Operator& parentheses,
       std::ostream& out,
+      BindingsPtr extra_bindings,
       int argc, char** argv) {
    Rules rules(loader.load(rules_filename), loader);
 
    // setup default bindings
-   BindingsPtr bindings = create_default_bindings(root, &rules);
+   BindingsPtr bindings = create_default_bindings(root, &rules, extra_bindings);
 
    // execute global attribution rules, if defined
    if (rules.attribution_rules_defined()) {
@@ -169,9 +170,21 @@ void run(NodePtr root,
       const char* rules_filename, const char* pattern,
       std::size_t count,
       const Operator& parentheses,
+      std::ostream& out,
+      BindingsPtr extra_bindings) {
+   Loader loader;
+   run(root, loader, rules_filename, pattern, count, parentheses, out,
+      extra_bindings, 0, 0);
+}
+
+void run(NodePtr root,
+      const char* rules_filename, const char* pattern,
+      std::size_t count,
+      const Operator& parentheses,
       std::ostream& out) {
    Loader loader;
-   run(root, loader, rules_filename, pattern, count, parentheses, out, 0, 0);
+   run(root, loader, rules_filename, pattern, count, parentheses, out,
+      nullptr, 0, 0);
 }
 
 void usage(char* cmdname) {
@@ -182,7 +195,8 @@ void usage(char* cmdname) {
 }
 
 void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
-      Loader& loader, const Operator& parentheses) {
+      Loader& loader, const Operator& parentheses,
+      BindingsPtr extra_bindings) {
    /* fetch cmdname */
    char* cmdname = *argv++; --argc;
    /* fetch name of our script */
@@ -195,7 +209,12 @@ void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
       throw Exception("no abstract syntax tree has been generated");
    }
    run(root, loader, script_name, /* pattern= */ nullptr, /* count = */ 0,
-      parentheses, std::cout, argc, argv);
+      parentheses, std::cout, extra_bindings, argc, argv);
+}
+
+void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
+      Loader& loader, const Operator& parentheses) {
+   run(argc, argv, astgen, loader, parentheses, nullptr);
 }
 
 } // namespace Astl
