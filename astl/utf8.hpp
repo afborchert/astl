@@ -222,7 +222,7 @@ template<typename T>
 typename std::enable_if<
    std::is_same<typename std::iterator_traits<T>::value_type, char>::value,
    CodepointRange<T>
->
+>::type
 codepoint_range(T begin, T end) {
    return CodepointRange<T>(begin, end);
 }
