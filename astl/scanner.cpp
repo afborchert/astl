@@ -331,6 +331,9 @@ char32_t Scanner::scan_escape_sequence() {
 	 case '}':
 	    ch = '}';
 	    break;
+	 case ' ':
+	    ch = ' ';
+	    break;
 	 case 'a':
 	    ch = '\a';
 	    break;
