@@ -28,10 +28,11 @@ flag = flag || (i == 7);
 
 \section{Integer values}\index{integer}\label{integer}
 
-Integer values can be of arbitrary size as their implementation is based
-on the GNU Multiple Precision Library\index{GNU Multiple Precision
-Library}. Please note that floating point\index{floating point}
-values are not supported.
+Integer values can be of arbitrary size as their
+implementation is based on the GNU Multiple Precision
+Library\footnote{\url{https://gmplib.org/}}\index{GNU Multiple Precision
+Library}. Please note that floating point\index{floating point} values
+are not supported.
 
 \section{String values}\index{string}\label{string}
 
@@ -44,8 +45,8 @@ is initialized to the concatenation of the strings \lstinline!"17"!
 (implicitly converted from the integer value of \textit{i}) and
 \lstinline!"8"!. Finally, the sum of \textit{i} and \textit{j} is
 computed where \textit{j} is converted to an integer first. These
-implicit conversions are enforced by the operators \lstinline!&!
-which expects strings and \lstinline!+! which expects integers.
+implicit conversions are enforced by the operators \token{\&}
+which expects strings and \token{+} which expects integers.
 
 \begin{lstlisting}
 var i = 17;
@@ -114,7 +115,7 @@ the dot-operator can be used as a selecting operator of dictionaries.
 Selector expressions can be put into \lstinline!{...}! as demonstrated
 by \lstinline!{id}! in this example. As shown below, dictionaries can be
 constructed using the \lstinline!{...}! syntax. In this case the keys in
-front of the ``\lstinline!->!'' delimiter must be identifiers.
+front of the \token{->} delimiter must be identifiers.
 
 \begin{lstlisting}
 ("direct_declarator" ("identifier" id)) as declarator
@@ -318,23 +319,67 @@ set of directed graphs $G = \{G_1, ..., G_n\}$ where each individual
 graph $G_i$ represents a procedure. Each graph $G_i = (N_i, E_i, n_i)$
 consists of nodes $N_i$, directed edges $E_i$, and a unique name $n_i$.
 
-Nodes can be freely typed using strings. Typical types are
-\lstinline!"entry"! and \lstinline!"exit"! for the entry and
-the exit node of a function, respectively.
-Edges can be labeled with strings. In this case, however, all edges
-diverting from a node must have distinct labels. Labels are used
-to tag conditional branches. Typically \lstinline!"t"! is chosen
-for true and \lstinline!"f"! for false.
+Nodes are created using the \textit{cfg\_node}\index{cfg\_node} function
+which takes one or two parameters. The parameters specify a type and/or
+the associated node of an abstract syntax tree:
+
+\begin{lstlisting}
+   var node1 = cfg_node(node); // cfg node associated with an ast node
+   var node2 = cfg_node("entry"); // cfg node created with the type "entry"
+   var cls = cfg_node("close_block", block); // typed cfg node with ast node
+\end{lstlisting}
+
+Control flow node types\index{control flow node type} are strings which
+can be used as identifiers (see \ref{identifier}). These types can be
+queried using the \textit{cfg\_type}\index{cfg\_type} function and used
+within conditions of state machines:
+
+\begin{lstlisting}
+   /* kill instance when we are leaving our block;
+      node is bound to the current cfg node */
+   at close_block where node.astnode == block -> close
+\end{lstlisting}
+
+Directed edges are created using the function
+\textit{cfg\_connect}\index{cfg\_connect} which takes two control flow
+graph nodes and optionally a third parameter with a label which is a
+string that can be used as an identifier (see \ref{identifier}):
+
+\begin{lstlisting}
+   // label "t" represents "true" for conditional paths
+   cfg_connect(node1, node2, "t");
+\end{lstlisting}
+
+Labels can be used within conditions of state machines.
+Following example matches the tree expression against
+the abstract syntax node of the current control flow
+graph node, requires that the node is typed as
+\textit{conditional\_fork} and tests within the
+\keyword{if} constructs for the labels ``t'' and ``f'':
+
+\begin{lstlisting}
+   ("identifier" varname) as id at conditional_fork
+      where exists id.object && id.object == object
+      if t and when welldefined -> nonnull
+      if t and when isnull -> cut
+      if f and when welldefined -> isnull
+      if f and when nonnull -> cut
+\end{lstlisting}
+
+Either all edges from a node have distinct labels or none
+of the edges are labelled.
 
 Each control flow node has (like syntax tree nodes) a set of attributes
 that is organized as a dictionary. If a control flow node is associated
-to a node of an abstract syntax tree, the \ident{astnode} field allows
-to access it. In addition, a \keyword{foreach} loop may be used to
-iterate through all the successor nodes. In case of labeled edges, the
-branches can be examined in the \ident{branch} dictionary.
+to a node of an abstract syntax tree, the \ident{astnode}\index{astnode}
+field allows to access it.
+
+The \keyword{foreach} loop may be used to iterate through all successor
+nodes of a control flow graph node. In case of labeled edges, the
+branches can be examined in the \ident{branch}\index{branch} dictionary.
 
 The set of graphs $G$ is represented by the predefined
-dictionary \ident{graph}\index{graph}. Per convention
+dictionary named \ident{graph}\index{graph}. Per convention
 this graph shall have the following attributes:
 
 \bigskip
