@@ -58,6 +58,7 @@ namespace Astl {
 	 void next_ch();
 	 void next_codepoint();
 	 void error(char const* msg);
+	 char32_t scan_escape_sequence();
 	 void scan_text();
 	 void scan_regexp(char32_t opening_delimiter,
 	    char32_t closing_delimiter);

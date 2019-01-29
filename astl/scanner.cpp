@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009, 2010 Andreas Franz Borchert
+   Copyright (C) 2009, 2010, 2019 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -288,6 +288,96 @@ void Scanner::push_token(int token, semantic_type yylval, location yylloc) {
    token_buffer.push_back(t);
 }
 
+/* scan esacpe sequence within string or program text literals */
+char32_t Scanner::scan_escape_sequence() {
+   /* current codepoint is '\\' */
+   char32_t ch = 0;
+   next_codepoint();
+   if (is_octal_digit(codepoint)) {
+      unsigned int val = codepoint - '0';
+      next_codepoint();
+      if (is_octal_digit(codepoint)) {
+	 val = val * 8 + codepoint - '0';
+	 next_codepoint();
+	 if (is_octal_digit(codepoint)) {
+	    val = val * 8 + codepoint - '0';
+	    next_codepoint();
+	 }
+      }
+      if (val >= 256) {
+	 error("octal constant within literal is out of range");
+      }
+      ch = static_cast<char32_t>(val);
+   } else {
+      switch (codepoint) {
+	 case '\\':
+	    ch = '\\';
+	    break;
+	 case '"':
+	    ch = '"';
+	    break;
+	 case '\'':
+	    ch = '\'';
+	    break;
+	 case '?':
+	    ch = '?';
+	    break;
+	 case '$':
+	    ch = '$';
+	    break;
+	 case '{':
+	    ch = '{';
+	    break;
+	 case '}':
+	    ch = '}';
+	    break;
+	 case 'a':
+	    ch = '\a';
+	    break;
+	 case 'b':
+	    ch = '\b';
+	    break;
+	 case 'n':
+	    ch = '\n';
+	    break;
+	 case 'r':
+	    ch = '\r';
+	    break;
+	 case 't':
+	    ch = '\t';
+	    break;
+	 case 'v':
+	    ch = '\v';
+	    break;
+	 case 'u':
+	 case 'U':
+	    /* Unicode codepoint in hex notation */
+	    {
+	       unsigned int nof_digits = codepoint == 'u'? 4: 8;
+	       char32_t val = 0;
+	       while (nof_digits > 0) {
+		  next_codepoint();
+		  if (!is_hex_digit(codepoint)) {
+		     error("hex digit expected");
+		  }
+		  val = val * 0x10 + eval_hex_digit(codepoint);
+		  --nof_digits;
+	       }
+	       if (!valid_codepoint(val)) {
+		  error("invalid Unicode codepoint");
+	       }
+	       ch = val;
+	    }
+	    break;
+	 default:
+	    error("invalid \\-sequence in literal");
+	    break;
+      }
+      next_codepoint();
+   }
+   return ch;
+}
+
 void Scanner::scan_text() {
    assert(tokenstr == nullptr);
    next_codepoint(); // eat opening '{'
@@ -407,9 +497,6 @@ void Scanner::scan_text() {
 	    if (newline) {
 	       current_text += '\n'; newline = false;
 	    }
-	    if (codepoint == '\\') {
-	       next_codepoint();
-	    }
 	    if (last_current_whitespace) {
 	       if (current_indent > indent) {
 		  for (std::size_t i = 0; i < current_indent - indent; ++i) {
@@ -417,7 +504,15 @@ void Scanner::scan_text() {
 		  }
 	       }
 	    }
-	    current_text += codepoint;
+	    char32_t ch;
+	    if (codepoint == '\\') {
+	       ch = scan_escape_sequence();
+	    } else {
+	       ch = codepoint;
+	       next_codepoint();
+	    }
+	    current_text += ch;
+	    continue;
 	 }
       } else if (!whitespace && codepoint == '\n') {
 	 if (newline) current_text += '\n';
@@ -477,80 +572,7 @@ void Scanner::scan_string_literal(semantic_type& yylval, int& token) {
    next_codepoint();
    while (!eof && codepoint != '"') {
       if (codepoint == '\\') {
-	 next_codepoint();
-	 if (is_octal_digit(codepoint)) {
-	    unsigned int val = codepoint - '0';
-	    next_codepoint();
-	    if (is_octal_digit(codepoint)) {
-	       val = val * 8 + codepoint - '0';
-	       next_codepoint();
-	       if (is_octal_digit(codepoint)) {
-		  val = val * 8 + codepoint - '0';
-		  next_codepoint();
-	       }
-	    }
-	    if (val >= 256) {
-	       error("octal constant within string literal is out of range");
-	    }
-	    tokenval += static_cast<char32_t>(val);
-	 } else {
-	    switch (codepoint) {
-	       case '\\':
-		  tokenval += '\\';
-		  break;
-	       case '"':
-		  tokenval += '"';
-		  break;
-	       case '\'':
-		  tokenval += '\'';
-		  break;
-	       case '?':
-		  tokenval += '?';
-		  break;
-	       case 'a':
-		  tokenval += '\a';
-		  break;
-	       case 'b':
-		  tokenval += '\b';
-		  break;
-	       case 'n':
-		  tokenval += '\n';
-		  break;
-	       case 'r':
-		  tokenval += '\r';
-		  break;
-	       case 't':
-		  tokenval += '\t';
-		  break;
-	       case 'v':
-		  tokenval += '\v';
-		  break;
-	       case 'u':
-	       case 'U':
-		  /* Unicode codepoint in hex notation */
-		  {
-		     unsigned int nof_digits = codepoint == 'u'? 4: 8;
-		     char32_t val = 0;
-		     while (nof_digits > 0) {
-			next_codepoint();
-			if (!is_hex_digit(codepoint)) {
-			   error("hex digit expected");
-			}
-			val = val * 0x10 + eval_hex_digit(codepoint);
-			--nof_digits;
-		     }
-		     if (!valid_codepoint(val)) {
-			error("invalid Unicode codepoint");
-		     }
-		     tokenval += val;
-		  }
-		  break;
-	       default:
-		  error("invalid \\-sequence in string literal");
-		  break;
-	    }
-	    next_codepoint();
-	 }
+	 tokenval += scan_escape_sequence();
       } else {
 	 tokenval += codepoint;
 	 next_codepoint();
