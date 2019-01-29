@@ -10,18 +10,17 @@ They are implicitly used by the \ident{gentext} function
 (see \ref{predefined}) and for generating the results of the regular
 transformation rules (see \ref{regtrans}).
 
-Print rules consist of
-individual rules giving a tree expression (see \ref{treeexpr}) and a
-program text literal (see below). The generation of texts starts with
-the top-level node passed to \ident{gentext} or at the root node of
-the transformed syntax tree. This node is matched
+Print rules consist of individual rules giving a tree expression (see
+\ref{treeexpr}) and a program text literal (see below). The generation
+of texts starts with the top-level node passed to \ident{gentext} or
+at the root node of the transformed syntax tree. This node is matched
 against the available rules. If none matches, a run-time error is
-raised, specifying the operator and its arity. If multiple rules
-match, the last is taken. The program text literal of the matching
-rule specifies the to be generated text. This literal may include
-placeholders which are interpolated. If one of these placeholders refers
-to a bound subnode, the print rules are executed recursively to generate
-the to be interpolated text for the subnode.
+raised, specifying the operator and its arity. If multiple rules match,
+the last one is taken. The program text literal of the matching rule
+specifies the to be generated text (see \ref{textlit}). This literal
+may include placeholders which are interpolated. If one of these
+placeholders refers to a bound subnode, the print rules are executed
+recursively to generate the to be interpolated text for the subnode.
 
 \begin{grammar}
    \nonterminal{print-rules}
@@ -45,9 +44,9 @@ is expanded by the recursively generated text of that subnode.  In case
 of expressions, the result is converted into a string and inserted at
 the corresponding position.
 
-In case of multiline program text literals, the leading and trailing
-white space is removed and any indentations are taken relatively to
-each other.
+In case of multiline program text literals, indentations are interpreted
+relatively to each other. Leading and trailing white space is removed
+unless protected by escape sequences.
 
 If a placeholder referencing a variable bound to a list of 
 subnodes is followed by the ``\$...'' placeholder, the
