@@ -481,6 +481,8 @@ key_value_pairs: key_value_pair
 
 key_value_pair: IDENT ARROW expression
       { $$ = BINARY(key_value_pair, $1, $3); }
+   | STRING_LITERAL ARROW expression
+      { $$ = BINARY(key_value_pair, $1, $3); }
    ;
 
 function_call: primary LPAREN RPAREN
