@@ -209,7 +209,7 @@ AttributePtr Expression::eval_primary(NodePtr expr) {
 	    FunctionPtr f = func->get_func();
 	    try {
 	       return f->eval(args);
-	    } catch (Exception e) {
+	    } catch (Exception& e) {
 	       throw Exception(expr->get_location(), e.what());
 	    }
 	 }

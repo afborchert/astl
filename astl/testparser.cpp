@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
       RuleTable rt;
       rt.scan(root, Op::print_rule, rules);
       // print(cout, root, rules); 
-   } catch (Exception e) {
+   } catch (Exception& e) {
       cerr << e.what() << endl;
    }
 }

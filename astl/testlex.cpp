@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
 	 cout << " at " << make_loc(loc);
 	 cout << endl;
       }
-   } catch (Exception e) {
+   } catch (Exception& e) {
       cerr << e.what() << endl;
    }
 }
