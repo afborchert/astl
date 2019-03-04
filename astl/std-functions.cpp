@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009, 2010 Andreas Franz Borchert
+   Copyright (C) 2009, 2010, 2019 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <cstdlib>
 #include <iostream>
 #include <memory>
 #include <astl/exception.hpp>
@@ -35,6 +36,18 @@ AttributePtr builtin_assert(BindingsPtr bindings, AttributePtr args) {
       throw Exception("assertion failed");
    }
    return assertion;
+}
+
+AttributePtr builtin_exit(BindingsPtr bindings, AttributePtr args) {
+   if (!args || args->size() != 1) {
+      throw Exception("wrong number of arguments for exit function");
+   }
+   AttributePtr exit_value = args->get_value(0);
+   Location loc;
+   auto intval = exit_value->convert_to_integer(loc);
+   Integer modulo(256); intval->mod(modulo);
+   auto val = intval->get_unsigned_int(loc);
+   std::exit(val);
 }
 
 AttributePtr builtin_push(BindingsPtr bindings, AttributePtr args) {
@@ -377,6 +390,7 @@ void insert_std_functions(BuiltinFunctions& bfs) {
    bfs.add("clone", builtin_clone);
    bfs.add("copy", builtin_copy);
    bfs.add("defined", builtin_defined);
+   bfs.add("exit", builtin_exit);
    bfs.add("gentext", builtin_gentext);
    bfs.add("integer", builtin_integer);
    bfs.add("isoperator", builtin_isoperator);

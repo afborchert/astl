@@ -41,6 +41,11 @@ to hide them by local declarations.
       is then copied to the target \\
    \ident{defined} & function &
       returns true if the value is non-\keyword{null} \\
+   \ident{exit} & function &
+      expects an argument that is converted to an integer value
+      which is taken modulo 256 and interpreted as exit code;
+      this function does not return but terminates execution
+      with the given exit code \\
    \ident{false} & boolean &
       boolean value of false \\
    \ident{gentext} & function &
