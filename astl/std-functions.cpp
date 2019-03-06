@@ -24,6 +24,7 @@
 #include <astl/printer.hpp>
 #include <astl/std-functions.hpp>
 #include <astl/types.hpp>
+#include <astl/utf8.hpp>
 
 namespace Astl {
 
@@ -164,6 +165,32 @@ AttributePtr builtin_operator(BindingsPtr bindings, AttributePtr args) {
    } else {
       return std::make_shared<Attribute>("");
    }
+}
+
+AttributePtr builtin_ord(BindingsPtr bindings, AttributePtr args) {
+   if (!args || args->size() != 1) {
+      throw Exception("wrong number of arguments for ord function");
+   }
+   AttributePtr at = args->get_value(0);
+   auto s = at->convert_to_string();
+   unsigned long char_val = 0;
+   for (auto codepoint: codepoint_range(s)) {
+      char_val = codepoint; break;
+   }
+   return std::make_shared<Attribute>(char_val);
+}
+
+AttributePtr builtin_chr(BindingsPtr bindings, AttributePtr args) {
+   if (!args || args->size() != 1) {
+      throw Exception("wrong number of arguments for chr function");
+   }
+   AttributePtr at = args->get_value(0);
+   Location loc;
+   auto intval = at->convert_to_integer(loc);
+   auto codepoint = intval->get_unsigned_int(loc);
+   std::string s;
+   add_codepoint(s, codepoint);
+   return std::make_shared<Attribute>(s);
 }
 
 AttributePtr builtin_tokenliteral(BindingsPtr bindings, AttributePtr args) {
@@ -387,6 +414,7 @@ AttributePtr builtin_cfg_type(BindingsPtr bindings, AttributePtr args) {
 
 void insert_std_functions(BuiltinFunctions& bfs) {
    bfs.add("assert", builtin_assert);
+   bfs.add("chr", builtin_chr);
    bfs.add("clone", builtin_clone);
    bfs.add("copy", builtin_copy);
    bfs.add("defined", builtin_defined);
@@ -398,6 +426,7 @@ void insert_std_functions(BuiltinFunctions& bfs) {
    bfs.add("len", builtin_len);
    bfs.add("location", builtin_location);
    bfs.add("operator", builtin_operator);
+   bfs.add("ord", builtin_ord);
    bfs.add("pop", builtin_pop);
    bfs.add("println", builtin_println);
    bfs.add("prints", builtin_prints);
