@@ -308,6 +308,9 @@ AttributePtr builtin_clone(BindingsPtr bindings, AttributePtr args) {
       throw Exception("wrong number of arguments for clone function");
    }
    AttributePtr at = args->get_value(0);
+   if (!at) {
+      throw Exception("null must not be cloned");
+   }
    return at->clone();
 }
 
