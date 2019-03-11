@@ -17,8 +17,8 @@ TeXDeps +=		keywords.tex
 endif
 #------------------------------------------------------------------------------
 .PHONY:			pdf
-pdf:			main.pdf
-main.pdf:		$(TeXDeps) $(PDFFigures) $(MPFigures)
+pdf:			astl-refman.pdf
+astl-refman.pdf:	$(TeXDeps) $(PDFFigures) $(MPFigures)
 			rm -f main.out
 			pdflatex main
 			makeindex main
@@ -27,6 +27,7 @@ main.pdf:		$(TeXDeps) $(PDFFigures) $(MPFigures)
 			pdflatex main
 			thumbpdf main
 			pdflatex main
+			mv main.pdf astl-refman.pdf
 #------------------------------------------------------------------------------
 keywords.tex:		../astl/keywords.cpp
 			./mk_keywords.pl >$@
