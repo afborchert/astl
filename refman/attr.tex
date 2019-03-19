@@ -1,18 +1,21 @@
 \chapter{Attribution rules}\label{attr}
 
 \section{Regular attribution rules}\label{reg-attr}
-An attribution rule consists of a tree expression and a block.
-When attribution rules are executed, the abstract syntax tree
-is traversed depth-first. For each visited node of the abstract
-syntax tree, all attribution rules are executed whose tree
-expressions match the visited node. When multiple rules match
-for the same node they are executed in the order of
-appearance in the source.
+An attribution rule consists of a tree expression and a block. When
+attribution rules are executed, the abstract syntax tree is traversed
+depth-first. For each visited node of the abstract syntax tree, all
+attribution rules are executed whose tree expressions match the visited
+node.
 
-Attributes rules are executed in pre- or postorder in respect
-to the traversal of the subnodes. By default, rules are executed
-in preorder. The keywords \keyword{pre} and \keyword{post} can
-be used to specify the order.
+Attributes rules are executed in pre- or postorder in respect to the
+traversal of the subnodes. By default, rules are executed in preorder.
+The keywords \keyword{pre} and \keyword{post} can be used to specify the
+order.
+
+When multiple rules match, they are ordered first by arity (in preorder
+those rules with varying arity are executed first, in postorder rules
+with varying arity come last) and second by the order of appearance in
+the source.
 
 \begin{grammar}
    \nonterminal{attribution-rules}
@@ -52,16 +55,14 @@ Finally, the third rule is executed last as it is a postfix rule.
       inner_block.up = outer_block;
    }
    ("compound_statement" *) as block in ("translation_unit" *) as root -> post {
-      foreach varname in (block.vars) {
-	 var entry = block.vars{varname};
-	 if (entry.used) {
-	    if (entry.minblock != block) {
-	       println(location(entry.decl) & ": variable " & varname &
-		  " should be moved into " & location(entry.minblock));
-	    }
-	 } else {
-	    println(location(entry.decl) & ": unused variable " & varname);
+      foreach (varname, entry) in (block.vars) {
+      if (entry.used) {
+	 if (entry.minblock != block) {
+	    println(location(entry.decl) & ": variable " & varname &
+	       " should be moved into " & location(entry.minblock));
 	 }
+      } else {
+	 println(location(entry.decl) & ": unused variable " & varname);
       }
    }
 \end{lstlisting}
