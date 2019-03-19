@@ -624,6 +624,10 @@ named_expression: LBRACE expression RBRACE
       { $$ = $2; }
    | LBRACE expression RBRACE AS IDENT
       { $$ = BINARY(named_expression, $2, $5); }
+   | LBRACE expression RBRACE DOTS
+      { $$ = UNARY(subnode_list, $2); }
+   | LBRACE expression RBRACE DOTS AS IDENT
+      { $$ = BINARY(named_expression, UNARY(subnode_list, $2), $6); }
    ;
 
 named_transformed_tree_expression: transformed_tree_expression
