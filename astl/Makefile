@@ -287,15 +287,15 @@ function.o: function.cpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/token.hpp ../astl/execution.hpp ../astl/candidate-set.hpp \
  ../astl/candidate.hpp ../astl/rule.hpp ../astl/opset.hpp \
  ../astl/tree-expressions.hpp ../astl/prg.hpp ../astl/rule-table.hpp
-std-functions.o: std-functions.cpp ../astl/exception.hpp \
+std-functions.o: std-functions.cpp ../astl/cloner.hpp \
+ ../astl/syntax-tree.hpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
- ../astl/location.hh ../astl/position.hh ../astl/flow-graph.hpp \
- ../astl/types.hpp ../astl/printer.hpp ../astl/bindings.hpp \
- ../astl/attribute.hpp ../astl/function.hpp ../astl/arity.hpp \
- ../astl/builtin-functions.hpp ../astl/integer.hpp \
- ../astl/syntax-tree.hpp ../astl/context.hpp ../astl/operator.hpp \
- ../astl/token.hpp ../astl/rule-table.hpp ../astl/rule.hpp \
- ../astl/opset.hpp ../astl/std-functions.hpp
+ ../astl/location.hh ../astl/position.hh ../astl/function.hpp \
+ ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
+ ../astl/operator.hpp ../astl/token.hpp ../astl/flow-graph.hpp \
+ ../astl/printer.hpp ../astl/rule-table.hpp ../astl/rule.hpp \
+ ../astl/opset.hpp ../astl/std-functions.hpp ../astl/utf8.hpp
 default-bindings.o: default-bindings.cpp ../astl/atrules-function.hpp \
  ../astl/function.hpp ../astl/arity.hpp ../astl/attribute.hpp \
  ../astl/exception.hpp ../astl/treeloc.hpp ../astl/location.hpp \
