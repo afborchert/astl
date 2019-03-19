@@ -73,10 +73,12 @@ void CandidateSet::traverse(NodePtr& node, Context& context) const {
 	 found = add_matching_candidates(node, it->second, context);
 	 if (found && suppress_conflicts) break;
       }
-      for (RuleTable::iterator it = rules.find_prefix(op, arity, end);
-	    it != end; ++it) {
-	 found = add_matching_candidates(node, it->second, context);
-	 if (found && suppress_conflicts) break;
+      if (!found || !suppress_conflicts) {
+	 for (RuleTable::iterator it = rules.find_prefix(op, arity, end);
+	       it != end; ++it) {
+	    found = add_matching_candidates(node, it->second, context);
+	    if (found && suppress_conflicts) break;
+	 }
       }
    }
    // descending
