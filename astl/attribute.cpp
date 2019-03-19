@@ -386,6 +386,10 @@ AttributePtr Attribute::convert_to_dict() {
    if (type == Attribute::dictionary) {
       return shared_from_this();
    }
+   // return attribute dictionary in case of syntax tree nodes
+   if (type == Attribute::tree) {
+      return node->get_attribute();
+   }
    // convert it into a list ...
    AttributePtr l = convert_to_list();
    AttributePtr set = std::make_shared<Attribute>(Attribute::dictionary);

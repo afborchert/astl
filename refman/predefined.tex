@@ -40,6 +40,10 @@ to hide them by local declarations.
       creates a clone of dictionaries and lists
       (one level deep copy, not done recursively);
       in all other cases it is similar to a regular assignment \\
+   \ident{clone\_ast} & function &
+      creates a clone of an abstract syntax tree
+      whereas all attributes are copied as well as in
+      regular assignments \\
    \ident{copy} & function &
       accepts a target and a source argument which must be both
       non-null and of the same type; the contents of the source

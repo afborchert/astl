@@ -42,12 +42,13 @@ int main(int argc, char** argv) {
       exit(1);
    }
 
+   ifstream fin;
    try {
       std::unique_ptr<Scanner> scanner;
       if (argc > 0) {
 	 char* fname = *argv++; --argc;
 	 string filename(fname);
-	 ifstream fin(filename);
+	 fin.open(filename);
 	 if (!fin) {
 	    cerr << cmdname << ": unable to open " << filename <<
 	       " for reading" << endl;

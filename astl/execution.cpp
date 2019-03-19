@@ -116,9 +116,12 @@ bool recursive_execute(NodePtr block, BindingsPtr bindings,
 	       NodePtr inner_block = statement->get_operand(3);
 	       Expression dict_expr(statement->get_operand(2), local_bindings);
 	       AttributePtr dict = dict_expr.get_result();
-	       if (!dict || dict->get_type() != Attribute::dictionary) {
+	       if (!dict) {
 		  throw Exception(statement->get_operand(2)->get_location(),
-			   "dictionary expected");
+			   "non-null dictionary expected");
+	       }
+	       if (dict->get_type() != Attribute::dictionary) {
+		  dict = dict->convert_to_dict();
 	       }
 	       Attribute::DictionaryIterator it = dict->get_pairs_begin();
 	       while (it != dict->get_pairs_end()) {

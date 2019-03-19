@@ -194,6 +194,7 @@ var decr = sub { return --counter; };
 
 \section{Abstract syntax trees}\index{abstract syntax tree}
 
+\label{ast}
 An abstract syntax tree is either a token\index{token} or a
 node\index{node}\index{operator node} consisting of an operator
 represented by a string and an ordered list of subtrees\index{subtree}.
@@ -461,8 +462,9 @@ that element.
 \subsection{Conversions to dictionary type}\index{dictionary}
 
 \label{dictconv}
-A null value is converted into an empty dictionary. All other
-types are converted to list first (see \ref{listconv}). Then
+A null value is converted into an empty dictionary. Syntax
+tree nodes are converted to their set of attributes (see \ref{ast}).
+All other types are converted to list first (see \ref{listconv}). Then
 each element of the list gets converted into a string
 (see \ref{stringconv}) which is subsequently used as a key.
 For the associated values the Boolean value \ident{true} is used.

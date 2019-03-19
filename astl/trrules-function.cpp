@@ -27,9 +27,8 @@
 namespace Astl {
 
 TransformationRuleSetFunction::TransformationRuleSetFunction(
-      RuleTablePtr rt_param,
-      BindingsPtr bindings_param) :
-      Function(bindings_param), rt(rt_param) {
+      RuleTablePtr rt, BindingsPtr bindings) :
+      Function(bindings), rt(rt) {
 }
 
 AttributePtr TransformationRuleSetFunction::eval(AttributePtr args) const {
@@ -65,9 +64,8 @@ AttributePtr TransformationRuleSetFunction::eval(AttributePtr args) const {
 }
 
 InplaceTransformationRuleSetFunction::InplaceTransformationRuleSetFunction(
-      RuleTablePtr rt_param,
-      BindingsPtr bindings_param) :
-      Function(bindings_param), rt(rt_param) {
+      RuleTablePtr rt, BindingsPtr bindings) :
+      Function(bindings), rt(rt) {
 }
 
 AttributePtr InplaceTransformationRuleSetFunction::eval(AttributePtr args)

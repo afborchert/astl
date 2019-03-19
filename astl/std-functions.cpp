@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <astl/cloner.hpp>
 #include <astl/exception.hpp>
 #include <astl/flow-graph.hpp>
 #include <astl/printer.hpp>
@@ -314,6 +315,21 @@ AttributePtr builtin_clone(BindingsPtr bindings, AttributePtr args) {
    return at->clone();
 }
 
+AttributePtr builtin_clone_ast(BindingsPtr bindings, AttributePtr args) {
+   if (!args || args->size() != 1) {
+      throw Exception("wrong number of arguments for clone_ast function");
+   }
+   AttributePtr at = args->get_value(0);
+   if (!at) {
+      throw Exception("null must not be cloned");
+   }
+   if (at->get_type() != Attribute::tree) {
+      throw Exception("abstract syntax tree expected as argument to clone_ast");
+   }
+   NodePtr cloned_ast = clone_including_attributes(at->get_node());
+   return std::make_shared<Attribute>(cloned_ast);
+}
+
 AttributePtr builtin_copy(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 2) {
       throw Exception("wrong number of arguments for copy function");
@@ -419,6 +435,7 @@ void insert_std_functions(BuiltinFunctions& bfs) {
    bfs.add("assert", builtin_assert);
    bfs.add("chr", builtin_chr);
    bfs.add("clone", builtin_clone);
+   bfs.add("clone_ast", builtin_clone_ast);
    bfs.add("copy", builtin_copy);
    bfs.add("defined", builtin_defined);
    bfs.add("exit", builtin_exit);
