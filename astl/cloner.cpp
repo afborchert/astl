@@ -61,7 +61,7 @@ void clone_tree_and_ptr(const NodePtr& root, const NodePtr& ptr,
 NodePtr clone(const NodePtr& root) {
    NodePtr cloned_root;
    NodePtr ptr; // just passed as dummy
-   NodePtr* cloned_ptr = 0; // just passed as dummy
+   NodePtr* cloned_ptr = nullptr; // just passed as dummy
    clone_tree_and_ptr(root, ptr, cloned_root, cloned_ptr);
    return cloned_root;
 }
@@ -69,7 +69,7 @@ NodePtr clone(const NodePtr& root) {
 NodePtr clone_including_attributes(const NodePtr& root) {
    NodePtr cloned_root;
    NodePtr ptr; // just passed as dummy
-   NodePtr* cloned_ptr = 0; // just passed as dummy
+   NodePtr* cloned_ptr = nullptr; // just passed as dummy
    gen_clone_tree_and_ptr(root, ptr, cloned_root, cloned_ptr, true);
    return cloned_root;
 }
