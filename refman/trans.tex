@@ -53,38 +53,13 @@ rule found'').
 \noindent
 The right-hand side of a transformation rule consists of the replacement
 tree construct and optional blocks that are executed before and after
-the actual transformation takes place. If an expression in curly braces
-or a bound variable name is followed by the ``...'' operator, the
-expression or variable must be a list of subnodes whose elements are
-inserted at the corresponding place.
+the actual transformation takes place.
 
 \begin{grammar}
    \nonterminal{transformation-instructions}
       \produces \optional{\nonterminal{pre-transformation-block}} \nextline
-	 \nonterminal{transformed-subnode} \nextline
+	 \nonterminal{subnode-constructor} \nextline
 	 \optional{\nonterminal{post-transformation-block}} \\
-   \nonterminal{transformed-subnode}
-      \produces \nonterminal{identifier} \\
-      \produces \nonterminal{identifier} \lextoken{...} \\
-      \produces \nonterminal{transformed-tree-expression} \\
-      \produces \nonterminal{transformed-tree-expression}
-	 \lexkeyword{as} \nonterminal{identifier} \\
-      \produces \lextoken{\{} \nonterminal{expression} \lextoken{\}} \\
-      \produces \lextoken{\{} \nonterminal{expression} \lextoken{\}}
-	 \lexkeyword{as} \nonterminal{identifier} \\
-      \produces \lextoken{\{} \nonterminal{expression} \lextoken{\}}
-	 \lextoken{...} \\
-      \produces \lextoken{\{} \nonterminal{expression} \lextoken{\}}
-	 \lextoken{...} \lexkeyword{as} \nonterminal{identifier} \\
-   \nonterminal{transformed-tree-expression}
-      \produces \lextoken{(} \nonterminal{string-literal}
-	 \lextoken{)} \\
-      \produces \lextoken{(} \nonterminal{string-literal}
-	 \nonterminal{transformed-subnodes} \lextoken{)} \\
-   \nonterminal{transformed-subnodes}
-      \produces \nonterminal{transformed-subnode} \\
-      \produces \nonterminal{transformed-subnodes}
-	 \nonterminal{transformed-subnode} \\
    \nonterminal{pre-transformation-block}
       \produces \nonterminal{block} \\
    \nonterminal{post-transformation-block}

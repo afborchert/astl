@@ -158,6 +158,14 @@ bool Scanner::get_next_token(semantic_type& yylval,
 	    scan_string_literal(yylval, token);
 	    break;
 	 /* compound delimiters */
+	 case ')':
+	    next_codepoint();
+	    if (codepoint == '>') {
+	       next_codepoint(); token = parser::token::REYE;
+	    } else {
+	       token = parser::token::RPAREN;
+	    }
+	    break;
 	 case '-':
 	    next_codepoint();
 	    if (codepoint == '>') {
@@ -174,6 +182,8 @@ bool Scanner::get_next_token(semantic_type& yylval,
 	    next_codepoint();
 	    if (codepoint == '=') {
 	       next_codepoint(); token = parser::token::LE;
+	    } else if (codepoint == '(') {
+	       next_codepoint(); token = parser::token::LEYE;
 	    } else {
 	       token = parser::token::LT;
 	    }
@@ -251,8 +261,6 @@ bool Scanner::get_next_token(semantic_type& yylval,
 	    next_codepoint(); token = parser::token::COLON; break;
 	 case '(':
 	    next_codepoint(); token = parser::token::LPAREN; break;
-	 case ')':
-	    next_codepoint(); token = parser::token::RPAREN; break;
 	 case ';':
 	    next_codepoint(); token = parser::token::SEMICOLON; break;
 	 case '*':

@@ -249,6 +249,11 @@ AttributePtr Expression::eval_primary(NodePtr expr) {
 	    }
 	    return dict;
 	 }
+      case ASTL_OPERATOR_TREE_EXPRESSION:
+	 {
+	    auto tree = gen_tree(expr, bindings);
+	    return std::make_shared<Attribute>(tree);
+	 }
       case ASTL_OPERATOR_CARDINAL_LITERAL_TK:
 	 {
 	    std::string s = expr->get_operand(0)->get_token().get_text();

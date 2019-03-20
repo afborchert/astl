@@ -194,6 +194,21 @@ AttributePtr builtin_chr(BindingsPtr bindings, AttributePtr args) {
    return std::make_shared<Attribute>(s);
 }
 
+AttributePtr builtin_token(BindingsPtr bindings, AttributePtr args) {
+   if (!args || args->size() != 1) {
+      if (args) std::cout << "salami: " << args->size(); else std::cout << "salami: null!"; std::cout << std::endl;
+      throw Exception("wrong number of arguments for token function");
+   }
+   AttributePtr at = args->get_value(0);
+   if (!at) {
+      throw Exception("null passed to token function");
+   }
+   Token token(at->convert_to_string());
+   Location loc;
+   NodePtr node = std::make_shared<Node>(loc, token);
+   return std::make_shared<Attribute>(node);
+}
+
 AttributePtr builtin_tokenliteral(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for tokenliteral function");
@@ -452,6 +467,7 @@ void insert_std_functions(BuiltinFunctions& bfs) {
    bfs.add("prints", builtin_prints);
    bfs.add("push", builtin_push);
    bfs.add("string", builtin_string);
+   bfs.add("token", builtin_token);
    bfs.add("tokenliteral", builtin_tokenliteral);
    bfs.add("tokentext", builtin_tokentext);
    bfs.add("type", builtin_type);

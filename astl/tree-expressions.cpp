@@ -264,4 +264,85 @@ bool matches(NodePtr root, NodePtr expression,
    }
 }
 
+NodePtr gen_tree(NodePtr troot, BindingsPtr bindings) {
+   bool named = false;
+   std::string name;
+   NodePtr newroot;
+   if (!troot->is_leaf() &&
+	 (troot->get_op() == Op::named_expression ||
+	 troot->get_op() == Op::named_tree_expression_constructor)) {
+      name = troot->get_operand(1)->get_token().get_text();
+      troot = troot->get_operand(0);
+      named = true;
+   }
+   if (troot->is_leaf()) {
+      /* variable */
+      std::string varname = troot->get_token().get_text();
+      if (bindings->defined(varname)) {
+	 newroot = bindings->get(varname)->get_node();
+      } else {
+	 std::ostringstream os;
+	 os << "undefined variable in replacement tree: " << varname;
+	 throw Exception(troot->get_location(), os.str());
+      }
+   } else if (troot->get_op() == Op::expression) {
+      Expression expr(troot, bindings);
+      newroot = expr.convert_to_node();
+   } else {
+      assert(troot->get_op() == Op::tree_expression);
+      std::string opname = troot->get_operand(0)->get_token().get_text();
+      Operator op(opname);
+      newroot = std::make_shared<Node>(troot->get_location(), op);
+      for (std::size_t i = 1; i < troot->size(); ++i) {
+	 NodePtr subnode = troot->get_operand(i);
+	 if (!subnode->is_leaf() && subnode->get_op() == Op::subnode_list) {
+	    NodePtr listexpr = subnode->get_operand(0);
+	    AttributePtr valist;
+	    if (listexpr->is_leaf()) {
+	       /* variable name that must be bound to a
+		  list of syntax tree nodes */
+	       std::string varname = listexpr->get_token().get_text();
+	       if (!bindings->defined(varname)) {
+		  std::ostringstream os;
+		  os << "undefined variable in replacement tree: " << varname;
+		  throw Exception(listexpr->get_location(), os.str());
+	       }
+	       valist = bindings->get(varname);
+	    } else {
+	       /* expression that must return a
+		  list of syntax tree nodes */
+	       assert(listexpr->get_op() == Op::expression);
+	       Expression expr(listexpr, bindings);
+	       valist = expr.get_result();
+	       if (!valist) {
+		  throw Exception(listexpr->get_location(),
+		     "null returned by expression in replacement tree");
+	       }
+	    }
+	    if (valist->get_type() == Attribute::list) {
+	       for (std::size_t j = 0; j < valist->size(); ++j) {
+		  AttributePtr element = valist->get_value(j);
+		  if (element && element->get_type() == Attribute::tree) {
+		     *newroot += valist->get_value(j)->get_node();
+		  } else {
+		     std::ostringstream os;
+		     os << "list member " << j << " is not a tree";
+		     throw Exception(listexpr->get_location(), os.str());
+		  }
+	       }
+	    } else {
+	       throw Exception(listexpr->get_location(),
+		  "list of syntax tree nodes expected");
+	    }
+	 } else {
+	    *newroot += gen_tree(subnode, bindings);
+	 }
+      }
+   }
+   if (named) {
+      bindings->define(name, std::make_shared<Attribute>(newroot));
+   }
+   return newroot;
+}
+
 } // namespace Astl

@@ -80,7 +80,7 @@ to hide them by local declarations.
       returns a string representing its operator \\
    \ident{ord} & function &
       returns the first Unicode codepoint value of the first
-      argument which converted to a string \\
+      argument which is converted to a string \\
    \ident{push} & function &
       its first operand is a list which is extended by appending
       all the remaining arguments to it \\
@@ -97,6 +97,10 @@ to hide them by local declarations.
       function \\
    \ident{string} & function &
       converts its argument into a string value \\
+   \ident{token} & function &
+      returns an abstract syntax tree leaf node consisting
+      of a token; the token text is derived from the first
+      argument which is converted to a string \\
    \ident{tokenliteral} & function &
       returns the literal text of a token; this usually
       includes the delimiters, e.g. the string quotes in case of

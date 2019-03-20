@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009, 2010 Andreas Franz Borchert
+   Copyright (C) 2009-2019 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -106,6 +106,7 @@ NodePtr fix_print_expression(NodePtr node, location& yylloc);
 %token	MATCHES /* =~ */
 %token	LBRACE RBRACE
 %token	LBRACKET RBRACKET
+%token	LEYE REYE
 %token	PLUSPLUS MINUSMINUS
 %token	DOTS
 
@@ -434,6 +435,7 @@ primary: designator
       { $$ = $2; }
    | list_aggregate
    | dictionary_aggregate
+   | tree_constructor
    | function_call
    | function_constructor
    | CARDINAL_LITERAL
@@ -472,6 +474,12 @@ dictionary_aggregate: LBRACE RBRACE
       { $$ = FLATTEN(NODE(dictionary_aggregate), $2, key_value_pairs); }
    | LBRACE key_value_pairs COMMA RBRACE
       { $$ = FLATTEN(NODE(dictionary_aggregate), $2, key_value_pairs); }
+   ;
+
+tree_constructor: LEYE STRING_LITERAL REYE
+      { $$ = UNARY(tree_expression, $2); }
+   | LEYE STRING_LITERAL subnodes_constructor REYE
+      { $$ = FLATTEN(UNARY(tree_expression, $2), $3, subnodes); }
    ;
 
 key_value_pairs: key_value_pair
@@ -594,12 +602,12 @@ transformation: conditional_tree_expression ARROW
       { $$ = TERTIARY(transformation, UNARY(POST, $3), $6, $1); }
    ;
 
-transformation_instructions: transformed_subnode
-   | pre_transformation_block transformed_subnode
+transformation_instructions: subnode_constructor
+   | pre_transformation_block subnode_constructor
       { $$ = BINARY(transformation_instructions, $2, $1); }
-   | transformed_subnode post_transformation_block
+   | subnode_constructor post_transformation_block
       { $$ = BINARY(transformation_instructions, $1, $2); }
-   | pre_transformation_block transformed_subnode
+   | pre_transformation_block subnode_constructor
 	 post_transformation_block
       { $$ = TERTIARY(transformation_instructions, $2, $1, $3); }
    ;
@@ -613,10 +621,10 @@ post_transformation_block: block
    ;
 
 /* tree expression for the rhs of an extended transformation rule */
-transformed_subnode: IDENT
+subnode_constructor: IDENT
    | IDENT DOTS
       { $$ = UNARY(subnode_list, $1); }
-   | named_transformed_tree_expression
+   | named_tree_expression_constructor
    | named_expression
    ;
 
@@ -630,18 +638,18 @@ named_expression: LBRACE expression RBRACE
       { $$ = BINARY(named_expression, UNARY(subnode_list, $2), $6); }
    ;
 
-named_transformed_tree_expression: transformed_tree_expression
-   | transformed_tree_expression AS IDENT
-      { $$ = BINARY(named_transformed_tree_expression, $1, $3); }
+named_tree_expression_constructor: tree_expression_constructor
+   | tree_expression_constructor AS IDENT
+      { $$ = BINARY(named_tree_expression_constructor, $1, $3); }
    ;
 
-transformed_tree_expression: LPAREN STRING_LITERAL RPAREN
+tree_expression_constructor: LPAREN STRING_LITERAL RPAREN
       { $$ = UNARY(tree_expression, $2); }
-   | LPAREN STRING_LITERAL transformed_subnodes RPAREN
+   | LPAREN STRING_LITERAL subnodes_constructor RPAREN
       { $$ = FLATTEN(UNARY(tree_expression, $2), $3, subnodes); }
    ;
-transformed_subnodes: transformed_subnode
-   | transformed_subnodes transformed_subnode
+subnodes_constructor: subnode_constructor
+   | subnodes_constructor subnode_constructor
       { $$ = BINARY(subnodes, $1, $2); }
    ;
 

@@ -29,6 +29,8 @@ namespace Astl {
    bool matches(NodePtr root, NodePtr expression,
       BindingsPtr bindings, Context& context);
 
+   NodePtr gen_tree(NodePtr troot, BindingsPtr bindings);
+
 } // namespace Astl
 
 #endif
