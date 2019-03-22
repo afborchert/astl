@@ -22,6 +22,7 @@
 #include <astl/cloner.hpp>
 #include <astl/exception.hpp>
 #include <astl/flow-graph.hpp>
+#include <astl/operator.hpp>
 #include <astl/printer.hpp>
 #include <astl/std-functions.hpp>
 #include <astl/types.hpp>
@@ -194,14 +195,48 @@ AttributePtr builtin_chr(BindingsPtr bindings, AttributePtr args) {
    return std::make_shared<Attribute>(s);
 }
 
-AttributePtr builtin_token(BindingsPtr bindings, AttributePtr args) {
+AttributePtr builtin_make_node(BindingsPtr bindings, AttributePtr args) {
+   if (!args || args->size() == 0) {
+      throw Exception("wrong number of arguments for make_node function");
+   }
+   AttributePtr operator_at = args->get_value(0);
+   if (!operator_at) {
+      throw Exception("null passed to make_node function");
+   }
+   Operator op(operator_at->convert_to_string());
+   Location loc;
+   NodePtr node = std::make_shared<Node>(loc, op);
+   for (std::size_t index = 1; index < args->size(); ++index) {
+      AttributePtr at = args->get_value(index);
+      switch (at->get_type()) {
+	 case Attribute::tree:
+	    *node += at->get_node();
+	    break;
+	 case Attribute::list:
+	    for (std::size_t lindex = 0; lindex < at->size(); ++lindex) {
+	       AttributePtr member_at = at->get_value(lindex);
+	       if (member_at->get_type() != Attribute::tree) {
+		  throw Exception("syntax tree node expected in "
+		     "parameter list of make_node");
+	       }
+	       *node += member_at->get_node();
+	    }
+	    break;
+	 default:
+	    throw Exception("syntax tree node or list of nodes expected in "
+	       "parameter list of make_node");
+      }
+   }
+   return std::make_shared<Attribute>(node);
+}
+
+AttributePtr builtin_make_token(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
-      if (args) std::cout << "salami: " << args->size(); else std::cout << "salami: null!"; std::cout << std::endl;
-      throw Exception("wrong number of arguments for token function");
+      throw Exception("wrong number of arguments for make_token function");
    }
    AttributePtr at = args->get_value(0);
    if (!at) {
-      throw Exception("null passed to token function");
+      throw Exception("null passed to make_token function");
    }
    Token token(at->convert_to_string());
    Location loc;
@@ -460,6 +495,8 @@ void insert_std_functions(BuiltinFunctions& bfs) {
    bfs.add("isstring", builtin_isstring);
    bfs.add("len", builtin_len);
    bfs.add("location", builtin_location);
+   bfs.add("make_node", builtin_make_node);
+   bfs.add("make_token", builtin_make_token);
    bfs.add("operator", builtin_operator);
    bfs.add("ord", builtin_ord);
    bfs.add("pop", builtin_pop);
@@ -467,7 +504,6 @@ void insert_std_functions(BuiltinFunctions& bfs) {
    bfs.add("prints", builtin_prints);
    bfs.add("push", builtin_push);
    bfs.add("string", builtin_string);
-   bfs.add("token", builtin_token);
    bfs.add("tokenliteral", builtin_tokenliteral);
    bfs.add("tokentext", builtin_tokentext);
    bfs.add("type", builtin_type);

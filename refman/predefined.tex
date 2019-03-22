@@ -75,6 +75,15 @@ to hide them by local declarations.
    \ident{location} & function &
       its operand must be a node of an abstract syntax tree;
       returns a string representing its source location \\
+   \ident{make\_node} & function &
+      creates an abstract syntax operator node where the
+      first parameter specifies the operator and the
+      remaining arguments the subnodes; lists of subnodes
+      are supported and get expanded \\
+   \ident{make\_token} & function &
+      returns an abstract syntax tree leaf node consisting
+      of a token; the token text is derived from the first
+      argument which is converted to a string \\
    \ident{operator} & function &
       its operand must be an operator node of an abstract syntax tree;
       returns a string representing its operator \\
@@ -97,10 +106,6 @@ to hide them by local declarations.
       function \\
    \ident{string} & function &
       converts its argument into a string value \\
-   \ident{token} & function &
-      returns an abstract syntax tree leaf node consisting
-      of a token; the token text is derived from the first
-      argument which is converted to a string \\
    \ident{tokenliteral} & function &
       returns the literal text of a token; this usually
       includes the delimiters, e.g. the string quotes in case of

@@ -97,6 +97,7 @@ namespace Astl {
 	 // for lists and match results:
 	 AttributePtr get_value(std::size_t index) const;
 
+	 // for syntax tree nodes:
 	 NodePtr get_node() const;
 
 	 // for flow graph nodes:
