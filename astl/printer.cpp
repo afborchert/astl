@@ -54,6 +54,7 @@ static bool expand_variable(std::ostream& out, std::string name,
 }
 
 static int get_indent(const std::string text) {
+   constexpr int TAB_STOP = 8;
    auto range = codepoint_range(text);
    auto it = range.end();
    std::size_t indent = 0;
@@ -61,7 +62,11 @@ static int get_indent(const std::string text) {
       auto ch = *--it;
       if (!is_whitespace(ch)) break;
       if (ch == '\n') return indent;
-      ++indent;
+      if (ch == '\t') {
+	 indent += TAB_STOP - indent % TAB_STOP;
+      } else {
+	 ++indent;
+      }
    }
    while (it != range.begin()) {
       auto ch = *--it;
