@@ -37,6 +37,8 @@
 
 namespace Astl {
 
+static constexpr int TAB_STOP = 8;
+
 static bool recursive_print(std::ostream& out, const NodePtr root,
 	 const RuleTable& rules, BindingsPtr bindings, std::size_t indent,
 	 Context& context);
@@ -54,7 +56,6 @@ static bool expand_variable(std::ostream& out, std::string name,
 }
 
 static int get_indent(const std::string text) {
-   constexpr int TAB_STOP = 8;
    auto range = codepoint_range(text);
    auto it = range.end();
    std::size_t indent = 0;
@@ -81,8 +82,13 @@ static void expand_text(std::ostream& out, const Token& t,
    for (auto ch: codepoint_range(text)) {
       out << ch;
       if (ch == '\n') {
-	 for (std::size_t wi = 0; wi < indent; ++wi) {
-	    out << ' ';
+	 std::size_t wi = 0;
+	 while (wi < indent) {
+	    if (indent - wi >= TAB_STOP) {
+	       out << '\t'; wi += TAB_STOP;
+	    } else {
+	       out << ' '; ++wi;
+	    }
 	 }
       }
    }
