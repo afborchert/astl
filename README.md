@@ -6,7 +6,7 @@ Astl programming language
 This package provides the parser and the core library for the
 Astl programming language. Astl is a scripting language that
 is based on abstract syntax trees, hence the name. A
-[language reference manual of Astl](../blob/refman/astl-refman.pdf)
+[language reference manual of Astl](../master/refman/astl-refman.pdf)
 is included.
 
 The core library in itself just lays the foundation which
