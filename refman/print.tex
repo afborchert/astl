@@ -46,7 +46,11 @@ the corresponding position.
 
 In case of multiline program text literals, indentations are interpreted
 relatively to each other. Leading and trailing white space is removed
-unless protected by escape sequences.
+unless protected by escape sequences. Tab stops\index{tab}
+(i.e. ASCII 9) cause the current column to be interpreted by advancing
+to the next multiply of 8 plus 1 (see \ref{lines}). Whenever
+leading spaces are required to indent generated text, leading tabs
+are used whenever possible.
 
 If a placeholder referencing a variable bound to a list of 
 subnodes is followed by the ``\$...'' placeholder, the
