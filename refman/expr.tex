@@ -181,7 +181,7 @@ Key values which are not of string type are converted implicitly
 to strings (see \ref{stringconv}). Null values are not permitted
 as keys.
 
-\section{Abstract syntax tree constructors}
+\section{Abstract syntax tree constructors}\label{treecon}
 \index{abstract syntax tree!constructor}\index{syntax tree!constructor}
 
 Tree constructors create new abstract syntax trees:
@@ -217,13 +217,41 @@ Tree constructors create new abstract syntax trees:
 
 If an expression in curly braces or a bound variable name is followed
 by the ``...'' operator, the expression or variable must be a list of
-subnodes whose elements are inserted at the corresponding place. The
-following example constructs abstract syntax trees that correspond to $3
-+ 4 * 5$ and $2 * (3 + 4 * 5)$:
+subnodes (see \ref{lists}) whose elements are inserted at the
+corresponding place.
+
+The syntax is close to tree expressions (see \ref{treeexpr}) except
+that the topmost parentheses require angle brackets and that all
+constructs are omitted that are required for matching a tree expression.
+Alternatively, the predefined functions \ident{make\_node}
+and \ident{make\_token} (see \ref{makenode}) can be used.
+
+The following example constructs abstract syntax trees that correspond to
+$3 + 4 * 5$ and $2 * (3 + 4 * 5)$, respectively:
 
 \begin{lstlisting}
-   var node = <("+" { token("3") } ("*" { token("4") } { token("5") }))>;
-   var expr = <("*" { token("2") } node)>;
+   var node = <("+"
+      { make_token("3") }
+      ("*"
+	 { make_token("4") }
+	 { make_token("5") }
+      )
+   )>;
+   var expr = <("*" { make_token("2") } node)>;
+\end{lstlisting}
+
+\noindent
+Alternatively, \ident{make\_node} can be used:
+
+\begin{lstlisting}
+   var node = make_node("+",
+      make_token("3"),
+      make_node("*",
+	 make_token("4"),
+	 make_token("5")
+      )
+   );
+   var expr = make_node("*", make_token("2"), node);
 \end{lstlisting}
 
 \section{Function constructors}\index{function!constructor}\label{funcon}

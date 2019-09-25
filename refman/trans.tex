@@ -134,4 +134,21 @@ to be transformed abstract syntax tree.
 	 \lextoken{\}}
 \end{grammar}
 
+Due to the suppression of possible conflicts, in-place
+transformation functions are usually embedded in a loop
+that apply the transformations repeatedly until none
+of the transformation rules fire:
+
+\begin{lstlisting}
+inplace transformation rules simplification_rules {
+   ("->" op name) -> ("." ("pointer_dereference" op) name)
+   ("[]" array index) -> ("pointer_dereference" ("+" array index))
+   /* ... */
+}
+
+sub simplify(tree) {
+   while (simplification_rules() > 0) {}
+}
+\end{lstlisting}
+
 \endinput

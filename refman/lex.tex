@@ -17,7 +17,7 @@ comments.
 
 Case is significant.
 
-\section{Lines and columns}
+\section{Lines and columns}\label{lines}
 
 To provide locations\index{location} for error messages,
 lines\index{line} and columns\index{column} are tracked while reading a
@@ -26,8 +26,8 @@ program source\index{source file}. The newline\index{newline} character
 and considered otherwise as being equivalent to the space\index{space}
 character (ASCII 32). Tabs\index{tab} (ASCII 9) are similarly treated as
 space characters but cause the current column to be advanced to the next
-multiply of 8 plus 1. Unicode\index{Unicode} codepoints are counted as one character
-independently from the number of bytes required to encode
+multiply of 8 plus 1. Unicode\index{Unicode} codepoints are counted
+as one character independently from the number of bytes required to encode
 them in UTF-8\index{UTF-8}.
 
 \section{Comments}\index{comment}

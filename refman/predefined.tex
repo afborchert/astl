@@ -75,12 +75,12 @@ to hide them by local declarations.
    \ident{location} & function &
       its operand must be a node of an abstract syntax tree;
       returns a string representing its source location \\
-   \ident{make\_node} & function &
+   \ident{make\_node}\label{makenode} & function &
       creates an abstract syntax operator node where the
       first parameter specifies the operator and the
       remaining arguments the subnodes; lists of subnodes
       are supported and get expanded \\
-   \ident{make\_token} & function &
+   \ident{make\_token}\label{maketoken} & function &
       returns an abstract syntax tree leaf node consisting
       of a token; the token text is derived from the first
       argument which is converted to a string \\
