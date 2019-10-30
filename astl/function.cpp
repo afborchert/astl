@@ -19,6 +19,7 @@
 #include <cassert>
 #include <memory>
 #include <set>
+#include <sstream>
 #include <astl/attribute.hpp>
 #include <astl/execution.hpp>
 #include <astl/function.hpp>
@@ -75,7 +76,10 @@ BindingsPtr Function::process_parameters(AttributePtr args) const {
    if (bind_parameters) {
       if (arity.fixed) {
 	 if (args->size() != arity.arity) {
-	    throw Exception("wrong number of arguments");
+	    std::ostringstream os;
+	    os << "wrong number of arguments, expected " <<
+	       arity.arity << " but got " << args->size();
+	    throw Exception(os.str());
 	 }
 	 for (std::size_t index = 0; index < arity.arity; ++index) {
 	    bool ok = local_scope->define(parameters[index],

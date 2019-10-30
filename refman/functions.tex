@@ -1,8 +1,10 @@
 \chapter{Function definitions}\index{function!definition}\label{functiondef}
 
-Global functions can be declared at the global level. They are
+\section{Regular global functions}
+
+Functions can be defined at the global level. They are
 globally visible and their closures\index{closure} are restricted
-to the set of predefined bindings and the other function definitions.
+to the set of predefined bindings and the other global functions.
 
 \begin{grammar}
    \nonterminal{function-definition}
@@ -16,15 +18,16 @@ Parameter passing is handled as for locally constructed functions
 (see \ref{funcon} and \ref{call}):
 
 \begin{itemize}
-   \item If a parameter list is given, the number of actual
-      arguments must match the length of the parameter list
-      and each of the named parameters is bound to the corresponding
-      actual argument on invocation.
+   \item If a parameter list\index{parameter list} is given,
+      the number of actual arguments must match the length of the
+      parameter list and each of the named parameters is bound to the
+      corresponding actual argument on invocation.
    \item Otherwise, if no parameter list is given, any number
       of actual parameters is permitted, and passed through
-      the list \ident{args}.
+      the list \ident{args}.\index{args}
 \end{itemize}
 
+\noindent
 Example: The following function computes the greatest common divisor
 of the two arguments \ident{a} and \ident{b}:
 
@@ -41,19 +44,52 @@ sub gcd (a, b) {
 }
 \end{lstlisting}
 
+\noindent
 Each function returns a value. If the function ends without
 executing \keyword{return} or if the \keyword{return}-statement
 is without value, \keyword{null} is returned. Otherwise, the
 value of the \keyword{return} expression is returned (see \ref{return}).
 
+Local functions\index{function!local} can be defined using function
+constructors (see \ref{funcon}) and within state machines (see
+\ref{sm-localfun}).
+
+\section{Main function}\index{main}\index{function!main}
+
+The global \ident{main} function, if it exists, is invoked implicitly
+within the regular execution order (see \ref{xorder}). The remaining
+command line\index{command line} arguments are passed as list
+to \ident{main}, either through an explicitly named parameter
+or, if the parameter list has been omitted, through the variable
+\ident{args}\index{args} which is locally bound within \ident{main}
+(see \ref{call}):
+
+\begin{lstlisting}
+/* variant with explicit parameter list */
+sub main (argv) {
+   foreach arg in (argv) {
+      /* process arg... */
+   }
+}
+
+/* variant without explicit parameter list */
+sub main {
+   foreach arg in (args) {
+      /* process arg... */
+   }
+}
+\end{lstlisting}
+
 \noindent
-Local functions\index{functions!local} can be defined using function constructors
-(see \ref{funcon}) and within state machines (see \ref{sm-localfun}).
+The return value of the \ident{main} function is ignored.
+
+\section{Other global functions}\index{function!global}
 
 Named attribution rules (see \ref{named-atrules}),
 named generating transformation rules (see \ref{named-trrules}),
 named in-place transformation rules (see \ref{named-inplace-trrules}),
 and named print rules (see \ref{named-print}) can be
-used like global functions.
+used like regular global functions. They all expect an
+abstract syntax tree as argument (see \ref{ast}).
 
 \endinput

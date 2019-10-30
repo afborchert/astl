@@ -23,7 +23,9 @@ testlex_objs := testlex.o
 testparser_objs := testparser.o
 testregex_objs := testregex.o
 run_objs := astl-run.o
-MainSources := testlex.cpp testparser.cpp testregex.cpp astl-run.cpp
+astl_astl_objs := astl-astl.o
+MainSources := testlex.cpp testparser.cpp testregex.cpp \
+   astl-run.cpp astl-astl.cpp
 MainObjects := $(patsubst %.cpp,%.o,$(MainSources))
 Lib := libastl.a
 Utils := ../bison-scripts
@@ -67,10 +69,13 @@ testparser:	$(testparser_objs) $(Lib)
 		$(CXX) $(LDFLAGS) -o $@ $(testparser_objs) $(Lib) $(LDLIBS)
 testregex:	$(testregex_objs) $(Lib)
 		$(CXX) $(LDFLAGS) -o $@ $(testregex_objs) $(Lib) $(LDLIBS)
-astl-astl:	$(run_objs) $(Lib)
+astl-run:	$(run_objs) $(Lib)
 		$(CXX) $(LDFLAGS) -o $@ $(run_objs) $(Lib) $(LDLIBS)
+astl-astl:	$(astl_astl_objs) $(Lib)
+		$(CXX) $(LDFLAGS) -o $@ $(astl_astl_objs) $(Lib) $(LDLIBS)
 depend:		$(CPPSources)
-		perl ../gcc-makedepend/gcc-makedepend.pl $(CPPFLAGS) $(CPPSources) $(MainSources)
+		perl ../gcc-makedepend/gcc-makedepend.pl \
+		   $(CPPFLAGS) $(CPPSources) $(MainSources)
 murks:
 		echo $(CPPFLAGS) $(CPPSources) $(MainSources)
 # DO NOT DELETE
@@ -456,3 +461,13 @@ astl-run.o: astl-run.cpp ../astl/location.hpp ../astl/position.hh \
  ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh \
  ../astl/run.hpp ../astl/generator.hpp ../astl/loader.hpp \
  ../astl/scanner.hpp ../astl/yytname.hpp
+astl-astl.o: astl-astl.cpp ../astl/generator.hpp ../astl/exception.hpp \
+ ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
+ ../astl/location.hh ../astl/position.hh ../astl/types.hpp \
+ ../astl/loader.hpp ../astl/syntax-tree.hpp ../astl/attribute.hpp \
+ ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
+ ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/context.hpp \
+ ../astl/operator.hpp ../astl/token.hpp ../astl/run.hpp location.hpp \
+ operators.hpp parser.hpp ../astl/yystype.hpp ../astl/parser.tab.hpp \
+ ../astl/stack.hh ../astl/location.hh scanner.hpp ../astl/parser.hpp \
+ yytname.hpp

@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009, 2010 Andreas Franz Borchert
+   Copyright (C) 2009-2019 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -124,20 +124,37 @@ void run(NodePtr root,
 
    NodePtr main = rules.get_function("main");
    if (main) {
-      if (main->size() != 2) {
-	 throw Exception(main->get_location(),
-	    "main must be declared without parameter list");
-      }
-      main = main->get_operand(1);
-      // invoke main with the remaining arguments
-      AttributePtr args(std::make_shared<Attribute>(Attribute::list));
+      // collect remaining arguments for main()
+      AttributePtr arg_list(std::make_shared<Attribute>(Attribute::list));
       while (argc > 0) {
 	 AttributePtr arg(std::make_shared<Attribute>(*argv++)); --argc;
-	 args->push_back(arg);
+	 arg_list->push_back(arg);
       }
+      AttributePtr args;
+      if (main->size() == 2) {
+	 // pass list directly, if main has no explicit parameter declaration
+	 args = arg_list;
+      } else {
+	 // we pass just one argument with a list of arguments
+	 args = std::make_shared<Attribute>(Attribute::list);
+	 args->push_back(arg_list);
+      }
+      // invoke main
       BindingsPtr local_bindings(bindings);
-      local_bindings->define("args", args);
-      execute(main, local_bindings);
+      FunctionPtr f;
+      if (main->size() == 2) {
+	 f = std::make_shared<RegularFunction>(main->get_operand(1),
+	    local_bindings);
+      } else {
+	 f = std::make_shared<RegularFunction>(main->get_operand(2),
+	    local_bindings, main->get_operand(1));
+      }
+      int exit_code;
+      try {
+	 f->eval(args);
+      } catch (Exception& e) {
+	 throw Exception(main->get_location(), e.what());
+      }
    }
 
    if (rules.print_rules_defined() &&
