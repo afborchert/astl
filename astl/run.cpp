@@ -149,7 +149,6 @@ void run(NodePtr root,
 	 f = std::make_shared<RegularFunction>(main->get_operand(2),
 	    local_bindings, main->get_operand(1));
       }
-      int exit_code;
       try {
 	 f->eval(args);
       } catch (Exception& e) {

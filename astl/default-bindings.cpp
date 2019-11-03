@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009 Andreas Franz Borchert
+   Copyright (C) 2009-2019 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -24,6 +24,7 @@
 #include <astl/prrules-function.hpp>
 #include <astl/rules.hpp>
 #include <astl/std-functions.hpp>
+#include <astl/stream.hpp>
 #include <astl/trrules-function.hpp>
 
 namespace Astl {
@@ -48,6 +49,12 @@ BindingsPtr create_default_bindings(NodePtr root,
    // add "true" and "false"
    bindings->define("true", std::make_shared<Attribute>(true));
    bindings->define("false", std::make_shared<Attribute>(false));
+
+   // add output streams "stdout" and "stderr"
+   bindings->define("stdout",
+      std::make_shared<Attribute>(std::make_shared<OutputStream>(std::cout)));
+   bindings->define("stderr",
+      std::make_shared<Attribute>(std::make_shared<OutputStream>(std::cerr)));
 
    // add standard functions to bindings
    BuiltinFunctions bfs;

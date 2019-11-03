@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009, 2016 Andreas Franz Borchert
+   Copyright (C) 2009-2019 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -63,6 +63,10 @@ Attribute::Attribute(unsigned long intval) :
 
 Attribute::Attribute(bool bool_val) :
       type(boolean), bval(bool_val) {
+}
+
+Attribute::Attribute(OutputStreamPtr ostream_val) :
+      type(ostream), ostream_val(ostream_val) {
 }
 
 Attribute::Attribute(const std::vector<std::string>& subtokens_param) :
@@ -262,6 +266,11 @@ IntegerPtr Attribute::get_integer() const {
    return ivalue;
 }
 
+OutputStreamPtr Attribute::get_ostream() const {
+   assert(type == ostream);
+   return ostream_val;
+}
+
 std::string Attribute::convert_to_string() const {
    switch (type) {
       case string:
@@ -301,6 +310,8 @@ std::string Attribute::convert_to_string() const {
 	 {
 	    std::ostringstream os; os << size(); return os.str();
 	 }
+      case ostream:
+	 return "";
       default:
 	 assert(false); std::abort();
    }
@@ -311,6 +322,8 @@ IntegerPtr Attribute::convert_to_integer(const Location& loc) const {
       return ivalue;
    } else if (type == boolean) {
       return std::make_shared<Integer>((unsigned long) bval);
+   } else if (type == ostream) {
+      return std::make_shared<Integer>((unsigned long) ostream_val->good());
    }
    std::string s = convert_to_string();
    if (s == "") {
@@ -337,6 +350,8 @@ bool Attribute::convert_to_bool() const {
       case match_result:
       case flow_graph_node:
 	 return true;
+      case ostream:
+	 return ostream_val->good();
       default:
 	 std::string string_value = convert_to_string();
 	 return string_value.size() > 0 && string_value != "0";
@@ -422,6 +437,9 @@ bool Attribute::equal_to(AttributePtr other) const {
 	    return func == other->func;
 	 case flow_graph_node:
 	    return fgnode == other->fgnode;
+	 case ostream:
+	    return ostream_val == other->ostream_val ||
+	       &ostream_val->get() == &other->ostream_val->get();
 	 default:
 	    return false;
       }
@@ -466,6 +484,9 @@ AttributePtr Attribute::clone() const {
       case boolean:
 	 cat->bval = bval;
 	 break;
+
+      case ostream:
+	 cat->ostream_val = ostream_val;
 
       default:
 	 assert(false); std::abort();
@@ -515,6 +536,10 @@ void Attribute::copy(AttributePtr other) {
 
       case boolean:
 	 bval = other->bval;
+	 break;
+
+      case ostream:
+	 ostream_val = other->ostream_val;
 	 break;
 
       default:
@@ -587,6 +612,10 @@ std::ostream& operator<<(std::ostream& out, AttributePtr at) {
 
 	 case Attribute::boolean:
 	    out << (at->bval? "true": "false");
+	    break;
+
+	 case Attribute::ostream:
+	    out << "ostream";
 	    break;
       }
    } else {

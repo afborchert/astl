@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009, 2016 Andreas F. Borchert
+   Copyright (C) 2009-2019 Andreas F. Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -16,8 +16,8 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef ASTL_ATTRIBUTE_H
-#define ASTL_ATTRIBUTE_H
+#ifndef ASTL_ATTRIBUTE_HPP
+#define ASTL_ATTRIBUTE_HPP
 
 #include <iostream>
 #include <list>
@@ -28,6 +28,7 @@
 #include <astl/exception.hpp>
 #include <astl/function.hpp>
 #include <astl/integer.hpp>
+#include <astl/stream.hpp>
 #include <astl/syntax-tree.hpp>
 #include <astl/types.hpp>
 
@@ -35,14 +36,14 @@ namespace Astl {
 
    class Attribute: public std::enable_shared_from_this<Attribute> {
       public:
-	 typedef enum {dictionary, list, match_result, tree,
-	    flow_graph_node, function, string, integer, boolean} Type;
-	 typedef std::vector<std::string> SubtokenVector;
-	 typedef std::map<std::string, AttributePtr> Dictionary;
-	 typedef std::pair<std::string, AttributePtr> DictionaryPair;
-	 typedef Dictionary::const_iterator DictionaryIterator;
-	 typedef std::insert_iterator<Dictionary> DictionaryInserter;
-	 typedef std::vector<AttributePtr> Vector;
+	 using Type = enum {dictionary, list, match_result, tree,
+	    flow_graph_node, function, string, integer, boolean, ostream};
+	 using SubtokenVector = std::vector<std::string>;
+	 using Dictionary = std::map<std::string, AttributePtr>;
+	 using DictionaryPair = std::pair<std::string, AttributePtr>;
+	 using DictionaryIterator = Dictionary::const_iterator;
+	 using DictionaryInserter = std::insert_iterator<Dictionary>;
+	 using Vector = std::vector<AttributePtr>;
 
 	 // constructors
 	 Attribute(); // create an empty dictionary
@@ -58,6 +59,7 @@ namespace Astl {
 	 Attribute(long intval); // integer attribute
 	 Attribute(unsigned long intval); // integer attribute
 	 Attribute(bool bool_val); // boolean attribute
+	 Attribute(OutputStreamPtr outstream_val); // stream attribute
 	 template <typename T> Attribute(T val) : type(string) {
 	    std::ostringstream os; os << val; svalue = os.str();
 	 }
@@ -112,6 +114,9 @@ namespace Astl {
 	 // for integers
 	 IntegerPtr get_integer() const;
 
+	 // for ostreams
+	 OutputStreamPtr get_ostream() const;
+
 	 // type inquiries
 	 bool is_scalar() const;
 	 bool is_integer() const;
@@ -163,6 +168,9 @@ namespace Astl {
 
 	 /* if type == bool: */
 	 bool bval;
+
+	 /* if type == stream: */
+	 OutputStreamPtr ostream_val;
    };
 
    std::ostream& operator<<(std::ostream& out, AttributePtr at);

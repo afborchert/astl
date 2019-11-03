@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009 Andreas Franz Borchert
+   Copyright (C) 2009-2019 Andreas Franz Borchert
    ----------------------------------------------------------------------------
    The Astl Library is free software; you can redistribute it
    and/or modify it under the terms of the GNU Library General Public
@@ -16,9 +16,10 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef ASTL_TYPES_H
-#define ASTL_TYPES_H
+#ifndef ASTL_TYPES_HPP
+#define ASTL_TYPES_HPP
 
+#include <iostream>
 #include <memory>
 #include <astl/exception.hpp>
 
@@ -27,21 +28,25 @@
 namespace Astl {
 
    class Attribute;
-   typedef std::shared_ptr<Attribute> AttributePtr;
+   using AttributePtr = std::shared_ptr<Attribute>;
 
    class Node;
-   typedef std::shared_ptr<Node> NodePtr;
+   using NodePtr = std::shared_ptr<Node>;
 
    class Function;
-   typedef std::shared_ptr<Function> FunctionPtr;
+   using FunctionPtr = std::shared_ptr<Function>;
 
    class Bindings;
-   typedef std::shared_ptr<Bindings> BindingsPtr;
+   using BindingsPtr = std::shared_ptr<Bindings>;
 
    class FlowGraphNode;
-   typedef std::shared_ptr<FlowGraphNode> FlowGraphNodePtr;
+   using FlowGraphNodePtr = std::shared_ptr<FlowGraphNode>;
 
-   typedef AttributePtr (*Builtin)(BindingsPtr, AttributePtr);
+   using Builtin = AttributePtr (*)(BindingsPtr, AttributePtr);
+
+   template<typename T> class Stream;
+   using OutputStream = Stream<std::ostream>;
+   using OutputStreamPtr = std::shared_ptr<OutputStream>;
 
    class Context;
    class Rules;
