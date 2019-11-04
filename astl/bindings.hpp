@@ -31,7 +31,7 @@ namespace Astl {
    class Bindings;
    typedef std::shared_ptr<Bindings> BindingsPtr;
 
-   class Bindings {
+   class Bindings: public std::enable_shared_from_this<Bindings> {
       public:
 	 Bindings();
 	 Bindings(const Rules* rulesp);

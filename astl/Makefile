@@ -24,8 +24,9 @@ testparser_objs := testparser.o
 testregex_objs := testregex.o
 run_objs := astl-run.o
 astl_astl_objs := astl-astl.o
+astl_astl_free_objs := astl-astl-free.o
 MainSources := testlex.cpp testparser.cpp testregex.cpp \
-   astl-run.cpp astl-astl.cpp
+   astl-run.cpp astl-astl.cpp astl-astl-free.cpp
 MainObjects := $(patsubst %.cpp,%.o,$(MainSources))
 Lib := libastl.a
 Utils := ../bison-scripts
@@ -38,12 +39,13 @@ LDLIBS := -lgmp -lpcre2-8
 BISON := bison
 
 .PHONY:		all clean realclean depend
-all:		$(Lib) testlex testparser testregex astl-astl
+all:		$(Lib) testlex testparser testregex astl-astl astl-astl-free
 clean:		; rm -f $(Objects) testlex.o testparser.o \
 			$(GeneratedCPPSources) $(MainObjects)
 realclean:	clean
 		rm -f $(Lib) $(GeneratedCPPSources) $(GeneratedHPPSources) \
-		   $(wildcard *.output) testlex testparser testregex astl-astl
+		   $(wildcard *.output) testlex testparser testregex \
+		   astl-astl astl-astl-free
 
 $(Lib):		$(Objects)
 		ar r $@ $(Objects)
@@ -73,11 +75,11 @@ astl-run:	$(run_objs) $(Lib)
 		$(CXX) $(LDFLAGS) -o $@ $(run_objs) $(Lib) $(LDLIBS)
 astl-astl:	$(astl_astl_objs) $(Lib)
 		$(CXX) $(LDFLAGS) -o $@ $(astl_astl_objs) $(Lib) $(LDLIBS)
+astl-astl-free:	$(astl_astl_free_objs) $(Lib)
+		$(CXX) $(LDFLAGS) -o $@ $(astl_astl_free_objs) $(Lib) $(LDLIBS)
 depend:		$(CPPSources)
 		perl ../gcc-makedepend/gcc-makedepend.pl \
 		   $(CPPFLAGS) $(CPPSources) $(MainSources)
-murks:
-		echo $(CPPFLAGS) $(CPPSources) $(MainSources)
 # DO NOT DELETE
 parser.tab.o: parser.tab.cpp ../astl/error.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \
@@ -307,8 +309,10 @@ std-functions.o: std-functions.cpp ../astl/cloner.hpp \
  ../astl/arity.hpp ../astl/bindings.hpp ../astl/types.hpp \
  ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/stream.hpp \
  ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
- ../astl/flow-graph.hpp ../astl/printer.hpp ../astl/rule-table.hpp \
- ../astl/rule.hpp ../astl/opset.hpp ../astl/std-functions.hpp \
+ ../astl/flow-graph.hpp ../astl/parser.hpp ../astl/yystype.hpp \
+ ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh \
+ ../astl/printer.hpp ../astl/rule-table.hpp ../astl/rule.hpp \
+ ../astl/opset.hpp ../astl/scanner.hpp ../astl/std-functions.hpp \
  ../astl/utf8.hpp
 default-bindings.o: default-bindings.cpp ../astl/atrules-function.hpp \
  ../astl/function.hpp ../astl/arity.hpp ../astl/attribute.hpp \
@@ -331,10 +335,10 @@ run.o: run.cpp ../astl/attribute.hpp ../astl/exception.hpp \
  ../astl/token.hpp ../astl/candidate-set.hpp ../astl/candidate.hpp \
  ../astl/rule.hpp ../astl/opset.hpp ../astl/tree-expressions.hpp \
  ../astl/prg.hpp ../astl/rule-table.hpp ../astl/default-bindings.hpp \
- ../astl/execution.hpp ../astl/loader.hpp ../astl/parenthesizer.hpp \
- ../astl/operator-table.hpp ../astl/printer.hpp ../astl/rules.hpp \
- ../astl/state-machine.hpp ../astl/flow-graph.hpp ../astl/run.hpp \
- ../astl/generator.hpp ../astl/sm-execution.hpp ../astl/mt19937.hpp
+ ../astl/execution.hpp ../astl/loader.hpp ../astl/mt19937.hpp \
+ ../astl/parenthesizer.hpp ../astl/operator-table.hpp ../astl/printer.hpp \
+ ../astl/rules.hpp ../astl/state-machine.hpp ../astl/flow-graph.hpp \
+ ../astl/run.hpp ../astl/generator.hpp ../astl/sm-execution.hpp
 arithmetic-ops.o: arithmetic-ops.cpp ../astl/arithmetic-ops.hpp \
  ../astl/attribute.hpp ../astl/exception.hpp ../astl/treeloc.hpp \
  ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
@@ -481,6 +485,21 @@ astl-astl.o: astl-astl.cpp ../astl/generator.hpp ../astl/exception.hpp \
  ../astl/function.hpp ../astl/arity.hpp ../astl/bindings.hpp \
  ../astl/builtin-functions.hpp ../astl/integer.hpp ../astl/stream.hpp \
  ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
- ../astl/run.hpp location.hpp operators.hpp parser.hpp \
- ../astl/yystype.hpp ../astl/parser.tab.hpp ../astl/stack.hh \
- ../astl/location.hh scanner.hpp ../astl/parser.hpp yytname.hpp
+ ../astl/operators.hpp ../astl/parser.hpp ../astl/yystype.hpp \
+ ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh \
+ ../astl/run.hpp ../astl/scanner.hpp ../astl/yytname.hpp
+astl-astl-free.o: astl-astl-free.cpp ../astl/builtin-parse.hpp \
+ ../astl/attribute.hpp ../astl/exception.hpp ../astl/treeloc.hpp \
+ ../astl/location.hpp ../astl/position.hh ../astl/location.hh \
+ ../astl/position.hh ../astl/function.hpp ../astl/arity.hpp \
+ ../astl/bindings.hpp ../astl/types.hpp ../astl/builtin-functions.hpp \
+ ../astl/integer.hpp ../astl/stream.hpp ../astl/syntax-tree.hpp \
+ ../astl/context.hpp ../astl/operator.hpp ../astl/token.hpp \
+ ../astl/execution.hpp ../astl/candidate-set.hpp ../astl/candidate.hpp \
+ ../astl/rule.hpp ../astl/opset.hpp ../astl/tree-expressions.hpp \
+ ../astl/prg.hpp ../astl/rule-table.hpp ../astl/rules.hpp \
+ ../astl/loader.hpp ../astl/operator-table.hpp ../astl/state-machine.hpp \
+ ../astl/flow-graph.hpp ../astl/sm-execution.hpp ../astl/generator.hpp \
+ ../astl/operators.hpp ../astl/parser.hpp ../astl/yystype.hpp \
+ ../astl/parser.tab.hpp ../astl/stack.hh ../astl/location.hh \
+ ../astl/run.hpp ../astl/scanner.hpp ../astl/yytname.hpp

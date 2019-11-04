@@ -103,30 +103,4 @@ other global functions.  The name of state machines do not belong to
 the global bindings, i.e. a global function name can conflict with the
 name of a state machine but this is not recommended.
 
-\section{Execution order}\label{xorder}
-
-This section describes the standard behaviour as implemented by
-the \ident{run} module of the Astl library. Custom implementations
-can divert from this.
-
-The execution starts with the construction of the abstract syntax tree
-which is not controlled by the Astl program but by its environment.
-In case of syntax errors, the execution is aborted.
-
-Following steps are performed if a valid and non-empty
-abstract syntax tree is present:
-
-\begin{enumerate}
-   \item Regular attribution rules (see \ref{reg-attr}) are executed,
-      if they exist.
-   \item State machines (see \ref{sm}) are executed, if they exist
-      and a control flow graph has been constructed using attribution rules.
-   \item The \textit{main}\index{main} function is executed, if it exists.
-   \item The regular transformation rules are executed, provided
-      that regular print rules exist (see \ref{regprint}).
-      For each transformation, a new abstract syntax tree is generated
-      and printed, in dependence of the command line arguments, either
-      to standard output or into individual output files.
-\end{enumerate}
-
 \endinput

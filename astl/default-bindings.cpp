@@ -50,11 +50,16 @@ BindingsPtr create_default_bindings(NodePtr root,
    bindings->define("true", std::make_shared<Attribute>(true));
    bindings->define("false", std::make_shared<Attribute>(false));
 
-   // add output streams "stdout" and "stderr"
+   // add standard streams "stdin", "stdout" and "stderr"
+   bindings->define("stdin",
+      std::make_shared<Attribute>(std::make_shared<InputStream>(std::cin,
+	 "stdin")));
    bindings->define("stdout",
-      std::make_shared<Attribute>(std::make_shared<OutputStream>(std::cout)));
+      std::make_shared<Attribute>(std::make_shared<OutputStream>(std::cout,
+         "stdout")));
    bindings->define("stderr",
-      std::make_shared<Attribute>(std::make_shared<OutputStream>(std::cerr)));
+      std::make_shared<Attribute>(std::make_shared<OutputStream>(std::cerr,
+	 "stderr")));
 
    // add standard functions to bindings
    BuiltinFunctions bfs;

@@ -159,7 +159,7 @@ DesignatorPtr Expression::eval_designator(NodePtr expr) {
 	 return std::make_shared<Designator>(bindings, varname);
       } else {
 	 std::ostringstream os;
-	 os << "unknown variable: " << varname;
+	 os << "unknown identifier: " << varname;
 	 throw Exception(expr->get_location(), os.str());
       }
    } else {

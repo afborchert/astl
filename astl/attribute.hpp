@@ -37,7 +37,8 @@ namespace Astl {
    class Attribute: public std::enable_shared_from_this<Attribute> {
       public:
 	 using Type = enum {dictionary, list, match_result, tree,
-	    flow_graph_node, function, string, integer, boolean, ostream};
+	    flow_graph_node, function, string, integer, boolean,
+	    istream, ostream};
 	 using SubtokenVector = std::vector<std::string>;
 	 using Dictionary = std::map<std::string, AttributePtr>;
 	 using DictionaryPair = std::pair<std::string, AttributePtr>;
@@ -59,7 +60,8 @@ namespace Astl {
 	 Attribute(long intval); // integer attribute
 	 Attribute(unsigned long intval); // integer attribute
 	 Attribute(bool bool_val); // boolean attribute
-	 Attribute(OutputStreamPtr outstream_val); // stream attribute
+	 Attribute(InputStreamPtr instream_val); // istream attribute
+	 Attribute(OutputStreamPtr outstream_val); // ostream attribute
 	 template <typename T> Attribute(T val) : type(string) {
 	    std::ostringstream os; os << val; svalue = os.str();
 	 }
@@ -113,6 +115,9 @@ namespace Astl {
 
 	 // for integers
 	 IntegerPtr get_integer() const;
+
+	 // for istreams
+	 InputStreamPtr get_istream() const;
 
 	 // for ostreams
 	 OutputStreamPtr get_ostream() const;
@@ -169,7 +174,10 @@ namespace Astl {
 	 /* if type == bool: */
 	 bool bval;
 
-	 /* if type == stream: */
+	 /* if type == istream: */
+	 InputStreamPtr istream_val;
+
+	 /* if type == ostream: */
 	 OutputStreamPtr ostream_val;
    };
 

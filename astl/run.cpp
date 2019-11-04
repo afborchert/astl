@@ -28,12 +28,12 @@
 #include <astl/default-bindings.hpp>
 #include <astl/execution.hpp>
 #include <astl/loader.hpp>
+#include <astl/mt19937.hpp>
 #include <astl/parenthesizer.hpp>
 #include <astl/printer.hpp>
 #include <astl/rules.hpp>
 #include <astl/run.hpp>
 #include <astl/sm-execution.hpp>
-#include <astl/mt19937.hpp>
 #include <astl/syntax-tree.hpp>
 
 namespace Astl {
@@ -115,12 +115,14 @@ void run(NodePtr root,
    // setup default bindings
    BindingsPtr bindings = create_default_bindings(root, &rules, extra_bindings);
 
-   // execute global attribution rules, if defined
-   if (rules.attribution_rules_defined()) {
-      execute(root, rules.get_attribution_rule_table(), bindings);
+   if (root) {
+      // execute global attribution rules, if defined
+      if (rules.attribution_rules_defined()) {
+	 execute(root, rules.get_attribution_rule_table(), bindings);
+      }
+      // execute state machines, if present
+      execute_state_machines(rules, bindings);
    }
-   // execute state machines, if present
-   execute_state_machines(rules, bindings);
 
    NodePtr main = rules.get_function("main");
    if (main) {
@@ -156,7 +158,7 @@ void run(NodePtr root,
       }
    }
 
-   if (rules.print_rules_defined() &&
+   if (root && rules.print_rules_defined() &&
 	    rules.transformation_rules_defined()) {
       std::random_device random;
       PseudoRandomGeneratorPtr prg = std::make_shared<mt19937>(random());
@@ -228,9 +230,27 @@ void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
       parentheses, std::cout, extra_bindings, argc, argv);
 }
 
+void run(int& argc, char**& argv,
+      Loader& loader, const Operator& parentheses,
+      BindingsPtr extra_bindings) {
+   /* fetch cmdname */
+   char* cmdname = *argv++; --argc;
+   /* fetch name of our script */
+   if (argc == 0) usage(cmdname);
+   char* script_name = *argv++; --argc;
+   NodePtr root;
+   run(root, loader, script_name, /* pattern= */ nullptr, /* count = */ 0,
+      parentheses, std::cout, extra_bindings, argc, argv);
+}
+
 void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
       Loader& loader, const Operator& parentheses) {
    run(argc, argv, astgen, loader, parentheses, nullptr);
+}
+
+void run(int& argc, char**& argv,
+      Loader& loader, const Operator& parentheses) {
+   run(argc, argv, loader, parentheses, nullptr);
 }
 
 } // namespace Astl

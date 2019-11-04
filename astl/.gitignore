@@ -11,6 +11,7 @@ yytname.cpp
 *.hh
 # binaries
 astl-astl
+astl-astl-free
 testlex
 testparser
 testregex

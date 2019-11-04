@@ -1,0 +1,68 @@
+\chapter{Execution}
+The order of execution depends on the actual implementation. But
+there exist some variants which are supported by the Astl library.
+Custom implementations can divert from this.
+
+\section{Standard execution order}\label{xorder}
+This is the most common order of execution where
+execution starts with the construction of the abstract syntax tree
+which is not controlled by the Astl program but by its environment.
+In case of syntax errors, the execution is aborted.
+
+Following steps are performed if a valid and non-empty
+abstract syntax tree is present:
+
+\begin{enumerate}
+   \item Regular attribution rules (see \ref{reg-attr}) are executed,
+      if they exist.
+   \item State machines (see \ref{sm}) are executed, if they exist
+      and a control flow graph has been constructed using attribution rules.
+   \item The \textit{main}\index{main} function is executed, if it exists.
+   \item The regular transformation rules are executed, provided
+      that regular print rules exist (see \ref{regprint}).
+      For each transformation, a new abstract syntax tree is generated
+      and printed, in dependence of the command line arguments, either
+      to standard output or into individual output files.
+\end{enumerate}
+
+\section{Free-standing execution order}\label{free-xorder}
+Alternatively, some implementations support a so-called free-standing execution
+order\index{execution order!free-standing}
+where no abstract syntax tree is generated at the
+beginning. Instead, the entire execution is controlled by the
+\ident{main}\index{main} function.
+
+The main function can process its command line arguments,
+open file arguments, and parse them using the \ident{parse}\index{parse}
+function (which does not belong to the standard set of predefined functions).
+Parsing, if successful, delivers an abstract syntax tree which is
+immediately processed by the regular attribution rules. Otherwise,
+a string is returned with an error message.
+
+The execution
+of state machines can be initiated through
+\ident{run\_state\_machines}\index{run\_state\_machines}. This is not
+done automatically to give the opportunity to construct a tree from
+multiple input sources:
+
+\begin{lstlisting}
+sub main(argv) {
+   var trees = [];
+   foreach arg in (argv) {
+      var input = open(arg);
+      var res = parse(input);
+      if (type(res) == "string") {
+	 println(stderr, "parse of ", input, " failed:\n", res);
+      } else {
+	 push(trees, res);
+      }
+   }
+   var super_root = <("super-root" { trees }...)>;
+   run_state_machines(super_root);
+}
+\end{lstlisting}
+
+Regular transformation rules (see \ref{regtrans})
+will never fire in case of free-standing scripts.
+
+\endinput

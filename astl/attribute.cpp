@@ -65,6 +65,10 @@ Attribute::Attribute(bool bool_val) :
       type(boolean), bval(bool_val) {
 }
 
+Attribute::Attribute(InputStreamPtr istream_val) :
+      type(istream), istream_val(istream_val) {
+}
+
 Attribute::Attribute(OutputStreamPtr ostream_val) :
       type(ostream), ostream_val(ostream_val) {
 }
@@ -266,6 +270,11 @@ IntegerPtr Attribute::get_integer() const {
    return ivalue;
 }
 
+InputStreamPtr Attribute::get_istream() const {
+   assert(type == istream);
+   return istream_val;
+}
+
 OutputStreamPtr Attribute::get_ostream() const {
    assert(type == ostream);
    return ostream_val;
@@ -310,8 +319,10 @@ std::string Attribute::convert_to_string() const {
 	 {
 	    std::ostringstream os; os << size(); return os.str();
 	 }
+      case istream:
+	 return istream_val->get_name();
       case ostream:
-	 return "";
+	 return ostream_val->get_name();
       default:
 	 assert(false); std::abort();
    }
@@ -322,6 +333,8 @@ IntegerPtr Attribute::convert_to_integer(const Location& loc) const {
       return ivalue;
    } else if (type == boolean) {
       return std::make_shared<Integer>((unsigned long) bval);
+   } else if (type == istream) {
+      return std::make_shared<Integer>((unsigned long) istream_val->good());
    } else if (type == ostream) {
       return std::make_shared<Integer>((unsigned long) ostream_val->good());
    }
@@ -350,6 +363,8 @@ bool Attribute::convert_to_bool() const {
       case match_result:
       case flow_graph_node:
 	 return true;
+      case istream:
+	 return istream_val->good();
       case ostream:
 	 return ostream_val->good();
       default:
@@ -437,6 +452,9 @@ bool Attribute::equal_to(AttributePtr other) const {
 	    return func == other->func;
 	 case flow_graph_node:
 	    return fgnode == other->fgnode;
+	 case istream:
+	    return istream_val == other->istream_val ||
+	       &istream_val->get() == &other->istream_val->get();
 	 case ostream:
 	    return ostream_val == other->ostream_val ||
 	       &ostream_val->get() == &other->ostream_val->get();
@@ -485,8 +503,13 @@ AttributePtr Attribute::clone() const {
 	 cat->bval = bval;
 	 break;
 
+      case istream:
+	 cat->istream_val = istream_val;
+	 break;
+
       case ostream:
 	 cat->ostream_val = ostream_val;
+	 break;
 
       default:
 	 assert(false); std::abort();
@@ -536,6 +559,10 @@ void Attribute::copy(AttributePtr other) {
 
       case boolean:
 	 bval = other->bval;
+	 break;
+
+      case istream:
+	 istream_val = other->istream_val;
 	 break;
 
       case ostream:
@@ -612,6 +639,10 @@ std::ostream& operator<<(std::ostream& out, AttributePtr at) {
 
 	 case Attribute::boolean:
 	    out << (at->bval? "true": "false");
+	    break;
+
+	 case Attribute::istream:
+	    out << "istream";
 	    break;
 
 	 case Attribute::ostream:

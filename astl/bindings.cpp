@@ -62,6 +62,14 @@ bool Bindings::merge(BindingsPtr bindings) {
 	 return false;
       }
    }
+   /* reconfigure merged bindings;
+      this is required as they are still refered to */
+   if (!bindings->rules) {
+      bindings->rules = rules;
+   }
+   if (!bindings->uplink) {
+      bindings->uplink = shared_from_this();
+   }
    return true;
 }
 

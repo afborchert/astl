@@ -48,6 +48,9 @@ namespace Astl {
    using OutputStream = Stream<std::ostream>;
    using OutputStreamPtr = std::shared_ptr<OutputStream>;
 
+   using InputStream = Stream<std::istream>;
+   using InputStreamPtr = std::shared_ptr<InputStream>;
+
    class Context;
    class Rules;
 

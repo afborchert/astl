@@ -1,9 +1,10 @@
 \chapter{Types}\index{type}
 
-Variables are untyped but values are typed. There exist ten different
+Variables are untyped but values are typed. There exist twelve different
 types of values: \keyword{null}, Boolean values, integers, strings,
 lists, dictionaries, functions, abstract syntax trees, matching
-results of a regular expression, and control flow graph nodes.
+results of a regular expression, control flow graph nodes, input
+streams, and output streams.
 
 \section{Null value}\index{null}\label{null}
 
@@ -401,6 +402,38 @@ Expressions of type control flow graph node reference a node within a
 control flow graph. Consequently, an assignment of a node causes the
 node to be shared.
 
+\section{Streams}\index{stream}
+Streams exist in two variants, input and output streams. The
+predefined bindings include
+\ident{stdin}\index{stdin} (standard input),
+\ident{stdout}\index{stdout} (standard output), and
+\ident{stderr}\index{stderr} (standard error output)
+(see \ref{predefined}).
+Files can be opened using the \ident{open}\index{open}
+function. By default, \ident{open} returns an input stream
+but files can also be opened for writing using \lstinline!"r"!
+as second parameter.
+The predefined functions \ident{getline}\index{getline},
+\ident{println}\index{println}, and \ident{prints}\index{prints}
+allow to read or to write to a stream, respectively. Streams
+are implicitly closed when the last reference to it is cut.
+
+\begin{lstlisting}
+sub main(argv) {
+   foreach arg in (argv) {
+      var input = open(arg);
+      if (input) {
+         var line;
+         while (defined(line = getline(input))) {
+            println(line);
+         }
+      } else {
+         println(stderr, arg, ": could not be opened for reading");
+      }
+   }
+}
+\end{lstlisting}
+
 \section{Implicit Conversions}\index{conversion}
 
 In dependence of their context, values may be implicitly converted
@@ -425,6 +458,12 @@ parameter lists are invoked with
 into string type. An empty string is delivered if \keyword{null} is
 returned.
 
+Streams\index{stream} are converted to their associated file names
+which were passed to \ident{open}\index{open}. The predefined
+standard streams are converted to the respective names,
+i.e. \lstinline!"stdin"!, \lstinline!"stdout"!, and
+\lstinline!"stderr"!.
+
 \subsection{Conversions to integer type}\index{integer}\label{intconv}
 
 Null values are converted to 0, Boolean values \ident{false} and
@@ -434,6 +473,10 @@ i.e. an optional minus sign followed by a non-empty sequence of digits
 ``0'' to ``9'' of arbitrary length. If the string does not conform to
 this format, a run time error is raised.
 
+Streams\index{stream} are converted to 1, if they are in a good
+state, and 0 otherwise in case of errors or on encountering end
+of input.
+
 \subsection{Conversions to Boolean type}\index{Boolean}\label{boolconv}
 
 Null values are converted to \ident{false}.
@@ -441,7 +484,13 @@ Non-zero integer values are converted to \ident{true}, zero to \ident{false}.
 All abstract syntax trees, match results, and flow graph nodes are
 converted to \ident{true} irrespectively of their value. (Note that
 even an empty match result is evaluated as \ident{true} to distinguish
-it from a failed match.) Values of other types are converted into
+it from a failed match.)
+
+Streams\index{stream} are converted to \ident{true}, if they are
+in a good state, and \ident{false} otherwise in case of errors or on
+encountering end of input.
+
+Values of other types are converted into
 strings first. The string values \lstinline!""! and \lstinline!"0"!
 are converted to \ident{false}, all other values to \ident{true}.
 
@@ -499,6 +548,8 @@ value and returns its type as string:
    abstract syntax tree & \lstinline!"tree"! \\
    matching results & \lstinline!"match_result"! \\
    control flow graph node & \lstinline!"flow_graph_node"! \\
+   input stream & \lstinline!"istream"! \\
+   output stream & \lstinline!"ostream"! \\
    \hline
 \end{tabular}
 

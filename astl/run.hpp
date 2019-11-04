@@ -49,6 +49,13 @@ void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
       Loader& loader, const Operator& parentheses,
       BindingsPtr extra_bindings);
 
+/* free-standing variants */
+void run(int& argc, char**& argv,
+      Loader& loader, const Operator& parentheses,
+      BindingsPtr extra_bindings);
+void run(int& argc, char**& argv,
+      Loader& loader, const Operator& parentheses);
+
 } // namespace Astl
 
 #endif

@@ -29,6 +29,7 @@ CandidateSet::CandidateSet(NodePtr root, const RuleTable& rules) :
       generated(false), root(root), suppress_conflicts(false),
       rules(rules), bindings(create_default_bindings(root)),
       consumer(nullptr), prg(nullptr) {
+   assert(root);
 }
 
 CandidateSet::CandidateSet(NodePtr root, const RuleTable& rules,
@@ -36,12 +37,14 @@ CandidateSet::CandidateSet(NodePtr root, const RuleTable& rules,
       generated(false), root(root), suppress_conflicts(false),
       rules(rules), bindings(create_default_bindings(root)),
       consumer(consumer), prg(prg) {
+   assert(root);
 }
 
 CandidateSet::CandidateSet(NodePtr root, const RuleTable& rules,
 	 BindingsPtr bindings) :
       generated(false), root(root), suppress_conflicts(false),
       rules(rules), bindings(bindings), consumer(nullptr), prg(nullptr) {
+   assert(root);
 }
 
 CandidateSet::CandidateSet(NodePtr root, const RuleTable& rules,
@@ -49,6 +52,7 @@ CandidateSet::CandidateSet(NodePtr root, const RuleTable& rules,
 	 ConsumerPtr consumer, PseudoRandomGeneratorPtr prg) :
       generated(false), root(root), suppress_conflicts(false),
       rules(rules), bindings(bindings), consumer(consumer), prg(prg) {
+   assert(root);
 }
 
 void CandidateSet::generate() const {

@@ -57,6 +57,11 @@ to hide them by local declarations.
       with the given exit code \\
    \ident{false} & boolean &
       boolean value of false \\
+   \ident{getline} & function &
+      expects an input stream and returns the next line read
+      from the stream without the line terminator; \keyword{null}
+      is returned when the input stream has ended or in case of
+      errors \\
    \ident{gentext} & function &
       requires the print rules to be available and converts
       an ast node into a string \\
@@ -84,6 +89,14 @@ to hide them by local declarations.
       returns an abstract syntax tree leaf node consisting
       of a token; the token text is derived from the first
       argument which is converted to a string \\
+   \ident{open} & function &
+      expects one or two arguments, the first specifying
+      a filename, the second a mode where \lstinline!"r"!
+      (for reading) and \lstinline!"w"! (for writing) are
+      accepted; the file name is opened in respect to
+      the given mode (for reading if just the filename is
+      given) and a corresponding stream is returned, if successful;
+      \keyword{null} is returned in case of errors \\
    \ident{operator} & function &
       its operand must be an operator node of an abstract syntax tree;
       returns a string representing its operator \\
@@ -106,6 +119,12 @@ to hide them by local declarations.
       \ident{root} is bound to the abstract syntax tree passed
       to the corresponding
       function \\
+   \ident{stdin}\index{stdin} & istream &
+      standard input stream \\
+   \ident{stdout}\index{stdout} & ostream &
+      standard output stream \\
+   \ident{stderr}\index{stderr} & ostream &
+      standard error output stream \\
    \ident{string} & function &
       converts its argument into a string value \\
    \ident{tokenliteral} & function &

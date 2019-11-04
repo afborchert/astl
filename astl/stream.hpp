@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <memory>
+#include <string>
 #include <utility>
 #include <astl/exception.hpp>
 #include <astl/types.hpp>
@@ -38,12 +39,12 @@ class Stream {
 
       /* associate stream object with an already existing stream
 	 that is not owned by this class */
-      Stream(T& s) : working(true), foreign(&s) {
+      Stream(T& s, std::string name) : working(true), name(name), foreign(&s) {
       }
 
       /* pass ownership of an opened stream to an object of this class */
-      Stream(std::unique_ptr<T> s) :
-	    working(s), owned(std::move(s)), foreign(nullptr) {
+      Stream(std::unique_ptr<T> s, std::string name) :
+	    working(s), name(name), owned(std::move(s)), foreign(nullptr) {
       }
 
       T& get() {
@@ -57,12 +58,18 @@ class Stream {
 	 }
       }
 
+      const std::string& get_name() {
+	 return name;
+      }
+
       bool good() {
 	 return working && get().good();
       }
 
    private:
       bool working;
+      /* name associated with this stream, usually the filename */
+      std::string name;
       /* stream that is owned by us */
       std::unique_ptr<T> owned;
       /* stream which is not our resource */

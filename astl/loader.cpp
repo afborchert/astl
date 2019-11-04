@@ -42,7 +42,11 @@ NodePtr Loader::load(const std::string& name) {
    } else {
       for (std::list<std::string>::const_iterator it = libpath.begin();
 	    it != libpath.end(); ++it) {
-	 path = *it + "/" + name;
+	 if (*it == ".") {
+	    path = name;
+	 } else {
+	    path = *it + "/" + name;
+	 }
 	 in.clear(); in.open(path.c_str());
 	 if (!in) {
 	    path += ".ast";

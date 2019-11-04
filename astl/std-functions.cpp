@@ -25,7 +25,9 @@
 #include <astl/exception.hpp>
 #include <astl/flow-graph.hpp>
 #include <astl/operator.hpp>
+#include <astl/parser.hpp>
 #include <astl/printer.hpp>
+#include <astl/scanner.hpp>
 #include <astl/std-functions.hpp>
 #include <astl/types.hpp>
 #include <astl/utf8.hpp>
@@ -128,6 +130,24 @@ AttributePtr builtin_gentext(BindingsPtr bindings, AttributePtr args) {
       return gen_text(at->get_node(), bindings);
    } else {
       throw Exception("abstract syntax tree expected as argument to gentext");
+   }
+}
+
+AttributePtr builtin_getline(BindingsPtr bindings, AttributePtr args) {
+   if (!args || args->size() != 1) {
+      throw Exception("wrong number of arguments for getline function");
+   }
+   AttributePtr at = args->get_value(0);
+   if (at && at->get_type() == Attribute::istream) {
+      std::istream& in(at->get_istream()->get());
+      std::string input_line;
+      if (std::getline(in, input_line)) {
+	 return std::make_shared<Attribute>(input_line);
+      } else {
+	 return nullptr;
+      }
+   } else {
+      throw Exception("input stream expected as argument to getline");
    }
 }
 
@@ -244,15 +264,35 @@ AttributePtr builtin_make_token(BindingsPtr bindings, AttributePtr args) {
 }
 
 AttributePtr builtin_open(BindingsPtr bindings, AttributePtr args) {
-   if (!args || args->size() != 1) {
+   if (!args || (args->size() != 1 && args->size() != 2)) {
       throw Exception("wrong number of arguments for open function");
    }
    AttributePtr at = args->get_value(0);
+   bool open_for_reading = true;
+   if (args->size() == 2) {
+      AttributePtr mode_at = args->get_value(1);
+      if (mode_at) {
+	 std::string mode = mode_at->convert_to_string();
+	 if (mode == "w") {
+	    open_for_reading = false;
+	 } else if (mode != "r") {
+	    throw Exception("invalid mode for open function");
+	 }
+      } else {
+	 throw Exception("invalid mode for open function");
+      }
+   }
    if (at) {
       std::string filename = at->convert_to_string();
-      return std::make_shared<Attribute>(
-	 std::make_shared<OutputStream>(
-	    std::make_unique<std::ofstream>(filename)));
+      if (open_for_reading) {
+	 return std::make_shared<Attribute>(
+	    std::make_shared<InputStream>(
+	       std::make_unique<std::ifstream>(filename), filename));
+      } else {
+	 return std::make_shared<Attribute>(
+	    std::make_shared<OutputStream>(
+	       std::make_unique<std::ofstream>(filename), filename));
+      }
    } else {
       return AttributePtr(nullptr);
    }
@@ -542,6 +582,7 @@ void insert_std_functions(BuiltinFunctions& bfs) {
    bfs.add("defined", builtin_defined);
    bfs.add("exit", builtin_exit);
    bfs.add("gentext", builtin_gentext);
+   bfs.add("getline", builtin_getline);
    bfs.add("integer", builtin_integer);
    bfs.add("isoperator", builtin_isoperator);
    bfs.add("isstring", builtin_isstring);
