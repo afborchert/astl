@@ -45,6 +45,8 @@ BindingsPtr create_default_bindings(NodePtr root,
    } else {
       bindings->define("root", AttributePtr(nullptr));
       bindings->define("graph", AttributePtr(nullptr));
+      /* allow root and graph to be redefined */
+      bindings = std::make_shared<Bindings>(bindings);
    }
    // add "true" and "false"
    bindings->define("true", std::make_shared<Attribute>(true));

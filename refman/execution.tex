@@ -57,10 +57,14 @@ sub main(argv) {
 	 push(trees, res);
       }
    }
-   var super_root = <("super-root" { trees }...)>;
-   run_state_machines(super_root);
+   var root = <("super-root" { trees }...)>;
+   run_state_machines(root);
 }
 \end{lstlisting}
+
+Note that \ident{root} and \ident{graph} can be redefined in
+the free-standing execution order while they are read-only
+in the regular execution order.
 
 Regular transformation rules (see \ref{regtrans})
 will never fire in case of free-standing scripts.
