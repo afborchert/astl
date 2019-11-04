@@ -90,10 +90,13 @@ private variables.
 \end{grammar}
 
 \noindent
-State machines are executed if a control flow graph\index{control
+State machines are implicitly executed in the course of a regular
+execution order (see \ref{xorder}) if a control flow graph\index{control
 flow graph} has been constructed through the attribution rules and if
 \ident{graph.root}\index{graph.root} exists and points to a node of the
-control flow graph.
+control flow graph. In case of a free-standing execution enviroment
+(see \ref{free-xorder}), the execution of state machines can be
+initiated through the \ident{run\_state\_machines} function.
 
 State machines instances, when executed, have a state and begin initially
 with the very first state of their list of named states. State machines

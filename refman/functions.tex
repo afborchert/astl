@@ -57,7 +57,9 @@ constructors (see \ref{funcon}) and within state machines (see
 \section{Main function}\index{main}\index{function!main}
 
 The global \ident{main} function, if it exists, is invoked implicitly
-within the regular execution order (see \ref{xorder}). The remaining
+within the regular execution order (see \ref{xorder}) or is controlling
+the entire execution in case of a free-standing script
+(see \ref{free-xorder}). The remaining
 command line\index{command line} arguments are passed as list
 to \ident{main}, either through an explicitly named parameter
 or, if the parameter list has been omitted, through the variable
@@ -81,6 +83,12 @@ sub main {
 \end{lstlisting}
 
 \noindent
+The argument list passed to \ident{main} includes neither the
+binary of the Astl interpreter nor the name of the script or
+any other options that are consumed by the runtime environment. The
+name of the script can be obtained through the predefined binding
+\ident{cmdname}.
+
 The return value of the \ident{main} function is ignored.
 
 \section{Other global functions}\index{function!global}

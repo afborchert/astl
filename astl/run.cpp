@@ -212,14 +212,33 @@ void usage(char* cmdname) {
    throw Exception(os.str());
 }
 
+void free_standing_usage(char* cmdname) {
+   std::ostringstream os;
+   os << "Usage: " << cmdname <<
+      " script [options...]";
+   throw Exception(os.str());
+}
+
 void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
       Loader& loader, const Operator& parentheses,
       BindingsPtr extra_bindings) {
    /* fetch cmdname */
    char* cmdname = *argv++; --argc;
+   if (cmdname && cmdname[0] == '.' && cmdname[1] == '/') {
+      cmdname += 2;
+   }
    /* fetch name of our script */
    if (argc == 0) usage(cmdname);
    char* script_name = *argv++; --argc;
+   /* make name of our script available */
+   if (script_name && script_name[0] == '.' && script_name[1] == '/') {
+      script_name += 2;
+   }
+   if (!extra_bindings) {
+      extra_bindings = std::make_shared<Bindings>();
+   }
+   extra_bindings->define("cmdname",
+      std::make_shared<Attribute>(std::string(script_name)));
    /* generate AST */
    if (argc == 0) usage(cmdname);
    NodePtr root = astgen.gen(argc, argv);
@@ -233,11 +252,20 @@ void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
 void run(int& argc, char**& argv,
       Loader& loader, const Operator& parentheses,
       BindingsPtr extra_bindings) {
-   /* fetch cmdname */
+   /* fetch cmdname and strip leading './', if present */
    char* cmdname = *argv++; --argc;
    /* fetch name of our script */
-   if (argc == 0) usage(cmdname);
+   if (argc == 0) free_standing_usage(cmdname);
    char* script_name = *argv++; --argc;
+   /* make name of our script available */
+   if (script_name && script_name[0] == '.' && script_name[1] == '/') {
+      script_name += 2;
+   }
+   if (!extra_bindings) {
+      extra_bindings = std::make_shared<Bindings>();
+   }
+   extra_bindings->define("cmdname",
+      std::make_shared<Attribute>(std::string(script_name)));
    NodePtr root;
    run(root, loader, script_name, /* pattern= */ nullptr, /* count = */ 0,
       parentheses, std::cout, extra_bindings, argc, argv);

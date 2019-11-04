@@ -9,10 +9,12 @@ rule sets which are executed only by invoking them.
 
 Regular transformation rules do not belong to a named rule set and do
 not operate in-place. Instead, if specified, they allow to generate
-mutants in conjunction with the printing rules. They are executed
-implicitly at the end if print rules exist (see \ref{xorder}). If a
-\ident{main}\index{main} function is defined, they are processed as soon
-as the execution of the \ident{main} function is finished.
+mutants in conjunction with the printing rules. They are executed in the
+course of a regular execution order implicitly at the end if print rules
+exist (see \ref{xorder}). If a \ident{main}\index{main} function is
+defined, they are processed as soon as the execution of the \ident{main}
+function is finished. Regular transformation rules are not executed
+in case of a free-standing script (see \ref{free-xorder}).
 
 In dependence of the command line arguments, a set of files is generated
 where each file contains a variant of the original source where exactly
