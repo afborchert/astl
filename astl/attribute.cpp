@@ -124,8 +124,8 @@ AttributePtr Attribute::pop() {
    assert(type == list);
    AttributePtr rval;
    if (values.size() > 0) {
-      rval = values.back();
-      values.pop_back();
+      rval = values.front();
+      values.pop_front();
    }
    return rval;
 }

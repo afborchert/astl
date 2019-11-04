@@ -19,6 +19,7 @@
 #ifndef ASTL_ATTRIBUTE_HPP
 #define ASTL_ATTRIBUTE_HPP
 
+#include <deque>
 #include <iostream>
 #include <list>
 #include <map>
@@ -44,7 +45,7 @@ namespace Astl {
 	 using DictionaryPair = std::pair<std::string, AttributePtr>;
 	 using DictionaryIterator = Dictionary::const_iterator;
 	 using DictionaryInserter = std::insert_iterator<Dictionary>;
-	 using Vector = std::vector<AttributePtr>;
+	 using Deque = std::deque<AttributePtr>;
 
 	 // constructors
 	 Attribute(); // create an empty dictionary
@@ -83,7 +84,7 @@ namespace Astl {
 
 	 /** Update a list */
 	 void push_back(AttributePtr val);
-	 AttributePtr pop();
+	 AttributePtr pop(); /* at the front */
 	 void update(std::size_t index, AttributePtr val);
 
 	 // accessors
@@ -151,7 +152,7 @@ namespace Astl {
 	 Dictionary dict;
 
 	 /* if type == list: */
-	 Vector values;
+	 Deque values;
 
 	 /* if type == match_result: */
 	 SubtokenVector subtokens;
