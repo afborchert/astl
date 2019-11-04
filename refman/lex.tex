@@ -9,7 +9,7 @@ source files are refered to.
 \section{Character set}\index{character set}
 
 Astl program sources are to be encoded in UTF-8\index{UTF-8}. While
-most Astl token including identifiers consist of ASCII\index{ASCII}
+most Astl tokens including identifiers consist of ASCII\index{ASCII}
 characters only, arbitrary non-ASCII characters are permitted in
 string literals (see \ref{stringlit}), program text literals (see
 \ref{textlit}), regular expression literals (see \ref{regexlit}), and
@@ -110,6 +110,7 @@ Following keywords are reserved. They cannot be used as identifiers.
 Identifiers begin with a letter, i.e. ``A'' to ``Z'' and ``a'' to ``z'',
 or an underscore ``\_'', and are optionally continued with a sequence
 of more letters, underscores, or decimal digits ``0'' to ``9''.
+Some identifiers are predefined (see \ref{predefined}).
 
 \section{Literals}\index{literal}
 
@@ -194,12 +195,13 @@ by a balanced ``\lstinline!}!''.\footnote{This type of literal is
 perhaps familiar to those knowing Perl. However, its semantics follows
 that of the ``\lstinline!qq\{...\}!'' construct in Perl which allows
 interpolation.} These literals are designed to support the generation of
-program text within the print rules.\index{print rule} They may include
-embedded references to variables or embedded expressions that are
-interpolated when the literal is evaluated. As in string literals (see
-\ref{stringlit}), the backslash ``\lstinline!\!'' may be used to escape
-following characters. Braces may be used without preceding backslashes
-within a program text literal as long as they are balanced.
+program text within the print rules (see \ref{print}).\index{print rule}
+They may include embedded references to variables or embedded
+expressions that are interpolated when the literal is evaluated. As in
+string literals (see \ref{stringlit}), the backslash ``\lstinline!\!''
+may be used to escape following characters. Braces may be used without
+preceding backslashes within a program text literal as long as they are
+balanced.
 
 Example: \lstinline!q{{}}! is equivalent to \lstinline!q{\{\}}!.
 

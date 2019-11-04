@@ -100,6 +100,9 @@ push(more_numbers, 7);
 // len(numbers) == 4
 \end{lstlisting}
 
+By using the predefined functions \ident{push}\index{push} and
+\ident{pop},\index{pop} lists can be used as FIFO queues.\index{queue}
+
 \section{Dictionaries}\index{dictionary}\label{dictionary}
 
 Dictionaries are data structures that map string-valued keys
@@ -261,13 +264,12 @@ sub traverse (node) {
 \end{lstlisting}
 
 \noindent
-The following attribution rules matches all operator nodes where
-the operator is \lstinline!"compound_statement"! with an arbitrary
-number of subnodes. Whenever the rule is executed, the operator
-node is bound to \ident{block} due to the \keyword{as} clause.
-Abstract syntax trees provide a dictionary that can be used for
-per-node attributes. The example below initializes the attributes
-\ident{vars}, \ident{level}, and \ident{up} of \ident{block}:
+The following attribution rules matches all \lstinline!"compound_statement"!
+operator nodes with an arbitrary number of subnodes. Whenever the rule
+is executed, the operator node is bound to \ident{block} due to the
+\keyword{as} clause. Abstract syntax trees provide a dictionary that
+can be used for per-node attributes. The example below initializes the
+attributes \ident{vars}, \ident{level}, and \ident{up} of \ident{block}:
 
 \begin{lstlisting}
 ("compound_statement" *) as block -> {
