@@ -1,4 +1,12 @@
-System := $(shell uname -s)
+#------------------------------------------------------------------------------
+# configuration parameters
+#------------------------------------------------------------------------------
+PREFIX = /usr/local
+ASTL_LIBPREFIX = $(PREFIX)/share/astl
+ASTL_ASTL_LIBDIR = $(ASTL_LIBPREFIX)/astl
+BINDIR = $(PREFIX)/bin
+DESTDIR =
+#------------------------------------------------------------------------------
 BisonSources :=	$(wildcard *.ypp)
 GeneratedCPPSourcesFromBison := $(patsubst %.ypp,%.tab.cpp,$(BisonSources))
 GeneratedCPPSources := $(GeneratedCPPSourcesFromBison) \
@@ -31,10 +39,11 @@ MainObjects := $(patsubst %.cpp,%.o,$(MainSources))
 Lib := libastl.a
 Utils := ../bison-scripts
 
+DEFS :=		-DASTL_ASTL_LIBDIR='"$(ASTL_ASTL_LIBDIR)"'
 CXX :=		g++
 CXXFLAGS :=	-Wall -g -O2
 LDFLAGS :=
-CPPFLAGS +=	-I.. -std=gnu++14
+CPPFLAGS +=	-I.. -std=gnu++14 $(DEFS)
 LDLIBS := -lgmp -lpcre2-8
 BISON := bison
 
@@ -80,6 +89,27 @@ astl-astl-free:	$(astl_astl_free_objs) $(Lib)
 depend:		$(CPPSources)
 		perl ../gcc-makedepend/gcc-makedepend.pl \
 		   $(CPPFLAGS) $(CPPSources) $(MainSources)
+
+#------------------------------------------------------------------------------
+# installation
+#------------------------------------------------------------------------------
+Binaries := astl-astl astl-astl-free
+ifeq ($(DESTDIR),)
+BinDir := $(BINDIR)
+else
+BinDir := $(DESTDIR)/$(BINDIR)
+endif
+InstalledBinaries := $(patsubst %,$(BinDir)/%,$(Binaries))
+.PHONY:		install
+install:	$(InstalledBinaries)
+$(InstalledBinaries): $(BinDir)/%: %
+		@mkdir -p $(BinDir)
+		cp $< $@
+		chmod 755 $@
+
+#------------------------------------------------------------------------------
+# for gcc-makedepend
+#------------------------------------------------------------------------------
 # DO NOT DELETE
 parser.tab.o: parser.tab.cpp ../astl/error.hpp ../astl/exception.hpp \
  ../astl/treeloc.hpp ../astl/location.hpp ../astl/position.hh \

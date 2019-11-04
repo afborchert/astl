@@ -81,8 +81,12 @@ int main(int argc, char** argv) {
 	 if (dir) loader.add_library(dir);
       } else {
 	 // default path
+#ifdef ASTL_ASTL_LIBDIR
+	 loader.add_library(ASTL_ASTL_LIBDIR);
+#else
 	 loader.add_library("/usr/local/share/astl/astl");
 	 loader.add_library("/usr/share/astl/astl");
+#endif
       }
       run(argc, argv, astgen, loader, Op::LPAREN);
    } catch (Exception& e) {

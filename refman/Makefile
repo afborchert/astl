@@ -1,3 +1,10 @@
+#------------------------------------------------------------------------------
+# configuration parameters
+#------------------------------------------------------------------------------
+PREFIX = /usr/local
+ASTL_LIBPREFIX = $(PREFIX)/share/astl
+DESTDIR =
+#------------------------------------------------------------------------------
 EPSFigures :=		$(shell find . -name '*.eps')
 MPFigures :=		$(shell find . -name '*.mp')
 ifeq ($(EPSFigures),)
@@ -37,9 +44,29 @@ GS_OPTIONS=-dPDFSETTINGS=/printer epstopdf $^ >$@
 endef
 $(EPS2PDFFigures): %.pdf: %.eps;				$(epstopdf)
 #------------------------------------------------------------------------------
-.PHONY:			clean
+.PHONY:			clean realclean
 clean:
 			rm -f *.aux *.out *.log *.ind *.lof *.tpt \
 			*.idx *.lol *.ilg *.toc \
 			main.bbl main.blg \
 			fixbookmarks.debug main.pdf main.ps
+realclean:		clean
+			rm -f astl-refman.pdf
+#------------------------------------------------------------------------------
+.PHONY:			install
+Manuals := astl-refman.pdf
+ifeq ($(DESTDIR),)
+LibDir := $(ASTL_LIBPREFIX)
+else
+BinDir := $(DESTDIR)/$(ASTL_LIBPREFIX)
+endif
+InstalledManuals := $(patsubst %,$(LibDir)/%,$(Manuals))
+.PHONY:		install
+install:	$(InstalledManuals)
+$(InstalledManuals): $(LibDir)/%: %
+		@mkdir -p $(LibDir)
+		cp $< $@
+		chmod 644 $@
+#------------------------------------------------------------------------------
+.PHONY:			depend
+depend:

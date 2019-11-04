@@ -24,9 +24,9 @@ If you want to clone it, you should do this recursively:
 git clone --recursive https://github.com/afborchert/astl.git
 ```
 
-To build it, you need _bison_ 3.x, a recent _g++_ with
-C++14 support, GMP, and _pcre2_ libraries:
+To build and install it at _~/astl_, you need _bison_ 3.x,
+a recent _g++_ with C++14 support, GMP, and _pcre2_ libraries:
 
 ```
-(cd astl/astl && make)
+(cd astl && make PREFIX=$HOME/astl depend install)
 ```
