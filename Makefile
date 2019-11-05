@@ -7,7 +7,7 @@ ASTL_ASTL_LIBDIR = $(ASTL_LIBPREFIX)/astl
 BINDIR = $(PREFIX)/bin
 DESTDIR =
 #------------------------------------------------------------------------------
-SubDirs := astl refman
+SubDirs := astl
 
 define propagate
 @for dir in $(SubDirs); do $(MAKE) -C $$dir $@; done
