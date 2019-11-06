@@ -119,10 +119,18 @@ void run(NodePtr root,
    if (root) {
       // execute global attribution rules, if defined
       if (rules.attribution_rules_defined()) {
-	 execute(root, rules.get_attribution_rule_table(), bindings);
+	 try {
+	    execute(root, rules.get_attribution_rule_table(), bindings);
+	 } catch (Exception& e) {
+	    throw Exception("within attribution rules", e);
+	 }
       }
       // execute state machines, if present
-      execute_state_machines(rules, bindings);
+      try {
+	 execute_state_machines(rules, bindings);
+      } catch (Exception& e) {
+	 throw Exception("while executing state machines", e);
+      }
    }
 
    NodePtr main = rules.get_function("main");
@@ -155,7 +163,7 @@ void run(NodePtr root,
       try {
 	 f->eval(args);
       } catch (Exception& e) {
-	 throw Exception(main->get_location(), e.what());
+	 throw Exception(main->get_location(), "within main", e);
       }
    }
 

@@ -3,7 +3,10 @@
 Some bindings are provided at a global scope. None of these values
 may be redefined at the global level nor modified (i.e. by referencing
 them on the left side of an assignment) but it is possible
-to hide them by local declarations.
+to hide them by local declarations. The only exception is
+the variable \ident{root} in the free-standing
+execution model (see \ref{free-xorder}) which is initially
+\keyword{null} but may be redefined.
 
 \noindent
 \setlength\LTleft{0pt}
@@ -45,13 +48,15 @@ to hide them by local declarations.
       whereas all attributes are copied as well as in
       regular assignments \\
    \ident{cmdname} & string &
-      name of the Astl script \\
+      basename of the Astl script \\
    \ident{copy} & function &
       accepts a target and a source argument which must be both
       non-null and of the same type; the contents of the source
       is then copied to the target \\
    \ident{defined} & function &
       returns true if the value is non-\keyword{null} \\
+   \ident{env} & dictionary &
+      dictionary of environment variables \\
    \ident{exit} & function &
       expects an argument that is converted to an integer value
       which is taken modulo 256 and interpreted as exit code;
@@ -67,6 +72,12 @@ to hide them by local declarations.
    \ident{gentext} & function &
       requires the print rules to be available and converts
       an ast node into a string \\
+   \ident{graph}\index{graph} & dictionary &
+      is predefined as an empty dictionary which is used
+      as data structure for the construction of the
+      control flow graph (see \ref{cfg}) and
+      during the execution of the state machines
+      (see \ref{sm}) \\
    \ident{integer} & function &
       converts its argument into an integer value \\
    \ident{isoperator} & function &
@@ -114,13 +125,15 @@ to hide them by local declarations.
       prints all arguments and a line terminator to standard output \\
    \ident{prints} & function &
       prints all arguments to standard output \\
-   \ident{root}\index{root} & ast & points to the root node of the
-      abstract syntax tree; within named attribution rules
+   \ident{root}\index{root} & tree & points to the root node of the
+      abstract syntax tree preloaded in course of the regular execution
+      model (see \ref{xorder}); the free-standing execution model
+      (see \ref{free-xorder}) sets \ident{root} initially to \keyword{null}
+      but allows it to be redefined; within named attribution rules
       (see \ref{named-atrules}) and transformation rules
       (see \ref{named-trrules} and \ref{named-inplace-trrules})
-      \ident{root} is bound to the abstract syntax tree passed
-      to the corresponding
-      function \\
+      \ident{root} is locally bound to the abstract syntax tree passed
+      to the corresponding function \\
    \ident{stdin}\index{stdin} & istream &
       standard input stream \\
    \ident{stdout}\index{stdout} & ostream &

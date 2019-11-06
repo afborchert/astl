@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <cstring>
 #include <memory>
 #include <astl/atrules-function.hpp>
 #include <astl/attribute.hpp>
@@ -27,7 +28,24 @@
 #include <astl/stream.hpp>
 #include <astl/trrules-function.hpp>
 
+extern char** environ;
+
 namespace Astl {
+
+/* create dictionary with environment variables */
+AttributePtr create_environment() {
+   auto dict = std::make_shared<Attribute>(Attribute::dictionary);
+   for (char** envp = environ; *envp; ++envp) {
+      char* start = *envp;
+      char* cp = std::strchr(start, '=');
+      if (cp) {
+	 std::string key(start, cp - start);
+	 auto value = std::make_shared<Attribute>(std::string(cp + 1));
+	 dict->update(key, value);
+      }
+   }
+   return dict;
+}
 
 BindingsPtr create_default_bindings(NodePtr root,
       const Rules* rulesp, BindingsPtr extra_bindings) {
@@ -44,9 +62,9 @@ BindingsPtr create_default_bindings(NodePtr root,
       bindings->define("graph", at->get_value("graph"));
    } else {
       bindings->define("root", AttributePtr(nullptr));
-      bindings->define("graph", AttributePtr(nullptr));
-      /* allow root and graph to be redefined */
+      /* allow root to be redefined */
       bindings = std::make_shared<Bindings>(bindings);
+      bindings->define("graph", std::make_shared<Attribute>());
    }
    // add "true" and "false"
    bindings->define("true", std::make_shared<Attribute>(true));
@@ -62,6 +80,9 @@ BindingsPtr create_default_bindings(NodePtr root,
    bindings->define("stderr",
       std::make_shared<Attribute>(std::make_shared<OutputStream>(std::cerr,
 	 "stderr")));
+
+   // add "env" as dictionary of environment variables
+   bindings->define("env", create_environment());
 
    // add standard functions to bindings
    BuiltinFunctions bfs;

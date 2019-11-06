@@ -210,7 +210,7 @@ AttributePtr Expression::eval_primary(NodePtr expr) {
 	    try {
 	       return f->eval(args);
 	    } catch (Exception& e) {
-	       throw Exception(expr->get_location(), e.what());
+	       throw Exception(expr->get_location(), e);
 	    }
 	 }
       case ASTL_OPERATOR_FUNCTION_CONSTRUCTOR:

@@ -33,7 +33,6 @@
 #include <astl/scanner.hpp>
 #include <astl/yytname.hpp>
 
-using namespace std;
 using namespace Astl;
 
 AttributePtr builtin_parse(BindingsPtr bindings, AttributePtr args) {
@@ -48,7 +47,7 @@ AttributePtr builtin_parse(BindingsPtr bindings, AttributePtr args) {
 int main(int argc, char** argv) {
    try {
       Loader loader;
-      char* path = getenv("ASTL_ASTL_PATH");
+      char* path = std::getenv("ASTL_ASTL_PATH");
       if (path) {
 	 char* dir = path;
 	 for (char* cp = path; *cp; ++cp) {
@@ -81,11 +80,9 @@ int main(int argc, char** argv) {
 
       run(argc, argv, loader, Op::LPAREN, bindings);
    } catch (Exception& e) {
-      cout << endl;
-      cerr << e.what() << endl;
+      std::cerr << e.what() << std::endl;
    } catch (std::exception& e) {
-      cout << endl;
-      cerr << e.what() << endl;
+      std::cerr << e.what() << std::endl;
    }
 }
 

@@ -20,6 +20,7 @@
 #define ASTL_BUILTIN_PARSE_HPP
 
 #include <memory>
+#include <sstream>
 #include <astl/attribute.hpp>
 #include <astl/bindings.hpp>
 #include <astl/exception.hpp>
@@ -64,8 +65,13 @@ AttributePtr builtin_parse(BindingsPtr bindings, AttributePtr args,
 	    const Rules& rules(bindings->get_rules());
 	    // execute global attribution rules, if defined
 	    if (rules.attribution_rules_defined()) {
-	       execute(root, rules.get_attribution_rule_table(),
-		  local_bindings);
+	       try {
+		  execute(root, rules.get_attribution_rule_table(),
+		     local_bindings);
+	       } catch (Exception& e) {
+		  throw Exception("error occurred while executing attribution "
+		     "rules within the parse function", e);
+	       }
 	    }
 	 }
 	 return std::make_shared<Attribute>(root);

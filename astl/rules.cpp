@@ -73,7 +73,11 @@ void Rules::scan(NodePtr root) {
       } else if (op == Op::import_clause) {
 	 std::string name = clause->get_operand(0)->get_token().get_text();
 	 if (!loader.loaded(name)) {
-	    scan(loader.load(name));
+	    try {
+	       scan(loader.load(name));
+	    } catch (Exception& e) {
+	       throw Exception(clause->get_location(), "imported from here");
+	    }
 	 }
       } else if (op == Op::operator_set_clause) {
 	 std::string name = clause->get_operand(0)->get_token().get_text();

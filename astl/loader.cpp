@@ -33,13 +33,17 @@ bool Loader::loaded(const std::string& name) const {
    return loaded_libs.find(name) != loaded_libs.end();
 }
 
-NodePtr Loader::load(const std::string& name) {
+NodePtr Loader::load(std::string name) {
    std::ifstream in;
    std::string path;
    if (name[0] == '/') {
       in.open(name.c_str());
       path = name;
    } else {
+      if (name[0] == '.' && name[1] == '/') {
+	 /* strip leading './' */
+	 name = name.substr(2);
+      }
       for (std::list<std::string>::const_iterator it = libpath.begin();
 	    it != libpath.end(); ++it) {
 	 if (*it == ".") {

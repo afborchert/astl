@@ -314,7 +314,7 @@ captures one substring which is refered to by \lstinline!dec[0]!.
 ("decimal_literal" m{^\d+(\d)$} as dec) -> ("decimal_literal" {dec & dec[0]})
 \end{lstlisting}%stopzone
 
-\section{Control flow graph nodes}\index{control flow graph}
+\section{Control flow graph nodes}\index{control flow graph}\label{cfg}
 
 Attribution rules can be used to construct a interprocedural control
 flow graph in conformance to the IFDS framework by

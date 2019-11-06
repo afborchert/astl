@@ -131,7 +131,7 @@ void Designator::assign(AttributePtr value,
       const Location& loc) {
    assert(lvalue);
    if (varname != "" && bindings->is_const(varname)) {
-      throw Exception(loc, "constants must not be assigned to");
+      throw Exception(loc, "read-only variables must not be assigned to");
    }
    switch (type) {
       case simpleDesignator:

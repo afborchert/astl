@@ -20,6 +20,7 @@
 #define ASTL_EXCEPTION_H
 
 #include <exception>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <astl/treeloc.hpp>
@@ -31,6 +32,7 @@ namespace Astl {
 	 Location loc;
 	 bool loc_defined;
 	 std::string msg;
+	 std::shared_ptr<Exception> nested;
 	 mutable std::string msgbuf; // temporarily used by what()
 
       public:
@@ -38,6 +40,19 @@ namespace Astl {
 	 Exception() : loc_defined(false) {}
 	 Exception(const location& loc) : loc(loc), loc_defined(true) {}
 	 Exception(const Location& loc) : loc(loc), loc_defined(true) {}
+	 Exception(const Location& loc, const Exception& other) :
+	       loc(loc), loc_defined(true),
+	       nested(std::make_shared<Exception>(other)) {
+	 }
+	 Exception(const Location& loc, const char* msg,
+	    const Exception& other) :
+	       loc(loc), loc_defined(true), msg(msg),
+	       nested(std::make_shared<Exception>(other)) {
+	 }
+	 Exception(const char* msg, const Exception& other) :
+	       loc_defined(false), msg(msg),
+	       nested(std::make_shared<Exception>(other)) {
+	 }
 	 Exception(const std::string msg) : loc_defined(false), msg(msg) {}
 	 Exception(const char* msg) : loc_defined(false), msg(msg) {}
 	 Exception(const location& loc, const std::string& msg) :
@@ -49,7 +64,8 @@ namespace Astl {
 	 Exception(const Location& loc, const char* msg) :
 	       loc(loc), loc_defined(true), msg(msg) {}
 	 Exception(const Exception& other) :
-	       loc(other.loc), loc_defined(other.loc_defined), msg(other.msg) {
+	       loc(other.loc), loc_defined(other.loc_defined),
+	       msg(other.msg), nested(other.nested) {
 	 }
 
 	 // destructor
@@ -62,15 +78,26 @@ namespace Astl {
 	       loc = other.loc;
 	    }
 	    msg = other.msg;
+	    nested = other.nested;
 	    return *this;
 	 }
 
 	 // accessor
 	 virtual const char* what() const throw() {
 	    std::ostringstream os;
-	    if (loc_defined) os << loc;
-	    if (loc_defined && msg.size() > 0) os << ": ";
-	    if (msg.size() > 0) os << msg;
+	    if (nested) {
+	       os << nested->what() << std::endl;
+	       if (loc_defined) os << loc << ": ";
+	       if (msg.size() > 0) {
+		  os << msg;
+	       } else {
+		  os << "called from here";
+	       }
+	    } else {
+	       if (loc_defined) os << loc;
+	       if (loc_defined && msg.size() > 0) os << ": ";
+	       if (msg.size() > 0) os << msg;
+	    }
 	    msgbuf = os.str();
 	    return msgbuf.c_str();
 	 }

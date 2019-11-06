@@ -35,7 +35,7 @@ namespace Astl {
 	 bool loaded(const std::string& name) const;
 
 	 // mutators
-	 NodePtr load(const std::string& name);
+	 NodePtr load(std::string name);
 	 void add_library(const std::string& libname);
 	 void add_library_in_front(const std::string& libname);
 
