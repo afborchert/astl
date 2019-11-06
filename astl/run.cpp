@@ -17,6 +17,7 @@
 */
 
 #include <cassert>
+#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -219,6 +220,22 @@ void free_standing_usage(char* cmdname) {
    throw Exception(os.str());
 }
 
+BindingsPtr define_cmdname(BindingsPtr bindings, const char* script_name) {
+   /* strip it down to the basename */
+   const char* cp = std::strrchr(script_name, '/');
+   if (cp) {
+      script_name = cp + 1;
+   }
+   if (!bindings) {
+      bindings = std::make_shared<Bindings>();
+   }
+   bindings->define("cmdname",
+      std::make_shared<Attribute>(std::string(script_name)));
+   return bindings;
+}
+
+/* regular execution model where an AST is generated before
+   the execution of the Astl script begins */
 void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
       Loader& loader, const Operator& parentheses,
       BindingsPtr extra_bindings) {
@@ -231,14 +248,7 @@ void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
    if (argc == 0) usage(cmdname);
    char* script_name = *argv++; --argc;
    /* make name of our script available */
-   if (script_name && script_name[0] == '.' && script_name[1] == '/') {
-      script_name += 2;
-   }
-   if (!extra_bindings) {
-      extra_bindings = std::make_shared<Bindings>();
-   }
-   extra_bindings->define("cmdname",
-      std::make_shared<Attribute>(std::string(script_name)));
+   extra_bindings = define_cmdname(extra_bindings, script_name);
    /* generate AST */
    if (argc == 0) usage(cmdname);
    NodePtr root = astgen.gen(argc, argv);
@@ -249,6 +259,7 @@ void run(int& argc, char**& argv, SyntaxTreeGenerator& astgen,
       parentheses, std::cout, extra_bindings, argc, argv);
 }
 
+/* free-standing execution order where no AST is preloaded */
 void run(int& argc, char**& argv,
       Loader& loader, const Operator& parentheses,
       BindingsPtr extra_bindings) {
@@ -258,14 +269,8 @@ void run(int& argc, char**& argv,
    if (argc == 0) free_standing_usage(cmdname);
    char* script_name = *argv++; --argc;
    /* make name of our script available */
-   if (script_name && script_name[0] == '.' && script_name[1] == '/') {
-      script_name += 2;
-   }
-   if (!extra_bindings) {
-      extra_bindings = std::make_shared<Bindings>();
-   }
-   extra_bindings->define("cmdname",
-      std::make_shared<Attribute>(std::string(script_name)));
+   extra_bindings = define_cmdname(extra_bindings, script_name);
+   /* generate AST */
    NodePtr root;
    run(root, loader, script_name, /* pattern= */ nullptr, /* count = */ 0,
       parentheses, std::cout, extra_bindings, argc, argv);
