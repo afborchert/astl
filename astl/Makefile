@@ -39,13 +39,13 @@ MainObjects := $(patsubst %.cpp,%.o,$(MainSources))
 Lib := libastl.a
 Utils := ../bison-scripts
 
-DEFS :=		-DASTL_ASTL_LIBDIR='"$(ASTL_ASTL_LIBDIR)"'
-CXX :=		g++
-CXXFLAGS :=	-Wall -g -O2
-LDFLAGS :=
+DEFS +=		-DASTL_ASTL_LIBDIR='"$(ASTL_ASTL_LIBDIR)"'
+CXX =		g++
+CXXFLAGS =	-Wall -g -O2
+LDFLAGS =
 CPPFLAGS +=	-I.. -std=gnu++14 $(DEFS)
-LDLIBS := -lgmp -lpcre2-8
-BISON := bison
+LDLIBS += -lgmp -lpcre2-8
+BISON = bison
 
 .PHONY:		all clean realclean depend
 all:		$(Lib) testlex testparser testregex astl-astl astl-astl-free
