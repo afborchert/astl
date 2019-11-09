@@ -88,7 +88,7 @@ astl-astl-free:	$(astl_astl_free_objs) $(Lib)
 		$(CXX) $(LDFLAGS) -o $@ $(astl_astl_free_objs) $(Lib) $(LDLIBS)
 depend:		$(CPPSources)
 		perl ../gcc-makedepend/gcc-makedepend.pl \
-		   $(CPPFLAGS) $(CPPSources) $(MainSources)
+		   -gcc $(CXX) $(CPPFLAGS) $(CPPSources) $(MainSources)
 
 #------------------------------------------------------------------------------
 # installation
