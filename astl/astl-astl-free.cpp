@@ -74,6 +74,7 @@ int main(int argc, char** argv) {
 
       BuiltinFunctions bfs;
       bfs.add("parse", builtin_parse);
+      bfs.add("run_attribution_rules", builtin_run_attribution_rules);
       bfs.add("run_state_machines", builtin_run_state_machines);
       auto bindings = std::make_shared<Bindings>();
       bfs.insert(bindings);

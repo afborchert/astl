@@ -59,21 +59,6 @@ AttributePtr builtin_parse(BindingsPtr bindings, AttributePtr args,
 	 if (!gentree(root, istream)) {
 	    return nullptr;
 	 }
-	 if (bindings->rules_defined()) {
-	    BindingsPtr local_bindings(bindings);
-	    local_bindings->define("root", std::make_shared<Attribute>(root));
-	    const Rules& rules(bindings->get_rules());
-	    // execute global attribution rules, if defined
-	    if (rules.attribution_rules_defined()) {
-	       try {
-		  execute(root, rules.get_attribution_rule_table(),
-		     local_bindings);
-	       } catch (Exception& e) {
-		  throw Exception("error occurred while executing attribution "
-		     "rules within the parse function", e);
-	       }
-	    }
-	 }
 	 return std::make_shared<Attribute>(root);
       } catch (Exception& e) {
 	 return std::make_shared<Attribute>(std::string(e.what()));
@@ -81,6 +66,36 @@ AttributePtr builtin_parse(BindingsPtr bindings, AttributePtr args,
    } else {
       throw Exception("input stream expected as argument to parse");
    }
+}
+
+inline AttributePtr builtin_run_attribution_rules(BindingsPtr bindings,
+      AttributePtr args) {
+   if (!args || args->size() != 1) {
+      throw Exception("wrong number of arguments for "
+	 "run_attribution_rules function");
+   }
+   AttributePtr at = args->get_value(0);
+   if (at && at->get_type() == Attribute::tree) {
+      NodePtr root = at->get_node();
+      if (bindings->rules_defined()) {
+	 BindingsPtr local_bindings(bindings);
+	 local_bindings->define("root", std::make_shared<Attribute>(root));
+	 const Rules& rules(bindings->get_rules());
+	 // execute global attribution rules, if defined
+	 if (rules.attribution_rules_defined()) {
+	    try {
+	       execute(root, rules.get_attribution_rule_table(),
+		  local_bindings);
+	    } catch (Exception& e) {
+	       throw Exception("error occurred while executing attribution "
+		  "rules within the run_attribution_rules function", e);
+	    }
+	 }
+      }
+   } else {
+      throw Exception("syntax tree expected as argument");
+   }
+   return nullptr;
 }
 
 inline AttributePtr builtin_run_state_machines(BindingsPtr bindings,

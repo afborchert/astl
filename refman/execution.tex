@@ -35,15 +35,16 @@ beginning. Instead, the entire execution is controlled by the
 The main function can process its command line arguments,
 open file arguments, and parse them using the \ident{parse}\index{parse}
 function (which does not belong to the standard set of predefined functions).
-Parsing, if successful, delivers an abstract syntax tree which is
-immediately processed by the regular attribution rules. Otherwise,
+Parsing, if successful, delivers an abstract syntax tree. Otherwise,
 a string is returned with an error message.
 
-The execution
-of state machines can be initiated through
-\ident{run\_state\_machines}\index{run\_state\_machines}. This is not
-done automatically to give the opportunity to construct a tree from
-multiple input sources:
+The regular attribution rules can be executed using the builtin function
+\ident{run\_attribution\_rules}\index{run\_attribution\_rules}.
+The execution of state machines can be initiated through
+\ident{run\_state\_machines}\index{run\_state\_machines}.
+
+Both is not done automatically to give the opportunity to construct a
+tree from multiple input sources:
 
 \begin{lstlisting}
 sub main(argv) {
@@ -58,6 +59,7 @@ sub main(argv) {
       }
    }
    var root = <("super-root" { trees }...)>;
+   run_attribution_rules(root);
    run_state_machines(root);
 }
 \end{lstlisting}
