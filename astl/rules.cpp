@@ -76,7 +76,7 @@ void Rules::scan(NodePtr root) {
 	    try {
 	       scan(loader.load(name));
 	    } catch (Exception& e) {
-	       throw Exception(clause->get_location(), "imported from here");
+	       throw Exception(clause->get_location(), "imported from here", e);
 	    }
 	 }
       } else if (op == Op::operator_set_clause) {
