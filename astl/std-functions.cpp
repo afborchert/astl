@@ -121,6 +121,24 @@ AttributePtr builtin_exit(BindingsPtr bindings, AttributePtr args) {
    std::exit(val);
 }
 
+AttributePtr builtin_extract_attributes(BindingsPtr bindings,
+      AttributePtr args) {
+   if (!args || args->size() != 1) {
+      throw Exception("wrong number of arguments for "
+	 "extract_attributes function");
+   }
+   AttributePtr at = args->get_value(0);
+   if (!at) {
+      throw Exception("null must not be cloned");
+   }
+   if (at->get_type() != Attribute::tree) {
+      throw Exception("abstract syntax tree expected as argument to "
+	 "extract_attributes function");
+   }
+   auto node = at->get_node();
+   return node->get_attribute()->clone();
+}
+
 AttributePtr builtin_gentext(BindingsPtr bindings, AttributePtr args) {
    if (!args || args->size() != 1) {
       throw Exception("wrong number of arguments for gentext function");
@@ -581,6 +599,7 @@ void insert_std_functions(BuiltinFunctions& bfs) {
    bfs.add("copy", builtin_copy);
    bfs.add("defined", builtin_defined);
    bfs.add("exit", builtin_exit);
+   bfs.add("extract_attributes", builtin_extract_attributes);
    bfs.add("gentext", builtin_gentext);
    bfs.add("getline", builtin_getline);
    bfs.add("integer", builtin_integer);

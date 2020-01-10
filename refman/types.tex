@@ -23,8 +23,8 @@ declared and set to \ident{false}. In the following statement
 the Boolean value of a logical expression is assigned to \ident{flag}.
 
 \begin{lstlisting}
-var flag = false;
-flag = flag || (i == 7);
+   var flag = false;
+   flag = flag || (i == 7);
 \end{lstlisting}
 
 \section{Integer values}\index{integer}\label{integer}
@@ -50,9 +50,9 @@ implicit conversions are enforced by the operators \token{\&}
 which expects strings and \token{+} which expects integers.
 
 \begin{lstlisting}
-var i = 17;
-var j = i & "8";
-var k = i + j; // k is set to 195
+   var i = 17;
+   var j = i & "8";
+   var k = i + j; // k is set to 195
 \end{lstlisting}
 
 When strings are converted to integers and vice versa,
@@ -75,16 +75,16 @@ using the \lstinline![...]!-syntax and how to iterate through
 lists using a \keyword{foreach}- or \keyword{while}-statement:
 
 \begin{lstlisting}
-var cities = ["Berlin", "Hamburg", "Stuttgart", "Ulm"];
-foreach city in (cities) {
-   println(city);
-}
-// alternatively, indices can be used:
-var index = 0;
-while (index < len(cities)) {
-   println(cities[index]);
-   ++index;
-}
+   var cities = ["Berlin", "Hamburg", "Stuttgart", "Ulm"];
+   foreach city in (cities) {
+      println(city);
+   }
+   // alternatively, indices can be used:
+   var index = 0;
+   while (index < len(cities)) {
+      println(cities[index]);
+      ++index;
+   }
 \end{lstlisting}
 
 \noindent
@@ -94,10 +94,10 @@ an assignment of a list causes a list to be shared
 (shallow copy). Example:
 
 \begin{lstlisting}
-var numbers = [1, 3, 5];
-var more_numbers = numbers;
-push(more_numbers, 7);
-// len(numbers) == 4
+   var numbers = [1, 3, 5];
+   var more_numbers = numbers;
+   push(more_numbers, 7);
+   // len(numbers) == 4
 \end{lstlisting}
 
 By using the predefined functions \ident{push}\index{push} and
@@ -122,15 +122,15 @@ constructed using the \lstinline!{...}! syntax. In this case the keys in
 front of the \token{->} delimiter must be identifiers.
 
 \begin{lstlisting}
-("direct_declarator" ("identifier" id)) as declarator
-      in ("compound_statement" *) as block -> {
-   block.vars{id} = {
-      decl -> declarator,
-      used -> false,
-      minlevel -> -1,
-      minblock -> null,
-   };
-}
+   ("direct_declarator" ("identifier" id)) as declarator
+         in ("compound_statement" *) as block -> {
+      block.vars{id} = {
+         decl -> declarator,
+         used -> false,
+         minlevel -> -1,
+         minblock -> null,
+      };
+   }
 \end{lstlisting}
 
 \noindent
@@ -142,7 +142,7 @@ may be deleted through a deletion statement.
 Example:\index{delete}
 
 \begin{lstlisting}
-delete block.vars{id}; // delete entry for id in block.vars
+   delete block.vars{id}; // delete entry for id in block.vars
 \end{lstlisting}
 
 \noindent
@@ -191,9 +191,9 @@ In the following example, the anonymous functions assigned to
 of the local variable \ident{counter} (see \ref{var}).
 
 \begin{lstlisting}
-var counter = 0;
-var incr = sub { return ++counter; };
-var decr = sub { return --counter; };
+   var counter = 0;
+   var incr = sub { return ++counter; };
+   var decr = sub { return --counter; };
 \end{lstlisting}
 
 \section{Abstract syntax trees}\index{abstract syntax tree}
@@ -227,40 +227,52 @@ operator and token nodes. An operator node can be examined like a list
 to retrieve the individual subtrees.
 
 \begin{lstlisting}
-sub traverse (node) {
-   var result = "";
-   if (isoperator(node)) {
-      result = "(" & operator(node);
-      foreach operand in (node) {
-         result &= " " & traverse(operand);
+   sub traverse (node) {
+      var result = "";
+      if (isoperator(node)) {
+         result = "(" & operator(node);
+         foreach operand in (node) {
+            result &= " " & traverse(operand);
+         }
+         result &= ")";
+      } else {
+         result = tokenliteral(node);
       }
-      result &= ")";
-   } else {
-      result = tokenliteral(node);
+      return result;
    }
-   return result;
-}
 \end{lstlisting}
 
 \noindent
 Alternatively, the individual operands can be indexed:
 
 \begin{lstlisting}
-sub traverse (node) {
-   var result = "";
-   if (isoperator(node)) {
-      result = "(" & operator(node);
-      var index = 0;
-      while (index < len(node)) {
-         result &= " " & traverse(node[index]);
-	 ++index;
+   sub traverse (node) {
+      var result = "";
+      if (isoperator(node)) {
+         result = "(" & operator(node);
+         var index = 0;
+         while (index < len(node)) {
+            result &= " " & traverse(node[index]);
+            ++index;
+         }
+         result &= ")";
+      } else {
+         result = tokenliteral(node);
       }
-      result &= ")";
-   } else {
-      result = tokenliteral(node);
+      return result;
    }
-   return result;
-}
+\end{lstlisting}
+
+\noindent
+The attributes of the root node of an abstract syntax tree
+can be examined using the predefined
+\textit{extract\_attributes}\index{extract\_attributes}
+function (see \ref{predefined}):
+
+\begin{lstlisting}
+   foreach (attribute, value) in (extract_attributes(node)) {
+      // ...
+   }
 \end{lstlisting}
 
 \noindent
@@ -272,11 +284,11 @@ can be used for per-node attributes. The example below initializes the
 attributes \ident{vars}, \ident{level}, and \ident{up} of \ident{block}:
 
 \begin{lstlisting}
-("compound_statement" *) as block -> {
-   block.vars = {};
-   block.level = 0;
-   block.up = null;
-}
+   ("compound_statement" *) as block -> {
+      block.vars = {};
+      block.level = 0;
+      block.up = null;
+   }
 \end{lstlisting}
 
 \noindent
@@ -303,7 +315,7 @@ regular expression. Variables bound to matching results can be
 used like scalars to refer to the matched text.
 
 \begin{lstlisting}
-("decimal_literal" m{^\d+$} as dec) -> ("decimal_literal" {dec + 1})
+   ("decimal_literal" m{^\d+$} as dec) -> ("decimal_literal" {dec + 1})
 \end{lstlisting}%stopzone
 
 \noindent
@@ -311,7 +323,7 @@ The regular expression of the following example
 captures one substring which is refered to by \lstinline!dec[0]!.
 
 \begin{lstlisting}
-("decimal_literal" m{^\d+(\d)$} as dec) -> ("decimal_literal" {dec & dec[0]})
+   ("decimal_literal" m{^\d+(\d)$} as dec) -> ("decimal_literal" {dec & dec[0]})
 \end{lstlisting}%stopzone
 
 \section{Control flow graph nodes}\index{control flow graph}\label{cfg}
@@ -421,19 +433,19 @@ allow to read or to write to a stream, respectively. Streams
 are implicitly closed when the last reference to it is cut.
 
 \begin{lstlisting}
-sub main(argv) {
-   foreach arg in (argv) {
-      var input = open(arg);
-      if (input) {
-         var line;
-         while (defined(line = getline(input))) {
-            println(line);
+   sub main(argv) {
+      foreach arg in (argv) {
+         var input = open(arg);
+         if (input) {
+            var line;
+            while (defined(line = getline(input))) {
+               println(line);
+            }
+         } else {
+            println(stderr, arg, ": could not be opened for reading");
          }
-      } else {
-         println(stderr, arg, ": could not be opened for reading");
       }
    }
-}
 \end{lstlisting}
 
 \section{Implicit Conversions}\index{conversion}
