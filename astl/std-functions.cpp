@@ -496,6 +496,40 @@ AttributePtr builtin_type(BindingsPtr bindings, AttributePtr args) {
    }
 }
 
+AttributePtr builtin_utf8_byte(BindingsPtr bindings, AttributePtr args) {
+   if (!args || args->size() != 2) {
+      throw Exception("wrong number of arguments for utf8_byte function");
+   }
+   AttributePtr at1 = args->get_value(0);
+   if (!at1 || at1->get_type() != Attribute::string) {
+      throw Exception("string expected as first argument "
+	 "of utf8_byte function");
+   }
+   AttributePtr at2 = args->get_value(1);
+   if (!at2) {
+      throw Exception("non-null value expected as second argument "
+	 "of utf8_byte function");
+   }
+   Location loc;
+   auto index = at2->convert_to_integer(loc)->get_unsigned_int(loc);
+   auto s = at1->get_string();
+   if (index >= s.length()) {
+      throw Exception("index out of range");
+   }
+   return std::make_shared<Attribute>((unsigned int)(unsigned char)(s[index]));
+}
+
+AttributePtr builtin_utf8_len(BindingsPtr bindings, AttributePtr args) {
+   if (!args || args->size() != 1) {
+      throw Exception("wrong number of arguments for utf8_len function");
+   }
+   AttributePtr at = args->get_value(0);
+   if (!at || at->get_type() != Attribute::string) {
+      throw Exception("string expected as argument of utf8_len function");
+   }
+   return std::make_shared<Attribute>(at->get_string().length());
+}
+
 // control flow graph construction functions
 
 AttributePtr builtin_cfg_connect(BindingsPtr bindings, AttributePtr args) {
@@ -620,6 +654,8 @@ void insert_std_functions(BuiltinFunctions& bfs) {
    bfs.add("tokenliteral", builtin_tokenliteral);
    bfs.add("tokentext", builtin_tokentext);
    bfs.add("type", builtin_type);
+   bfs.add("utf8_byte", builtin_utf8_byte);
+   bfs.add("utf8_len", builtin_utf8_len);
    // control flow graph extensions
    bfs.add("cfg_connect", builtin_cfg_connect);
    bfs.add("cfg_node", builtin_cfg_node);

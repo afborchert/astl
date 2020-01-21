@@ -157,6 +157,13 @@ execution model (see \ref{free-xorder}) which is initially
       boolean value of true \\
    \ident{type} & function &
       returns the type of its argument as a string (see \ref{exam-type}) \\
+   \ident{utf8\_byte}\label{utf8} & function &
+      takes two arguments, a string \textit{s} and an index \textit{i},
+      and returns the \textit{i}-th byte of the UTF-8 representation
+      of \textit{s} \\
+   \ident{utf8\_len} & function &
+      returns the number of bytes of the UTF-8 representation of
+      its argument which must be a string \\
 \end{longtable}
 
 \bigskip
