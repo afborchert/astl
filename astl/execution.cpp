@@ -167,7 +167,7 @@ bool recursive_execute(NodePtr block, BindingsPtr bindings,
 	 case ASTL_OPERATOR_EXPRESSION:
 	    {
 	       // expression statement
-	       Expression expr(statement->get_operand(0), local_bindings);
+	       Expression expr(statement, local_bindings);
 	    }
 	    break;
 
