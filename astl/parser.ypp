@@ -91,7 +91,7 @@ NodePtr fix_print_expression(NodePtr node, location& yylloc);
 %left	EQEQ NE LT LE GT GE	/* comparisons */
 %left	PLUS MINUS	/* additive operators */
 %left	DIV MOD STAR	/* multiplicative operators */
-%left	POWER
+%right	POWER
 %right	NOT
 
 /* delimiters */
