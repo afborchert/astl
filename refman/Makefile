@@ -32,7 +32,6 @@ astl-refman.pdf:	$(TeXDeps) $(PDFFigures) $(MPFigures)
 			./fixbookmarks 2>fixbookmarks.debug
 			bibtex main
 			pdflatex main
-			thumbpdf main
 			pdflatex main
 			mv main.pdf astl-refman.pdf
 #------------------------------------------------------------------------------
