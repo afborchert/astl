@@ -28,7 +28,6 @@ namespace Astl {
 #include <astl/operators.hpp>
 #include <astl/scanner.hpp>
 #include <astl/syntax-tree.hpp>
-#include <astl/yystype.hpp>
 #include <astl/yytname.hpp>
 
 using namespace Astl;
@@ -69,6 +68,7 @@ NodePtr fix_print_expression(NodePtr node, location& yylloc);
 %skeleton "lalr1.cc"
 %define api.prefix {astl}
 %define api.namespace { Astl }
+%define api.value.type { Astl::NodePtr }
 %defines
 %verbose
 %locations
