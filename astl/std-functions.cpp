@@ -426,9 +426,11 @@ AttributePtr builtin_string(BindingsPtr bindings, AttributePtr args) {
    }
    AttributePtr at = args->get_value(0);
    if (at) {
-      return std::make_shared<Attribute>(at->convert_to_string());
-   } else if (at->get_type() == Attribute::string) {
-      return at;
+      if (at->get_type() == Attribute::string) {
+	 return at;
+      } else {
+	 return std::make_shared<Attribute>(at->convert_to_string());
+      }
    } else {
       return std::make_shared<Attribute>("");
    }
