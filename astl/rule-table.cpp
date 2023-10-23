@@ -85,10 +85,12 @@ RuleTable::iterator RuleTable::find_postfix(const Operator& op,
 
 RuleTable::iterator RuleTable::find(const Operator& op, Arity arity,
 	    Rule::Type rtype, iterator& end) const {
+   static submap_type empty;
+
    std::string opname(op.get_name());
    map_type::const_iterator it = table[rtype].find(key_pair(opname, arity));
    if (it == table[rtype].end()) {
-      return end = submap_type().end();
+      return end = empty.end();
    } else {
       end = it->second.end();
       return it->second.begin();
@@ -97,11 +99,13 @@ RuleTable::iterator RuleTable::find(const Operator& op, Arity arity,
 
 RuleTable::print_iterator RuleTable::reversed_find(const Operator& op,
       Arity arity, print_iterator& end) const {
+   static submap_type empty;
+
    std::string opname(op.get_name());
    map_type::const_iterator it =
       table[Rule::prefix].find(key_pair(opname, arity));
    if (it == table[Rule::prefix].end()) {
-      return end = submap_type().rend();
+      return end = empty.rend();
    } else {
       end = it->second.rend();
       return it->second.rbegin();
